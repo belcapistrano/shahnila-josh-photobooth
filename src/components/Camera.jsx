@@ -1,14 +1,11 @@
 import { useRef, useState } from 'react'
 import useCamera from '../hooks/useCamera'
-import useCaptureWithOverlays from '../hooks/useCaptureWithOverlays'
+import usePhotoCapture from '../hooks/usePhotoCapture'
 import useCountdown from '../hooks/useCountdown'
 import useShutterSound from '../hooks/useShutterSound'
 import CaptureButton from './CaptureButton'
 import CountdownTimer from './CountdownTimer'
 import FlashEffect from './FlashEffect'
-import FramesAndStickers from './FramesAndStickers'
-import FrameOverlay from './FrameOverlay'
-import DraggableSticker from './DraggableSticker'
 import BurstIndicator from './BurstIndicator'
 import PhotoPreview from './PhotoPreview'
 import { combinePhotosIntoStrip } from '../utils/photoStrip'
@@ -20,31 +17,16 @@ const PREVIEW_DURATION = 1000 // milliseconds to show preview
 
 function Camera({ onCapture }) {
   const videoRef = useRef(null)
-  const previewRef = useRef(null)
   const { stream, error, loading } = useCamera(videoRef)
-  const { captureWithOverlays } = useCaptureWithOverlays(videoRef, previewRef)
+  const { capturePhoto } = usePhotoCapture(videoRef)
   const { count, isActive, startCountdown, cancelCountdown } = useCountdown(3)
   const { playShutter } = useShutterSound()
   const [flashTrigger, setFlashTrigger] = useState(0)
-  const [selectedFrame, setSelectedFrame] = useState('none')
-  const [stickers, setStickers] = useState([])
   const [burstActive, setBurstActive] = useState(false)
   const [burstProgress, setBurstProgress] = useState(0)
   const [burstCountdown, setBurstCountdown] = useState(0)
   const [previewPhoto, setPreviewPhoto] = useState(null)
   const [showPreview, setShowPreview] = useState(false)
-
-  const handleAddSticker = (sticker) => {
-    const newSticker = {
-      ...sticker,
-      instanceId: Date.now() + Math.random()
-    }
-    setStickers(prev => [...prev, newSticker])
-  }
-
-  const handleRemoveSticker = (instanceId) => {
-    setStickers(prev => prev.filter(s => s.instanceId !== instanceId))
-  }
 
   const waitWithCountdown = async (seconds) => {
     for (let i = seconds; i > 0; i--) {
@@ -67,8 +49,8 @@ function Camera({ onCapture }) {
       setFlashTrigger(prev => prev + 1)
       playShutter()
 
-      // Capture photo with overlays
-      const photoData = captureWithOverlays()
+      // Capture photo
+      const photoData = capturePhoto()
       if (photoData) {
         photos.push(photoData)
 
@@ -120,12 +102,7 @@ function Camera({ onCapture }) {
 
   return (
     <div className="camera-container">
-      <FramesAndStickers
-        selectedFrame={selectedFrame}
-        onFrameChange={setSelectedFrame}
-        onAddSticker={handleAddSticker}
-      />
-      <div className="camera-preview" ref={previewRef}>
+      <div className="camera-preview">
         <video
           ref={videoRef}
           autoPlay
@@ -133,15 +110,6 @@ function Camera({ onCapture }) {
           muted
           className="camera-video"
         />
-        <FrameOverlay frameType={selectedFrame} />
-        {stickers.map(sticker => (
-          <DraggableSticker
-            key={sticker.instanceId}
-            sticker={sticker}
-            onRemove={handleRemoveSticker}
-            containerRef={previewRef}
-          />
-        ))}
         <CountdownTimer count={count || burstCountdown} isActive={isActive || burstCountdown > 0} />
         <FlashEffect trigger={flashTrigger} />
         <BurstIndicator
