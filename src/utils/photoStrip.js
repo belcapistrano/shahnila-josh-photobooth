@@ -1,0 +1,170 @@
+/**
+ * Combines multiple photo data URLs into a single wedding photo strip with elegant frame
+ * @param {string[]} photoDataUrls - Array of photo data URLs
+ * @param {number} stripWidth - Width of the photo strip (default: 640)
+ * @returns {Promise<string>} Data URL of the combined photo strip
+ */
+export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 640) {
+  return new Promise((resolve, reject) => {
+    const photoCount = photoDataUrls.length
+    if (photoCount === 0) {
+      reject(new Error('No photos to combine'))
+      return
+    }
+
+    // Load all images
+    const imagePromises = photoDataUrls.map(url => {
+      return new Promise((resolveImg, rejectImg) => {
+        const img = new Image()
+        img.onload = () => resolveImg(img)
+        img.onerror = rejectImg
+        img.src = url
+      })
+    })
+
+    Promise.all(imagePromises)
+      .then(images => {
+        // Calculate dimensions
+        const borderWidth = 20
+        const innerPadding = 15
+        const headerHeight = 120
+        const footerHeight = 80
+        const photoPadding = 10
+
+        const firstImage = images[0]
+        const aspectRatio = firstImage.height / firstImage.width
+        const photoWidth = stripWidth - (borderWidth * 2) - (innerPadding * 2)
+        const photoHeight = Math.round(photoWidth * aspectRatio)
+
+        // Calculate total height
+        const photosHeight = (photoHeight * photoCount) + (photoPadding * (photoCount - 1))
+        const totalHeight = headerHeight + photosHeight + footerHeight + (borderWidth * 2) + (innerPadding * 2)
+
+        // Create canvas
+        const canvas = document.createElement('canvas')
+        canvas.width = stripWidth
+        canvas.height = totalHeight
+        const ctx = canvas.getContext('2d')
+
+        // Draw decorative border background (pink gradient)
+        const gradient = ctx.createLinearGradient(0, 0, 0, totalHeight)
+        gradient.addColorStop(0, '#FFB6C1')
+        gradient.addColorStop(0.5, '#FF69B4')
+        gradient.addColorStop(1, '#FFB6C1')
+        ctx.fillStyle = gradient
+        ctx.fillRect(0, 0, stripWidth, totalHeight)
+
+        // Draw inner white rectangle
+        ctx.fillStyle = 'white'
+        ctx.fillRect(borderWidth, borderWidth, stripWidth - (borderWidth * 2), totalHeight - (borderWidth * 2))
+
+        // Draw decorative corners
+        ctx.strokeStyle = '#FF69B4'
+        ctx.lineWidth = 3
+        const cornerSize = 20
+        const corners = [
+          { x: borderWidth + 10, y: borderWidth + 10 },
+          { x: stripWidth - borderWidth - 10, y: borderWidth + 10 },
+          { x: borderWidth + 10, y: totalHeight - borderWidth - 10 },
+          { x: stripWidth - borderWidth - 10, y: totalHeight - borderWidth - 10 }
+        ]
+
+        corners.forEach((corner, i) => {
+          ctx.beginPath()
+          if (i === 0) { // Top-left
+            ctx.moveTo(corner.x, corner.y + cornerSize)
+            ctx.lineTo(corner.x, corner.y)
+            ctx.lineTo(corner.x + cornerSize, corner.y)
+          } else if (i === 1) { // Top-right
+            ctx.moveTo(corner.x - cornerSize, corner.y)
+            ctx.lineTo(corner.x, corner.y)
+            ctx.lineTo(corner.x, corner.y + cornerSize)
+          } else if (i === 2) { // Bottom-left
+            ctx.moveTo(corner.x, corner.y - cornerSize)
+            ctx.lineTo(corner.x, corner.y)
+            ctx.lineTo(corner.x + cornerSize, corner.y)
+          } else { // Bottom-right
+            ctx.moveTo(corner.x - cornerSize, corner.y)
+            ctx.lineTo(corner.x, corner.y)
+            ctx.lineTo(corner.x, corner.y - cornerSize)
+          }
+          ctx.stroke()
+        })
+
+        // Draw header section
+        const headerY = borderWidth + innerPadding
+
+        // Draw couple names
+        ctx.fillStyle = '#FF1493'
+        ctx.font = 'bold 36px Georgia, serif'
+        ctx.textAlign = 'center'
+        ctx.fillText('Shahnila & Josh', stripWidth / 2, headerY + 40)
+
+        // Draw wedding date
+        ctx.fillStyle = '#FF69B4'
+        ctx.font = '18px Georgia, serif'
+        ctx.fillText('[Wedding Date]', stripWidth / 2, headerY + 70)
+
+        // Draw hearts
+        ctx.font = '24px Arial'
+        ctx.fillText('♥', stripWidth / 2 - 120, headerY + 70)
+        ctx.fillText('♥', stripWidth / 2 + 120, headerY + 70)
+
+        // Draw decorative line
+        ctx.strokeStyle = '#FFB6C1'
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.moveTo(borderWidth + innerPadding + 30, headerY + 95)
+        ctx.lineTo(stripWidth - borderWidth - innerPadding - 30, headerY + 95)
+        ctx.stroke()
+
+        // Draw photos
+        const photosStartY = headerY + headerHeight
+        images.forEach((img, index) => {
+          const yPosition = photosStartY + (index * (photoHeight + photoPadding))
+          const xPosition = borderWidth + innerPadding
+
+          // Draw photo with slight shadow
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.2)'
+          ctx.shadowBlur = 10
+          ctx.shadowOffsetX = 3
+          ctx.shadowOffsetY = 3
+          ctx.drawImage(img, xPosition, yPosition, photoWidth, photoHeight)
+
+          // Reset shadow
+          ctx.shadowColor = 'transparent'
+          ctx.shadowBlur = 0
+          ctx.shadowOffsetX = 0
+          ctx.shadowOffsetY = 0
+        })
+
+        // Draw footer section
+        const footerY = photosStartY + photosHeight + 20
+
+        // Draw decorative line
+        ctx.strokeStyle = '#FFB6C1'
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.moveTo(borderWidth + innerPadding + 30, footerY)
+        ctx.lineTo(stripWidth - borderWidth - innerPadding - 30, footerY)
+        ctx.stroke()
+
+        // Draw thank you message
+        ctx.fillStyle = '#C71585'
+        ctx.font = 'italic 20px Georgia, serif'
+        ctx.textAlign = 'center'
+        ctx.fillText('Thank you for celebrating with us!', stripWidth / 2, footerY + 35)
+
+        // Draw hearts
+        ctx.fillStyle = '#FF69B4'
+        ctx.font = '18px Arial'
+        ctx.fillText('♥', stripWidth / 2 - 180, footerY + 35)
+        ctx.fillText('♥', stripWidth / 2 + 180, footerY + 35)
+
+        // Convert to data URL
+        const dataUrl = canvas.toDataURL('image/png')
+        resolve(dataUrl)
+      })
+      .catch(reject)
+  })
+}
