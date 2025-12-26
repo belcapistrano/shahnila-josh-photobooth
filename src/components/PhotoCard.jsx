@@ -5,18 +5,6 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   const imageUrl = photo.downloadURL || photo.dataUrl
   const [isAnimating, setIsAnimating] = useState(false)
 
-  // Check if photo was taken today
-  const isToday = () => {
-    if (!photo.timestamp && !photo.createdAt) return false
-
-    const photoDate = new Date(photo.timestamp || photo.createdAt)
-    const today = new Date()
-
-    return photoDate.getDate() === today.getDate() &&
-           photoDate.getMonth() === today.getMonth() &&
-           photoDate.getFullYear() === today.getFullYear()
-  }
-
   const handleLike = () => {
     if (onLike && onToggleLike) {
       // Toggle the like state in localStorage
@@ -153,20 +141,16 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
           </div>
         )}
       </div>
-      {(!navigator.share || isToday()) && (
-        <div className="photo-card-actions">
-          {!navigator.share && (
-            <button onClick={handleShare} className="btn-download">
-              Download
-            </button>
-          )}
-          {isToday() && (
-            <button onClick={handleDelete} className="btn-delete">
-              Delete
-            </button>
-          )}
-        </div>
-      )}
+      <div className="photo-card-actions">
+        {!navigator.share && (
+          <button onClick={handleShare} className="btn-download">
+            Download
+          </button>
+        )}
+        <button onClick={handleDelete} className="btn-delete">
+          Delete
+        </button>
+      </div>
     </div>
   )
 }
