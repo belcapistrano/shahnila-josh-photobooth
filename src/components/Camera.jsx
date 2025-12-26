@@ -156,9 +156,19 @@ function Camera({ onCapture }) {
             className="flip-camera-button"
             disabled={loading}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 13c0-1.65 1.35-3 3-3s3 1.35 3 3-1.35 3-3 3-3-1.35-3-3z"/>
-              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="currentColor">
+              {/* Camera body */}
+              <path d="M10 7L8.5 5H5.5L4 7H2C1.45 7 1 7.45 1 8V20C1 20.55 1.45 21 2 21H26C26.55 21 27 20.55 27 20V8C27 7.45 26.55 7 26 7H24L22.5 5H19.5L18 7H10Z"/>
+              {/* Camera lens */}
+              <circle cx="14" cy="13.5" r="4"/>
+
+              {/* Top left arrow */}
+              <path d="M5 3L3 5L5 7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M3 5C3 5 4 5 5 5C6.5 5 8 6 8.5 7.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+
+              {/* Bottom right arrow */}
+              <path d="M23 24L25 22L23 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M25 22C25 22 24 22 23 22C21.5 22 20 21 19.5 19.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </button>
         )}
