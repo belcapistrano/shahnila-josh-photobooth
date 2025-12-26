@@ -191,8 +191,7 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
             <h3>Your Challenge Awaits!</h3>
           </div>
           <p className="instructions-text">
-            Capture this moment and make it unforgettable. Head to the camera,
-            strike your pose, and share your creation with everyone!
+            {challenges[currentIndex].context || 'Capture this moment and make it unforgettable. Head to the camera, strike your pose, and share your creation with everyone!'}
           </p>
           <div className="challenge-actions">
             <button className="action-button primary" onClick={onTakePhoto}>
