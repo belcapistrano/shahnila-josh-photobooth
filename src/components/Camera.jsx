@@ -15,7 +15,7 @@ const BURST_DELAY = 3000 // milliseconds between burst photos
 const BURST_COUNTDOWN = 3 // countdown seconds between photos
 const PREVIEW_DURATION = 1000 // milliseconds to show preview
 
-function Camera({ onCapture }) {
+function Camera({ onCapture, challenge }) {
   const videoRef = useRef(null)
   const [facingMode, setFacingMode] = useState('user') // 'user' for front, 'environment' for back
   const { stream, error, loading } = useCamera(videoRef, facingMode)
@@ -99,6 +99,12 @@ function Camera({ onCapture }) {
 
   return (
     <div className="camera-container">
+      {challenge && (
+        <div className="challenge-banner">
+          <span className="challenge-emoji">{challenge.emoji}</span>
+          <span className="challenge-text">{challenge.text}</span>
+        </div>
+      )}
       {error ? (
         <div className="camera-error">Error: {error}</div>
       ) : (

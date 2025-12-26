@@ -19,15 +19,36 @@ function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
     }
   }
 
-  const handleDownload = () => {
-    const link = document.createElement('a')
-    link.href = imageUrl
-    link.download = `photobooth-${photo.id}.png`
-    link.target = '_blank'
-    link.rel = 'noopener noreferrer'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const handleDownload = async () => {
+    try {
+      // Convert URL to blob
+      const response = await fetch(imageUrl)
+      const blob = await response.blob()
+
+      // Create object URL from blob
+      const blobUrl = URL.createObjectURL(blob)
+
+      // Create download link
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = `photobooth-${photo.id}.png`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      // Clean up object URL
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100)
+    } catch (error) {
+      console.error('Download failed:', error)
+      // Fallback: try direct link download
+      const link = document.createElement('a')
+      link.href = imageUrl
+      link.download = `photobooth-${photo.id}.png`
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
   }
 
   const handleShare = async () => {
@@ -46,13 +67,13 @@ function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
         })
       } else {
         // Fallback to download if share not supported
-        handleDownload()
+        await handleDownload()
       }
     } catch (error) {
       // User cancelled or error occurred, fallback to download
       if (error.name !== 'AbortError') {
         console.log('Share failed, downloading instead')
-        handleDownload()
+        await handleDownload()
       }
     }
   }
@@ -61,6 +82,12 @@ function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
     <div className="photo-card">
       <div className="photo-card-image-container">
         <img src={imageUrl} alt={`Photo taken at ${photo.timestamp}`} />
+        {photo.challenge && (
+          <div className="photo-challenge-tag">
+            <span className="challenge-tag-emoji">{photo.challenge.emoji}</span>
+            <span className="challenge-tag-text">{photo.challenge.text}</span>
+          </div>
+        )}
         <button
           className={`photo-like-button ${isAnimating ? 'animate' : ''}`}
           onClick={handleLike}

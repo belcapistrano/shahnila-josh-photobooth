@@ -12,25 +12,50 @@ function App() {
   const [activeTab, setActiveTab] = useState('camera')
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [activeChallenge, setActiveChallenge] = useState(null)
 
   const handlePhotoCapture = async (photoData, filter) => {
+    // Don't upload immediately - just store for preview
+    setRecentPhoto({
+      id: Date.now(), // temporary ID
+      dataUrl: photoData,
+      filter: filter || 'none',
+      challenge: activeChallenge,
+      isPending: true // Flag to indicate it hasn't been saved yet
+    })
+
+    // Clear the challenge after capturing the photo
+    setActiveChallenge(null)
+  }
+
+  const handleSaveRecentPhoto = async () => {
+    if (!recentPhoto || !recentPhoto.isPending) return
+
     try {
       setUploading(true)
 
-      // Upload to Firebase (or fallback to local storage)
-      const uploadedPhoto = await uploadPhoto(photoData, filter)
+      // Upload to Firebase (or fallback to local storage) with challenge info
+      const uploadedPhoto = await uploadPhoto(
+        recentPhoto.dataUrl,
+        recentPhoto.filter,
+        recentPhoto.challenge
+      )
 
-      // Set as recent photo for preview (with dataUrl for local display)
+      // Update recent photo with uploaded info
       setRecentPhoto({
         ...uploadedPhoto,
-        dataUrl: photoData
+        dataUrl: recentPhoto.dataUrl
       })
     } catch (error) {
-      console.error('Error capturing photo:', error)
-      // Error is already handled in useFirebasePhotos hook with fallback
+      console.error('Error saving photo:', error)
     } finally {
       setUploading(false)
     }
+  }
+
+  const handleDeleteRecentPhoto = () => {
+    // Just discard the preview without saving
+    setRecentPhoto(null)
   }
 
   const handleDeletePhoto = async (id, storagePath) => {
@@ -59,7 +84,8 @@ function App() {
     }
   }
 
-  const handleTakePhoto = () => {
+  const handleTakePhoto = (challenge = null) => {
+    setActiveChallenge(challenge)
     setActiveTab('camera')
   }
 
@@ -84,7 +110,7 @@ function App() {
       </header>
       <InfoBanner />
       <main className="app-main">
-        {activeTab === 'camera' && <Camera onCapture={handlePhotoCapture} />}
+        {activeTab === 'camera' && <Camera onCapture={handlePhotoCapture} challenge={activeChallenge} />}
         {activeTab === 'gallery' && (
           <PhotoGallery
             photos={photos}
@@ -96,7 +122,11 @@ function App() {
         )}
         {activeTab === 'challenges' && <Challenges onTakePhoto={handleTakePhoto} />}
       </main>
-      <RecentPhoto photo={recentPhoto} onDelete={handleDeletePhoto} />
+      <RecentPhoto
+        photo={recentPhoto}
+        onDelete={handleDeleteRecentPhoto}
+        onSave={handleSaveRecentPhoto}
+      />
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   )

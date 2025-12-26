@@ -60,7 +60,7 @@ function useFirebasePhotos() {
   }, [useFirebase, localPhotos])
 
   // Upload photo to Firebase Storage and save metadata to Firestore
-  const uploadPhoto = async (photoData, filter = 'none') => {
+  const uploadPhoto = async (photoData, filter = 'none', challenge = null) => {
     const timestamp = Date.now()
 
     // If Firebase is not configured, use local storage
@@ -70,7 +70,12 @@ function useFirebasePhotos() {
         dataUrl: photoData,
         timestamp: new Date().toISOString(),
         filter: filter || 'none',
-        likes: 0
+        likes: 0,
+        challenge: challenge ? {
+          text: challenge.text,
+          emoji: challenge.emoji,
+          category: challenge.category
+        } : null
       }
       setLocalPhotos(prev => [newPhoto, ...prev])
       return newPhoto
@@ -94,7 +99,12 @@ function useFirebasePhotos() {
         filter,
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
-        likes: 0
+        likes: 0,
+        challenge: challenge ? {
+          text: challenge.text,
+          emoji: challenge.emoji,
+          category: challenge.category
+        } : null
       })
 
       return {
@@ -113,7 +123,12 @@ function useFirebasePhotos() {
         dataUrl: photoData,
         timestamp: new Date().toISOString(),
         filter: filter || 'none',
-        likes: 0
+        likes: 0,
+        challenge: challenge ? {
+          text: challenge.text,
+          emoji: challenge.emoji,
+          category: challenge.category
+        } : null
       }
       setLocalPhotos(prev => [newPhoto, ...prev])
       return newPhoto

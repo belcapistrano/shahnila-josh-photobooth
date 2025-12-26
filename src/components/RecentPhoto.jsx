@@ -1,10 +1,15 @@
-function RecentPhoto({ photo, onShare, onDelete }) {
+function RecentPhoto({ photo, onSave, onDelete }) {
   if (!photo) return null
 
   // Use dataUrl if available (for recent photos), otherwise use downloadURL
   const imageUrl = photo.dataUrl || photo.downloadURL
 
   const handleShare = async () => {
+    // Save to gallery first if not already saved
+    if (photo.isPending && onSave) {
+      await onSave()
+    }
+
     try {
       const response = await fetch(imageUrl)
       const blob = await response.blob()
@@ -44,7 +49,13 @@ function RecentPhoto({ photo, onShare, onDelete }) {
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(photo.id, photo.storagePath)
+      onDelete()
+    }
+  }
+
+  const handleSaveToGallery = async () => {
+    if (photo.isPending && onSave) {
+      await onSave()
     }
   }
 
@@ -52,17 +63,33 @@ function RecentPhoto({ photo, onShare, onDelete }) {
     <div className="recent-photo-container">
       <div className="recent-photo-header">
         <h3>Your Photo Strip!</h3>
-        <p>Share it or find it in the gallery</p>
+        <p>{photo.isPending ? 'Save to gallery or discard' : 'Share it or find it in the gallery'}</p>
       </div>
       <div className="recent-photo-content">
         <img src={imageUrl} alt="Recently captured photo strip" />
         <div className="recent-photo-actions">
-          <button onClick={handleShare} className="btn-share-recent">
-            Share Photo
-          </button>
-          <button onClick={handleDelete} className="btn-delete-recent">
-            Delete
-          </button>
+          {photo.isPending ? (
+            <>
+              <button onClick={handleSaveToGallery} className="btn-save-recent">
+                Save to Gallery
+              </button>
+              <button onClick={handleShare} className="btn-share-recent">
+                Share
+              </button>
+              <button onClick={handleDelete} className="btn-delete-recent">
+                Discard
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={handleShare} className="btn-share-recent">
+                Share Photo
+              </button>
+              <button onClick={handleDelete} className="btn-delete-recent">
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

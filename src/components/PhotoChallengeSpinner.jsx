@@ -262,7 +262,7 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
           </div>
 
           <div className="challenge-actions">
-            <button className="action-button primary" onClick={onTakePhoto}>
+            <button className="action-button primary" onClick={() => onTakePhoto(challenges[currentIndex])}>
               <span className="action-icon">📷</span>
               Take Photo
             </button>
