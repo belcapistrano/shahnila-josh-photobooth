@@ -5,6 +5,7 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isShuffling, setIsShuffling] = useState(false)
   const [activeCategory, setActiveCategory] = useState(null)
+  const [hasShuffled, setHasShuffled] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const audioContext = useRef(null)
   const trackRef = useRef(null)
@@ -62,9 +63,10 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
 
     setIsShuffling(true)
     setActiveCategory(null)
+    setHasShuffled(true)
 
-    const baseSpeed = 15
-    const cycles = 1.5 + Math.random() * 0.5
+    const baseSpeed = 8
+    const cycles = 1 + Math.random() * 0.3
     const totalCards = challenges.length
     const targetIndex = Math.floor(Math.random() * totalCards)
     const totalSteps = Math.floor(cycles * totalCards) + targetIndex
@@ -83,7 +85,7 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
 
       const progress = currentStep / totalSteps
       const easeOut = 1 - Math.pow(1 - progress, 4)
-      const delay = baseSpeed + (easeOut * 70)
+      const delay = baseSpeed + (easeOut * 40)
 
       stepIndex = (stepIndex + 1) % totalCards
       setCurrentIndex(stepIndex)
@@ -144,35 +146,37 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
       </div>
 
       {/* Card carousel */}
-      <div className="carousel-container">
-        <div className="carousel-fade-left"></div>
-        <div className="carousel-fade-right"></div>
-        <div className="card-track" ref={trackRef}>
-          {getVisibleCards().map((challenge, idx) => (
-            <div
-              key={`${challenge.index}-${idx}`}
-              className={`challenge-card ${challenge.offset === 0 ? 'active' : ''}`}
-              style={{
-                transform: `translateX(${challenge.offset * 110}%)`,
-                opacity: Math.abs(challenge.offset) > 1 ? 0.3 : 1,
-                zIndex: 10 - Math.abs(challenge.offset)
-              }}
-            >
-              <div className="card-accent-bar"></div>
-              <div className="card-category">
-                <span className="category-line"></span>
-                {challenge.category}
-                <span className="category-line"></span>
+      {(hasShuffled || isShuffling) && (
+        <div className="carousel-container">
+          <div className="carousel-fade-left"></div>
+          <div className="carousel-fade-right"></div>
+          <div className="card-track" ref={trackRef}>
+            {getVisibleCards().map((challenge, idx) => (
+              <div
+                key={`${challenge.index}-${idx}`}
+                className={`challenge-card ${challenge.offset === 0 ? 'active' : ''}`}
+                style={{
+                  transform: `translateX(${challenge.offset * 110}%)`,
+                  opacity: Math.abs(challenge.offset) > 1 ? 0.3 : 1,
+                  zIndex: 10 - Math.abs(challenge.offset)
+                }}
+              >
+                <div className="card-accent-bar"></div>
+                <div className="card-category">
+                  <span className="category-line"></span>
+                  {challenge.category}
+                  <span className="category-line"></span>
+                </div>
+                <div className="card-emoji">{challenge.emoji}</div>
+                <p className="card-text">{challenge.text}</p>
+                <div className="card-number">
+                  {String(challenge.index + 1).padStart(2, '0')}
+                </div>
               </div>
-              <div className="card-emoji">{challenge.emoji}</div>
-              <p className="card-text">{challenge.text}</p>
-              <div className="card-number">
-                {String(challenge.index + 1).padStart(2, '0')}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Shuffle button */}
       <div className="shuffle-section">
