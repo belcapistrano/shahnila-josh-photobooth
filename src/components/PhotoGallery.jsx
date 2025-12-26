@@ -28,6 +28,7 @@ function PhotoGallery({ photos, onDelete, onClearAll, onLike, isUsingFirebase })
             key={photo.id}
             photo={photo}
             onLike={onLike}
+            onDelete={onDelete}
             isLiked={isPhotoLiked(photo.id)}
             onToggleLike={toggleLike}
           />

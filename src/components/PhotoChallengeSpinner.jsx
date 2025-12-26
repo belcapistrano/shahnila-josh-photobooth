@@ -251,9 +251,6 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
                     Click <strong>"Take Photo"</strong> below to open the camera
                   </li>
                   <li className="step-text">
-                    Add <strong>frames & stickers</strong> if you want
-                  </li>
-                  <li className="step-text">
                     <strong>Capture</strong> your moment and share it!
                   </li>
                 </ul>
