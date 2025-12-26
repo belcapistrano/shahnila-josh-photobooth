@@ -11,38 +11,55 @@ function RecentPhoto({ photo, onSave, onDelete }) {
     }
 
     try {
-      const response = await fetch(imageUrl)
+      const response = await fetch(imageUrl, { mode: 'cors' })
       const blob = await response.blob()
-      const file = new File([blob], `photobooth-${photo.id}.png`, { type: 'image/png' })
 
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
+      // For mobile devices, use Web Share API
+      if (navigator.share) {
+        const filesArray = []
+
+        // Try to create File object
+        try {
+          const file = new File([blob], `shahnila-josh-wedding-${photo.id}.png`, {
+            type: 'image/png',
+            lastModified: new Date().getTime()
+          })
+
+          // Check if sharing files is supported
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            filesArray.push(file)
+          }
+        } catch (e) {
+          console.log('File creation not supported:', e)
+        }
+
+        // Share with or without files
+        const shareData = {
           title: 'Shahnila & Josh Wedding Photo',
-          text: 'Photo from the wedding photobooth!'
-        })
+          text: 'Photo from our wedding photobooth! 💕'
+        }
+
+        if (filesArray.length > 0) {
+          shareData.files = filesArray
+        }
+
+        await navigator.share(shareData)
       } else {
-        // Fallback to download
+        // Desktop fallback: download
+        const blobUrl = URL.createObjectURL(blob)
         const link = document.createElement('a')
-        link.href = imageUrl
-        link.download = `photobooth-${photo.id}.png`
-        link.target = '_blank'
-        link.rel = 'noopener noreferrer'
+        link.href = blobUrl
+        link.download = `shahnila-josh-wedding-${photo.id}.png`
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100)
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.log('Share failed, downloading instead')
-        const link = document.createElement('a')
-        link.href = imageUrl
-        link.download = `photobooth-${photo.id}.png`
-        link.target = '_blank'
-        link.rel = 'noopener noreferrer'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+      if (error.name === 'AbortError') {
+        console.log('Share cancelled by user')
+      } else {
+        console.log('Share failed:', error)
       }
     }
   }

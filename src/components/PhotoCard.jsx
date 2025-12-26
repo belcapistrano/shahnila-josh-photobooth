@@ -54,25 +54,49 @@ function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
   const handleShare = async () => {
     try {
       // Convert URL to blob
-      const response = await fetch(imageUrl)
+      const response = await fetch(imageUrl, { mode: 'cors' })
       const blob = await response.blob()
-      const file = new File([blob], `photobooth-${photo.id}.png`, { type: 'image/png' })
 
-      // Check if Web Share API is supported
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
+      // For mobile devices, use Web Share API
+      if (navigator.share) {
+        const filesArray = []
+
+        // Try to create File object (supported on most modern mobile browsers)
+        try {
+          const file = new File([blob], `shahnila-josh-wedding-${photo.id}.png`, {
+            type: 'image/png',
+            lastModified: new Date().getTime()
+          })
+
+          // Check if sharing files is supported
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            filesArray.push(file)
+          }
+        } catch (e) {
+          console.log('File creation not supported:', e)
+        }
+
+        // Share with or without files
+        const shareData = {
           title: 'Shahnila & Josh Wedding Photo',
-          text: 'Photo from the wedding photobooth!'
-        })
+          text: 'Photo from our wedding photobooth! 💕'
+        }
+
+        if (filesArray.length > 0) {
+          shareData.files = filesArray
+        }
+
+        await navigator.share(shareData)
       } else {
-        // Fallback to download if share not supported
+        // Desktop fallback: download
         await handleDownload()
       }
     } catch (error) {
-      // User cancelled or error occurred, fallback to download
-      if (error.name !== 'AbortError') {
-        console.log('Share failed, downloading instead')
+      // User cancelled or error occurred
+      if (error.name === 'AbortError') {
+        console.log('Share cancelled by user')
+      } else {
+        console.log('Share failed, trying download:', error)
         await handleDownload()
       }
     }
@@ -113,7 +137,7 @@ function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
       </div>
       <div className="photo-card-actions">
         <button onClick={handleShare} className="btn-download">
-          Save to Camera Roll
+          {navigator.share ? 'Save / Share' : 'Download'}
         </button>
       </div>
     </div>

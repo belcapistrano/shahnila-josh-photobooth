@@ -5,6 +5,9 @@ export const challenges = [
   { category: 'Gaye Holud', emoji: '💛', text: 'Recreate applying holud to your bestie', context: 'Get playful! Pretend to apply turmeric paste on someone - capture that joyful moment of tradition and friendship.' },
   { category: 'Gaye Holud', emoji: '🥶', text: 'The turmeric is freezing reaction', context: 'That cold turmeric paste hits different! Show us your best shocked, surprised, or freezing cold face.' },
   { category: 'Gaye Holud', emoji: '👑', text: 'Strike a golden goddess pose', context: 'You are royalty today! Strike a confident, elegant pose worthy of a queen draped in gold and turmeric.' },
+  { category: 'Gaye Holud', emoji: '💅', text: 'Show your holud-stained hands', context: 'Yellow fingers everywhere! Display your turmeric-stained hands with pride - it is a badge of honor!' },
+  { category: 'Gaye Holud', emoji: '🌼', text: 'Flower crown moment', context: 'Nature queen! Pose with the floral decorations - crown yourself with flowers or hold a beautiful garland.' },
+  { category: 'Gaye Holud', emoji: '🎨', text: 'The yellow is everywhere reaction', context: 'Turmeric chaos! Show your reaction to getting holud all over your outfit, face, or everywhere - shocked or laughing!' },
 
   // Outfit (16 challenges)
   { category: 'Outfit', emoji: '👗', text: 'Saree draping champion pose', context: 'Show off that perfect saree drape! Strike a graceful pose that highlights your beautiful draping skills.' },
@@ -23,6 +26,11 @@ export const challenges = [
   { category: 'Outfit', emoji: '👟', text: 'Kurta and sneakers fusion look', context: 'Modern meets traditional! Rock that kurta with sneakers combo - comfort and style can coexist!' },
   { category: 'Outfit', emoji: '🏆', text: 'Best dressed guest pose', context: 'You know you look good! Strike your most confident pose showing off why you are the best dressed guest here.' },
   { category: 'Outfit', emoji: '🔙', text: 'Your outfit from behind', context: 'Back details matter! Turn around and show off the back of your outfit - the blouse work, draping, or embroidery.' },
+  { category: 'Outfit', emoji: '💄', text: 'Makeup on point selfie', context: 'Beat face! Show off that flawless makeup - lipstick, eye makeup, and glow all in one frame!' },
+  { category: 'Outfit', emoji: '🎀', text: 'Show your hair styling', context: 'Hair goals! Display your gorgeous hairstyle - bun, braid, curls, or whatever masterpiece you are rocking!' },
+  { category: 'Outfit', emoji: '🌟', text: 'Jewelry close-up shot', context: 'Details matter! Get a close-up of your favorite piece of jewelry - necklace, ring, or earrings!' },
+  { category: 'Outfit', emoji: '👔', text: 'Desi meets Western fusion', context: 'Best of both worlds! Show off any fusion element in your outfit - kurta with jeans, saree with boots, get creative!' },
+  { category: 'Outfit', emoji: '🎩', text: 'Hat or headpiece appreciation', context: 'Top it off! If you are wearing any headpiece, turban, or hat - show it off with style!' },
 
   // Family (16 challenges)
   { category: 'Family', emoji: '👨‍👩‍👧‍👦', text: 'Three generations, one frame', context: 'Family legacy! Gather grandparents, parents, and kids together for a beautiful multi-generational photo.' },
@@ -41,6 +49,11 @@ export const challenges = [
   { category: 'Family', emoji: '💕', text: 'Bhai and Apu moment', context: 'Brother-sister bond! Take a photo with your sibling showing that special bhai-apu connection.' },
   { category: 'Family', emoji: '🤳', text: 'Four plus cousins in one shot', context: 'Cousin squad goals! Get at least four cousins together - squeeze in, pile up, and smile!' },
   { category: 'Family', emoji: '🥲', text: 'Parents looking proud', context: 'Make them proud! Capture your parents in a moment where they are beaming with pride and joy.' },
+  { category: 'Family', emoji: '👰', text: 'Photo with the bride or groom', context: 'Newlywed moment! Get a photo with Shahnila or Josh - congratulate them and capture the moment!' },
+  { category: 'Family', emoji: '🎭', text: 'The favorite child energy', context: 'Golden child! Act like you are clearly the favorite child - smug face, parents approval, full confidence!' },
+  { category: 'Family', emoji: '🤝', text: 'Crossing cultural bridges pose', context: 'Unity! If you are part of the culture blending, show your appreciation for both families coming together!' },
+  { category: 'Family', emoji: '👪', text: 'Nuclear family portrait', context: 'Immediate family! Get your parents and siblings together for a nice family photo - everyone smile!' },
+  { category: 'Family', emoji: '🎓', text: 'The elder giving advice moment', context: 'Wisdom time! If you are older, give that elder advice look - or act like you are receiving wisdom from an elder!' },
 
   // Food (5 challenges)
   { category: 'Food', emoji: '🍚', text: 'Your first bite of biryani face', context: 'That first bite hits different! Capture your reaction to tasting the biryani - eyes closed in bliss, chef kiss, whatever feels right!' },
@@ -48,6 +61,12 @@ export const challenges = [
   { category: 'Food', emoji: '😏', text: "Pretending this isn't your third plate", context: 'We have all been there! Act casual with your plate like this is definitely your first serving (wink wink).' },
   { category: 'Food', emoji: '😤', text: 'The food line is too long face', context: 'The struggle is real! Show your frustration or impatience waiting in that never-ending food line.' },
   { category: 'Food', emoji: '⭐', text: 'Rate the biryani out of ten', context: 'Food critic time! Hold up fingers to show your rating or write it on paper - how many stars for this biryani?' },
+  { category: 'Food', emoji: '☕', text: 'Chai appreciation moment', context: 'Tea time! Hold your chai cup with both hands and show pure contentment - the Desi way!' },
+  { category: 'Food', emoji: '🥘', text: 'Your favorite dish on the table', context: 'Foodie pick! Point to or hold up your favorite dish from the entire spread - show us what you loaded up on!' },
+  { category: 'Food', emoji: '😋', text: 'Dessert table raid successful', context: 'Sweet victory! Pose with your dessert haul - the bigger the plate, the better!' },
+  { category: 'Food', emoji: '🍽️', text: 'The plate is too full struggle', context: 'Eyes bigger than stomach! Show your overloaded plate - we have all been there!' },
+  { category: 'Food', emoji: '🤤', text: 'Sneaking food before dinner', context: 'Caught in the act! Pretend to sneak food from the kitchen or buffet - guilty face required!' },
+  { category: 'Food', emoji: '🥄', text: 'Feeding the person next to you', context: 'Share the love! Feed someone a bite of food - sweet gesture or silly moment, you choose!' },
 
   // Dance (6 challenges)
   { category: 'Dance', emoji: '💃', text: 'Your signature wedding dance move', context: 'Show us your moves! Capture yourself doing your go-to dance move - whether graceful or goofy, own it!' },
@@ -56,6 +75,11 @@ export const challenges = [
   { category: 'Dance', emoji: '🎭', text: 'Recreate a classic film scene', context: 'Movie magic time! Act out an iconic scene from your favorite Bollywood or Bengali film - extra points for props!' },
   { category: 'Dance', emoji: '🙈', text: "The I don't dance but here I am", context: 'Reluctant dancer unite! Show that awkward but trying energy when you do not dance but got pulled onto the floor anyway.' },
   { category: 'Dance', emoji: '🚶‍♀️', text: 'Your dramatic slow-mo walk', context: 'Main character energy! Do a slow-motion hero walk like you are in a movie - hair flip optional but encouraged!' },
+  { category: 'Dance', emoji: '🕺', text: 'Group circle dance moment', context: 'Circle up! Get in a group and do a coordinated circle dance move - synchronization not required but fun!' },
+  { category: 'Dance', emoji: '🎵', text: 'Dance with your eyes closed', context: 'Feel the music! Close your eyes and just vibe with the beat - pure joy, no thinking!' },
+  { category: 'Dance', emoji: '👏', text: 'Clap along to the beat', context: 'Rhythm master! Clap to the music and show your musicality - bonus points for getting others to join!' },
+  { category: 'Dance', emoji: '🌪️', text: 'The wedding dance floor spin', context: 'Spin master! Do a dramatic spin on the dance floor - twirl that outfit and show us your moves!' },
+  { category: 'Dance', emoji: '🙌', text: 'Hands up celebration dance', context: 'Celebrate! Dance with your hands up in the air like you just do not care - full energy mode!' },
 
   // Fun (10 challenges)
   { category: 'Fun', emoji: '🙏', text: 'Best blessing pose for the couple', context: 'Bless the newlyweds! Strike your most heartfelt blessing pose - hands together, loving expression, send good vibes!' },
@@ -67,7 +91,19 @@ export const challenges = [
   { category: 'Fun', emoji: '😜', text: 'Best photobomb attempt', context: 'Stealth mode! Jump into someone else photo in the most creative or hilarious way possible - timing is everything!' },
   { category: 'Fun', emoji: '😴', text: 'The I woke up at five for this look', context: 'Worth it though! Show that tired but fabulous face - you woke up early to get ready and you are rocking it!' },
   { category: 'Fun', emoji: '📖', text: 'Most dramatic romance cover pose', context: 'Romance novel realness! Strike the most dramatic, over-the-top romantic pose like you are on a book cover!' },
-  { category: 'Fun', emoji: '👯‍♀️', text: 'Squad photo, minimum three people', context: 'Squad up! Gather at least three people for your crew photo - coordinated poses and silly faces welcome!' }
+  { category: 'Fun', emoji: '👯‍♀️', text: 'Squad photo, minimum three people', context: 'Squad up! Gather at least three people for your crew photo - coordinated poses and silly faces welcome!' },
+  { category: 'Fun', emoji: '🎤', text: 'Pretend to sing the wedding song', context: 'Karaoke moment! Mime singing along to the music playing - full performance mode, microphone hand gesture included!' },
+  { category: 'Fun', emoji: '📷', text: 'Photographer behind the scenes', context: 'Candid capture! Pretend to be the photographer - hold an imaginary camera and strike a pro photographer pose!' },
+  { category: 'Fun', emoji: '💐', text: 'Bouquet toss ready position', context: 'Get ready! Position yourself like you are about to catch (or already caught) the bouquet - excited or determined face!' },
+  { category: 'Fun', emoji: '🎉', text: 'Confetti celebration moment', context: 'Throw it up! Throw imaginary or real confetti in the air and celebrate - pure joy required!' },
+  { category: 'Fun', emoji: '🤗', text: 'Group hug with your people', context: 'Love all around! Get your favorite people in a big group hug - the more squished together, the better!' },
+  { category: 'Fun', emoji: '😎', text: 'Too cool for the wedding pose', context: 'Cool kid energy! Strike your most nonchalant, too-cool pose - sunglasses optional but encouraged!' },
+  { category: 'Fun', emoji: '🎊', text: 'Make a wish for the couple', context: 'Wish them well! Close your eyes, hands together, and make a wish for Shahnila and Josh - heartfelt or playful!' },
+  { category: 'Fun', emoji: '🕰️', text: 'The waiting for ceremony to start', context: 'Patience game! Show your expression while waiting - checking watch, yawning, or entertaining yourself!' },
+  { category: 'Fun', emoji: '🎁', text: 'Show or point to your gift', context: 'Gift time! Point to or show the gift you brought - proud gifter energy!' },
+  { category: 'Fun', emoji: '🌙', text: 'Night one celebration energy', context: 'First night vibes! Show your excitement for the first day of the wedding celebration - pumped up!' },
+  { category: 'Fun', emoji: '🏡', text: 'Welcome to the family pose', context: 'New family member! If you are part of the new extended family, strike a welcoming or welcomed pose!' },
+  { category: 'Fun', emoji: '🎯', text: 'Your prediction for the couple', context: 'Fortune teller! Act like you are predicting the couple future - crystal ball optional, mysterious face required!' }
 ]
 
 export const categories = ['Gaye Holud', 'Family', 'Dance', 'Food', 'Outfit', 'Fun']

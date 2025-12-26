@@ -65,8 +65,8 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
     setActiveCategory(null)
     setHasShuffled(true)
 
-    const baseSpeed = 8
-    const cycles = 1 + Math.random() * 0.3
+    const baseSpeed = 5
+    const cycles = 0.4 + Math.random() * 0.2 // 0.4 to 0.6 cycles
     const totalCards = challenges.length
     const targetIndex = Math.floor(Math.random() * totalCards)
     const totalSteps = Math.floor(cycles * totalCards) + targetIndex
@@ -85,7 +85,7 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
 
       const progress = currentStep / totalSteps
       const easeOut = 1 - Math.pow(1 - progress, 4)
-      const delay = baseSpeed + (easeOut * 40)
+      const delay = baseSpeed + (easeOut * 25)
 
       stepIndex = (stepIndex + 1) % totalCards
       setCurrentIndex(stepIndex)
