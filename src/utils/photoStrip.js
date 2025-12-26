@@ -103,7 +103,13 @@ export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 640) {
         // Draw wedding date
         ctx.fillStyle = '#FF69B4'
         ctx.font = '18px Georgia, serif'
-        ctx.fillText('[Wedding Date]', stripWidth / 2, headerY + 70)
+        const today = new Date()
+        const dateString = today.toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        })
+        ctx.fillText(dateString, stripWidth / 2, headerY + 70)
 
         // Draw hearts
         ctx.font = '24px Arial'
