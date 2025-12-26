@@ -28,6 +28,7 @@ function useCamera(videoRef) {
           const video = videoRef.current
           console.log('Setting video srcObject, video element:', video)
           console.log('MediaStream tracks:', mediaStream.getTracks())
+          alert('Camera stream obtained! Tracks: ' + mediaStream.getTracks().length)
 
           video.srcObject = mediaStream
 
