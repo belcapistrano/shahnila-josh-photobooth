@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-function useCamera(videoRef) {
+function useCamera(videoRef, facingMode = 'user') {
   const [stream, setStream] = useState(null)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -27,7 +27,7 @@ function useCamera(videoRef) {
           video: {
             width: { ideal: 1280 },
             height: { ideal: 720 },
-            facingMode: 'user'
+            facingMode: facingMode
           },
           audio: false
         })
@@ -91,7 +91,7 @@ function useCamera(videoRef) {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [facingMode])
 
   return { stream, error, loading }
 }

@@ -17,8 +17,9 @@ const PREVIEW_DURATION = 1000 // milliseconds to show preview
 
 function Camera({ onCapture }) {
   const videoRef = useRef(null)
-  const { stream, error, loading } = useCamera(videoRef)
-  const { capturePhoto } = usePhotoCapture(videoRef)
+  const [facingMode, setFacingMode] = useState('user') // 'user' for front, 'environment' for back
+  const { stream, error, loading } = useCamera(videoRef, facingMode)
+  const { capturePhoto } = usePhotoCapture(videoRef, facingMode === 'user')
   const { count, isActive, startCountdown, cancelCountdown } = useCountdown(3)
   const { playShutter } = useShutterSound()
   const [flashTrigger, setFlashTrigger] = useState(0)
@@ -92,6 +93,10 @@ function Camera({ onCapture }) {
     cancelCountdown()
   }
 
+  const handleFlipCamera = () => {
+    setFacingMode(prev => prev === 'user' ? 'environment' : 'user')
+  }
+
   return (
     <div className="camera-container">
       {error ? (
@@ -105,7 +110,10 @@ function Camera({ onCapture }) {
               playsInline
               muted
               className="camera-video"
-              style={{ opacity: loading ? 0.3 : 1 }}
+              style={{
+                opacity: loading ? 0.3 : 1,
+                transform: facingMode === 'user' ? 'scaleX(-1)' : 'none'
+              }}
             />
             {loading && (
               <div style={{
@@ -142,6 +150,18 @@ function Camera({ onCapture }) {
           onClick={handleCapture}
           disabled={!stream || isActive || burstActive}
         />
+        {!isActive && !burstActive && (
+          <button
+            onClick={handleFlipCamera}
+            className="flip-camera-button"
+            disabled={loading}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 5h-3.2L15 3H9L7.2 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-10 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+              <path d="M10 9c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm6-3l1.25 1.25L19 5.5V10h-1.5V7.25L16.25 6H18z"/>
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   )

@@ -160,6 +160,37 @@ body {
   color: white;
 }
 
+/* Flip Camera Button */
+.flip-camera-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #FF69B4;
+  background: white;
+  color: #FF69B4;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.flip-camera-button:hover:not(:disabled) {
+  background: #FF69B4;
+  color: white;
+  transform: scale(1.1);
+}
+
+.flip-camera-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.flip-camera-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Flash Effect */
 .flash-overlay {
   position: absolute;
