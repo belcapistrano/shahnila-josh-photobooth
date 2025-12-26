@@ -7,9 +7,19 @@ function useCamera(videoRef) {
 
   useEffect(() => {
     let currentStream = null
+    let mounted = true
 
     const startCamera = async () => {
       try {
+        // Wait for video element to be available
+        if (!videoRef.current) {
+          // Retry after a short delay
+          setTimeout(() => {
+            if (mounted) startCamera()
+          }, 100)
+          return
+        }
+
         setLoading(true)
         setError(null)
 
@@ -24,24 +34,15 @@ function useCamera(videoRef) {
 
         currentStream = mediaStream
 
-        if (videoRef.current) {
+        if (videoRef.current && mounted) {
           const video = videoRef.current
-          console.log('Setting video srcObject, video element:', video)
-          console.log('MediaStream tracks:', mediaStream.getTracks())
-          alert('Camera stream obtained! Tracks: ' + mediaStream.getTracks().length)
-
           video.srcObject = mediaStream
 
           // Wait for video metadata to load before playing
           const playVideo = () => {
-            console.log('Video metadata loaded, attempting to play')
-            video.play()
-              .then(() => {
-                console.log('Video playing successfully')
-              })
-              .catch(err => {
-                console.error('Error playing video:', err)
-              })
+            video.play().catch(err => {
+              console.error('Error playing video:', err)
+            })
           }
 
           // If metadata already loaded, play immediately
@@ -53,8 +54,10 @@ function useCamera(videoRef) {
           }
         }
 
-        setStream(mediaStream)
-        setLoading(false)
+        if (mounted) {
+          setStream(mediaStream)
+          setLoading(false)
+        }
       } catch (err) {
         console.error('Error accessing camera:', err)
         let errorMessage = 'Failed to access camera'
@@ -82,11 +85,13 @@ function useCamera(videoRef) {
 
     // Cleanup function
     return () => {
+      mounted = false
       if (currentStream) {
         currentStream.getTracks().forEach(track => track.stop())
       }
     }
-  }, [videoRef])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return { stream, error, loading }
 }

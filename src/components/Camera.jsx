@@ -92,33 +92,46 @@ function Camera({ onCapture }) {
     cancelCountdown()
   }
 
-  if (loading) {
-    return <div className="camera-loading">Loading camera...</div>
-  }
-
-  if (error) {
-    return <div className="camera-error">Error: {error}</div>
-  }
-
   return (
     <div className="camera-container">
-      <div className="camera-preview">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className="camera-video"
-        />
-        <CountdownTimer count={count || burstCountdown} isActive={isActive || burstCountdown > 0} />
-        <FlashEffect trigger={flashTrigger} />
-        <BurstIndicator
-          currentPhoto={burstProgress}
-          totalPhotos={BURST_COUNT}
-          isActive={burstActive && burstCountdown === 0 && !showPreview}
-        />
-        <PhotoPreview photoData={previewPhoto} isVisible={showPreview} />
-      </div>
+      {error ? (
+        <div className="camera-error">Error: {error}</div>
+      ) : (
+        <>
+          <div className="camera-preview">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="camera-video"
+              style={{ opacity: loading ? 0.3 : 1 }}
+            />
+            {loading && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                textShadow: '0 0 10px rgba(0,0,0,0.8)'
+              }}>
+                Loading camera...
+              </div>
+            )}
+            <CountdownTimer count={count || burstCountdown} isActive={isActive || burstCountdown > 0} />
+            <FlashEffect trigger={flashTrigger} />
+            <BurstIndicator
+              currentPhoto={burstProgress}
+              totalPhotos={BURST_COUNT}
+              isActive={burstActive && burstCountdown === 0 && !showPreview}
+            />
+            <PhotoPreview photoData={previewPhoto} isVisible={showPreview} />
+          </div>
+        </>
+      )}
       <div className="camera-actions">
         {isActive && !burstActive && (
           <button onClick={handleCancelCountdown} className="cancel-button">

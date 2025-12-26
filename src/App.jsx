@@ -32,7 +32,6 @@ function App() {
           <h1>Shahnila & Josh</h1>
           <p className="wedding-subtitle">Our Wedding Celebration</p>
           <p className="wedding-date">♥ [Wedding Date] ♥</p>
-          <p style={{fontSize: '12px', color: '#FF69B4', marginTop: '10px'}}>v2.0 - Camera Debug Build</p>
         </div>
       </header>
       <main className="app-main">
