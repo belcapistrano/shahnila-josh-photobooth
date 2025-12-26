@@ -41,6 +41,7 @@ body {
   gap: 12px;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
 }
 
 .info-banner-content svg {
@@ -55,6 +56,31 @@ body {
   font-size: 0.95rem;
   line-height: 1.5;
   font-weight: 500;
+  flex: 1;
+}
+
+.info-banner-close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.info-banner-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.info-banner-close:active {
+  transform: scale(0.95);
 }
 
 /* Tab Navigation Styles */
@@ -630,7 +656,7 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
   width: 100%;
-  max-width: 640px;
+  max-width: 450px;
 }
 
 .photo-card:hover {
@@ -840,7 +866,7 @@ body {
 .recent-photo-content img {
   max-width: 100%;
   width: auto;
-  max-height: 400px;
+  max-height: 350px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   border: 3px solid #F5F5DC;
@@ -1728,7 +1754,7 @@ body {
   }
 
   .recent-photo-content img {
-    max-height: 300px;
+    max-height: 250px;
   }
 
   .recent-photo-actions {

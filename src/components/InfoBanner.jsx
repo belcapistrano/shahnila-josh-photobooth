@@ -1,4 +1,4 @@
-function InfoBanner() {
+function InfoBanner({ onClose }) {
   return (
     <div className="info-banner">
       <div className="info-banner-content">
@@ -10,6 +10,12 @@ function InfoBanner() {
         <p>
           All photos are shared publicly! The photobooth captures 3 photos in a row with a countdown between each shot. When you're ready, strike a pose and let's create beautiful memories together!
         </p>
+        <button className="info-banner-close" onClick={onClose} aria-label="Close banner">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
     </div>
   )

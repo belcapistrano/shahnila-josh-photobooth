@@ -1,10 +1,10 @@
 /**
  * Combines multiple photo data URLs into a single wedding photo strip with elegant frame
  * @param {string[]} photoDataUrls - Array of photo data URLs
- * @param {number} stripWidth - Width of the photo strip (default: 640)
+ * @param {number} stripWidth - Width of the photo strip (default: 450)
  * @returns {Promise<string>} Data URL of the combined photo strip
  */
-export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 640) {
+export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 450) {
   return new Promise((resolve, reject) => {
     const photoCount = photoDataUrls.length
     if (photoCount === 0) {
@@ -25,11 +25,11 @@ export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 640) {
     Promise.all(imagePromises)
       .then(images => {
         // Calculate dimensions
-        const borderWidth = 20
-        const innerPadding = 15
-        const headerHeight = 120
-        const footerHeight = 80
-        const photoPadding = 10
+        const borderWidth = 15
+        const innerPadding = 12
+        const headerHeight = 100
+        const footerHeight = 70
+        const photoPadding = 8
 
         const firstImage = images[0]
         const aspectRatio = firstImage.height / firstImage.width
@@ -60,8 +60,8 @@ export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 640) {
 
         // Draw decorative corners
         ctx.strokeStyle = '#674F2D'
-        ctx.lineWidth = 3
-        const cornerSize = 20
+        ctx.lineWidth = 2
+        const cornerSize = 15
         const corners = [
           { x: borderWidth + 10, y: borderWidth + 10 },
           { x: stripWidth - borderWidth - 10, y: borderWidth + 10 },
@@ -96,33 +96,33 @@ export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 640) {
 
         // Draw couple names
         ctx.fillStyle = '#674F2D'
-        ctx.font = 'bold 36px Georgia, serif'
+        ctx.font = 'bold 28px Georgia, serif'
         ctx.textAlign = 'center'
-        ctx.fillText('Shahnila & Josh', stripWidth / 2, headerY + 40)
+        ctx.fillText('Shahnila & Josh', stripWidth / 2, headerY + 35)
 
         // Draw wedding date
         ctx.fillStyle = '#674F2D'
-        ctx.font = 'italic 18px Georgia, serif'
+        ctx.font = 'italic 15px Georgia, serif'
         const today = new Date()
         const dateString = today.toLocaleDateString('en-US', {
           month: 'long',
           day: 'numeric',
           year: 'numeric'
         })
-        ctx.fillText(dateString, stripWidth / 2, headerY + 70)
+        ctx.fillText(dateString, stripWidth / 2, headerY + 60)
 
         // Draw hearts
         ctx.fillStyle = '#8B6F47'
-        ctx.font = '24px Arial'
-        ctx.fillText('♥', stripWidth / 2 - 120, headerY + 70)
-        ctx.fillText('♥', stripWidth / 2 + 120, headerY + 70)
+        ctx.font = '18px Arial'
+        ctx.fillText('♥', stripWidth / 2 - 90, headerY + 60)
+        ctx.fillText('♥', stripWidth / 2 + 90, headerY + 60)
 
         // Draw decorative line
         ctx.strokeStyle = '#c9a86c'
-        ctx.lineWidth = 2
+        ctx.lineWidth = 1.5
         ctx.beginPath()
-        ctx.moveTo(borderWidth + innerPadding + 30, headerY + 95)
-        ctx.lineTo(stripWidth - borderWidth - innerPadding - 30, headerY + 95)
+        ctx.moveTo(borderWidth + innerPadding + 20, headerY + 80)
+        ctx.lineTo(stripWidth - borderWidth - innerPadding - 20, headerY + 80)
         ctx.stroke()
 
         // Draw photos
@@ -146,27 +146,27 @@ export async function combinePhotosIntoStrip(photoDataUrls, stripWidth = 640) {
         })
 
         // Draw footer section
-        const footerY = photosStartY + photosHeight + 20
+        const footerY = photosStartY + photosHeight + 15
 
         // Draw decorative line
         ctx.strokeStyle = '#c9a86c'
-        ctx.lineWidth = 2
+        ctx.lineWidth = 1.5
         ctx.beginPath()
-        ctx.moveTo(borderWidth + innerPadding + 30, footerY)
-        ctx.lineTo(stripWidth - borderWidth - innerPadding - 30, footerY)
+        ctx.moveTo(borderWidth + innerPadding + 20, footerY)
+        ctx.lineTo(stripWidth - borderWidth - innerPadding - 20, footerY)
         ctx.stroke()
 
         // Draw thank you message
         ctx.fillStyle = '#674F2D'
-        ctx.font = 'italic 20px Georgia, serif'
+        ctx.font = 'italic 16px Georgia, serif'
         ctx.textAlign = 'center'
-        ctx.fillText('Thank you for celebrating with us!', stripWidth / 2, footerY + 35)
+        ctx.fillText('Thank you for celebrating with us!', stripWidth / 2, footerY + 30)
 
         // Draw hearts
         ctx.fillStyle = '#8B6F47'
-        ctx.font = '18px Arial'
-        ctx.fillText('♥', stripWidth / 2 - 180, footerY + 35)
-        ctx.fillText('♥', stripWidth / 2 + 180, footerY + 35)
+        ctx.font = '14px Arial'
+        ctx.fillText('♥', stripWidth / 2 - 135, footerY + 30)
+        ctx.fillText('♥', stripWidth / 2 + 135, footerY + 30)
 
         // Convert to data URL
         const dataUrl = canvas.toDataURL('image/png')

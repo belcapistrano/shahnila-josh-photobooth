@@ -13,6 +13,10 @@ function App() {
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [activeChallenge, setActiveChallenge] = useState(null)
+  const [showBanner, setShowBanner] = useState(() => {
+    const dismissed = localStorage.getItem('infoBannerDismissed')
+    return dismissed !== 'true'
+  })
   const recentPhotoRef = useRef(null)
 
   const handlePhotoCapture = async (photoData, filter) => {
@@ -110,6 +114,11 @@ function App() {
     }
   }
 
+  const handleDismissBanner = () => {
+    localStorage.setItem('infoBannerDismissed', 'true')
+    setShowBanner(false)
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -121,7 +130,7 @@ function App() {
           </div>
         </div>
       </header>
-      <InfoBanner />
+      {showBanner && activeTab === 'camera' && <InfoBanner onClose={handleDismissBanner} />}
       <main className="app-main">
         {activeTab === 'camera' && <Camera onCapture={handlePhotoCapture} challenge={activeChallenge} />}
         {activeTab === 'gallery' && (
