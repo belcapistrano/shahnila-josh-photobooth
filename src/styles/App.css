@@ -10,7 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 50%, #C71585 100%);
+  background: #F5F5DC;
   min-height: 100vh;
 }
 
@@ -34,23 +34,23 @@ body {
 }
 
 .app-header h1 {
-  color: #FF1493;
+  color: #674F2D;
   font-size: 3rem;
-  text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
+  text-shadow: 2px 2px 4px rgba(103, 79, 45, 0.2);
   margin-bottom: 10px;
   font-family: Georgia, serif;
   font-weight: 400;
 }
 
 .wedding-subtitle {
-  color: #C71585;
+  color: #674F2D;
   font-size: 1.2rem;
   margin: 10px 0;
   font-style: italic;
 }
 
 .wedding-date {
-  color: #FF69B4;
+  color: #674F2D;
   font-size: 1rem;
   margin: 5px 0 0 0;
   font-weight: 500;
@@ -378,7 +378,7 @@ body {
 
 .photo-gallery h2 {
   margin: 0;
-  color: #333;
+  color: #674F2D;
 }
 
 .btn-clear-all {
@@ -404,7 +404,7 @@ body {
   padding: 40px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  color: #666;
+  color: #674F2D;
 }
 
 .gallery-grid {
