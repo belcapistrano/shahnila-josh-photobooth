@@ -1,15 +1,17 @@
 import { useState } from 'react'
 
-function PhotoCard({ photo, onDelete, onLike }) {
+function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
   // Use downloadURL from Firebase or dataUrl as fallback
   const imageUrl = photo.downloadURL || photo.dataUrl
-  const [isLiked, setIsLiked] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
 
   const handleLike = () => {
-    if (onLike) {
-      onLike(photo.id)
-      setIsLiked(!isLiked)
+    if (onLike && onToggleLike) {
+      // Toggle the like state in localStorage
+      const newLikedState = onToggleLike(photo.id)
+
+      // Update the like count in Firebase/localStorage
+      onLike(photo.id, newLikedState ? 1 : -1)
 
       // Trigger animation
       setIsAnimating(true)
@@ -55,12 +57,6 @@ function PhotoCard({ photo, onDelete, onLike }) {
     }
   }
 
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete(photo.id, photo.storagePath)
-    }
-  }
-
   return (
     <div className="photo-card">
       <div className="photo-card-image-container">
@@ -83,15 +79,14 @@ function PhotoCard({ photo, onDelete, onLike }) {
       </div>
       <div className="photo-card-info">
         <div className="photo-likes">
-          <span className="likes-count">{photo.likes || 0} likes</span>
+          <span className="likes-count">
+            {photo.likes || 0} {(photo.likes || 0) === 1 ? 'like' : 'likes'}
+          </span>
         </div>
       </div>
       <div className="photo-card-actions">
         <button onClick={handleShare} className="btn-download">
-          Save
-        </button>
-        <button onClick={handleDelete} className="btn-delete">
-          Delete
+          Save to Camera Roll
         </button>
       </div>
     </div>

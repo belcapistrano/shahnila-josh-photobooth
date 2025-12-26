@@ -162,15 +162,15 @@ function useFirebasePhotos() {
     }
   }
 
-  // Like a photo (increment likes count)
-  const likePhoto = async (photoId) => {
+  // Like/Unlike a photo (increment or decrement likes count)
+  const likePhoto = async (photoId, incrementValue = 1) => {
     try {
       // If Firebase is not configured, use local storage
       if (!useFirebase || !storage || !db) {
         setLocalPhotos(prev =>
           prev.map(photo =>
             photo.id === photoId
-              ? { ...photo, likes: (photo.likes || 0) + 1 }
+              ? { ...photo, likes: Math.max(0, (photo.likes || 0) + incrementValue) }
               : photo
           )
         )
@@ -180,15 +180,15 @@ function useFirebasePhotos() {
       // Update likes count in Firestore
       const photoRef = doc(db, PHOTOS_COLLECTION, photoId)
       await updateDoc(photoRef, {
-        likes: increment(1)
+        likes: increment(incrementValue)
       })
     } catch (err) {
-      console.error('Error liking photo:', err)
+      console.error('Error updating photo likes:', err)
       // Fallback to local update on error
       setLocalPhotos(prev =>
         prev.map(photo =>
           photo.id === photoId
-            ? { ...photo, likes: (photo.likes || 0) + 1 }
+            ? { ...photo, likes: Math.max(0, (photo.likes || 0) + incrementValue) }
             : photo
         )
       )

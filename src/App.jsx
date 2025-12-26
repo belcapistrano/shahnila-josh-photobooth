@@ -63,9 +63,9 @@ function App() {
     setActiveTab('camera')
   }
 
-  const handleLike = async (photoId) => {
+  const handleLike = async (photoId, incrementValue) => {
     try {
-      await likePhoto(photoId)
+      await likePhoto(photoId, incrementValue)
     } catch (error) {
       console.error('Error liking photo:', error)
     }

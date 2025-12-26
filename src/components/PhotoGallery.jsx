@@ -1,6 +1,8 @@
 import PhotoCard from './PhotoCard'
+import useLikedPhotos from '../hooks/useLikedPhotos'
 
 function PhotoGallery({ photos, onDelete, onClearAll, onLike, isUsingFirebase }) {
+  const { isPhotoLiked, toggleLike } = useLikedPhotos()
   if (photos.length === 0) {
     return (
       <div className="gallery-empty">
@@ -19,17 +21,15 @@ function PhotoGallery({ photos, onDelete, onClearAll, onLike, isUsingFirebase })
             <span className="storage-text">{isUsingFirebase ? 'Cloud Storage' : 'Local Storage'}</span>
           </div>
         </div>
-        <button onClick={onClearAll} className="btn-clear-all">
-          Clear All
-        </button>
       </div>
       <div className="gallery-grid">
         {photos.map(photo => (
           <PhotoCard
             key={photo.id}
             photo={photo}
-            onDelete={onDelete}
             onLike={onLike}
+            isLiked={isPhotoLiked(photo.id)}
+            onToggleLike={toggleLike}
           />
         ))}
       </div>
