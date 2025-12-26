@@ -1,6 +1,6 @@
 import PhotoCard from './PhotoCard'
 
-function PhotoGallery({ photos, onDelete, onClearAll, isUsingFirebase }) {
+function PhotoGallery({ photos, onDelete, onClearAll, onLike, isUsingFirebase }) {
   if (photos.length === 0) {
     return (
       <div className="gallery-empty">
@@ -29,6 +29,7 @@ function PhotoGallery({ photos, onDelete, onClearAll, isUsingFirebase }) {
             key={photo.id}
             photo={photo}
             onDelete={onDelete}
+            onLike={onLike}
           />
         ))}
       </div>

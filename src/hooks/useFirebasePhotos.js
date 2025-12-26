@@ -8,7 +8,9 @@ import {
   query,
   orderBy,
   onSnapshot,
-  serverTimestamp
+  serverTimestamp,
+  updateDoc,
+  increment
 } from 'firebase/firestore'
 import { storage, db, isFirebaseConfigured } from '../config/firebase'
 import useLocalStorage from './useLocalStorage'
@@ -67,7 +69,8 @@ function useFirebasePhotos() {
         id: timestamp,
         dataUrl: photoData,
         timestamp: new Date().toISOString(),
-        filter: filter || 'none'
+        filter: filter || 'none',
+        likes: 0
       }
       setLocalPhotos(prev => [newPhoto, ...prev])
       return newPhoto
@@ -90,7 +93,8 @@ function useFirebasePhotos() {
         storagePath: filename,
         filter,
         timestamp: serverTimestamp(),
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        likes: 0
       })
 
       return {
@@ -108,7 +112,8 @@ function useFirebasePhotos() {
         id: timestamp,
         dataUrl: photoData,
         timestamp: new Date().toISOString(),
-        filter: filter || 'none'
+        filter: filter || 'none',
+        likes: 0
       }
       setLocalPhotos(prev => [newPhoto, ...prev])
       return newPhoto
@@ -157,6 +162,39 @@ function useFirebasePhotos() {
     }
   }
 
+  // Like a photo (increment likes count)
+  const likePhoto = async (photoId) => {
+    try {
+      // If Firebase is not configured, use local storage
+      if (!useFirebase || !storage || !db) {
+        setLocalPhotos(prev =>
+          prev.map(photo =>
+            photo.id === photoId
+              ? { ...photo, likes: (photo.likes || 0) + 1 }
+              : photo
+          )
+        )
+        return
+      }
+
+      // Update likes count in Firestore
+      const photoRef = doc(db, PHOTOS_COLLECTION, photoId)
+      await updateDoc(photoRef, {
+        likes: increment(1)
+      })
+    } catch (err) {
+      console.error('Error liking photo:', err)
+      // Fallback to local update on error
+      setLocalPhotos(prev =>
+        prev.map(photo =>
+          photo.id === photoId
+            ? { ...photo, likes: (photo.likes || 0) + 1 }
+            : photo
+        )
+      )
+    }
+  }
+
   return {
     photos,
     loading,
@@ -164,6 +202,7 @@ function useFirebasePhotos() {
     uploadPhoto,
     deletePhoto,
     clearAllPhotos,
+    likePhoto,
     isUsingFirebase: useFirebase && storage && db && !error
   }
 }

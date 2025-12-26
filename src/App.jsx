@@ -8,7 +8,7 @@ import RecentPhoto from './components/RecentPhoto'
 import useFirebasePhotos from './hooks/useFirebasePhotos'
 
 function App() {
-  const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, isUsingFirebase } = useFirebasePhotos()
+  const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, likePhoto, isUsingFirebase } = useFirebasePhotos()
   const [activeTab, setActiveTab] = useState('camera')
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -63,6 +63,14 @@ function App() {
     setActiveTab('camera')
   }
 
+  const handleLike = async (photoId) => {
+    try {
+      await likePhoto(photoId)
+    } catch (error) {
+      console.error('Error liking photo:', error)
+    }
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -82,6 +90,7 @@ function App() {
             photos={photos}
             onDelete={handleDeletePhoto}
             onClearAll={handleClearAll}
+            onLike={handleLike}
             isUsingFirebase={isUsingFirebase}
           />
         )}
