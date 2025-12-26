@@ -38,13 +38,19 @@ function App() {
     }
   }
 
+  const handleTakePhoto = () => {
+    setActiveTab('camera')
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <div className="wedding-title">
           <h1>Shahnila & Josh</h1>
           <p className="wedding-subtitle">Our Wedding Celebration</p>
-          <p className="wedding-date">♥ [Wedding Date] ♥</p>
+          <div className="wedding-schedule">
+            <p className="wedding-date-header">♥ December 26-28, 2025 ♥</p>
+          </div>
         </div>
       </header>
       <InfoBanner />
@@ -57,7 +63,7 @@ function App() {
             onClearAll={handleClearAll}
           />
         )}
-        {activeTab === 'challenges' && <Challenges />}
+        {activeTab === 'challenges' && <Challenges onTakePhoto={handleTakePhoto} />}
       </main>
       <RecentPhoto photo={recentPhoto} onDelete={handleDeletePhoto} />
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />

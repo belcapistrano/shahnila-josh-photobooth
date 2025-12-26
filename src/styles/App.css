@@ -129,11 +129,15 @@ body {
   font-style: italic;
 }
 
-.wedding-date {
+.wedding-schedule {
+  margin-top: 10px;
+}
+
+.wedding-date-header {
   color: #674F2D;
   font-size: 1rem;
-  margin: 5px 0 0 0;
-  font-weight: 500;
+  margin: 0;
+  font-weight: 600;
 }
 
 .app-main {
@@ -649,61 +653,490 @@ body {
 
 /* Challenges Styles */
 .challenges-container {
+  background: #faf8f5;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-height: 600px;
+}
+
+/* Photo Challenge Spinner */
+.photo-challenge-spinner {
+  position: relative;
+  width: 100%;
+  min-height: 600px;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  background: #faf8f5;
+}
+
+/* Corner accents */
+.corner-accent {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-color: #c9a86c;
+  opacity: 0.6;
+}
+
+.corner-tl {
+  top: 20px;
+  left: 20px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.corner-tr {
+  top: 20px;
+  right: 20px;
+  border-top: 1px solid;
+  border-right: 1px solid;
+}
+
+.corner-bl {
+  bottom: 20px;
+  left: 20px;
+  border-bottom: 1px solid;
+  border-left: 1px solid;
+}
+
+.corner-br {
+  bottom: 20px;
+  right: 20px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* Gradient blobs */
+.gradient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.blob-1 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #e8c4c0, transparent);
+  top: 10%;
+  left: -100px;
+}
+
+.blob-2 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, #d4ddd6, transparent);
+  bottom: 10%;
+  right: -80px;
+}
+
+/* Floating particles */
+.floating-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #c9a86c;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: float-up 10s linear infinite;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Sound toggle */
+.sound-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 168, 108, 0.3);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.sound-toggle:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Header */
+.challenge-header {
+  text-align: center;
+  z-index: 10;
+}
+
+.challenge-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #5a5a5a;
+  margin: 0 0 15px 0;
+  letter-spacing: 0.05em;
+}
+
+.header-line {
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c9a86c, transparent);
+  margin: 0 auto;
+}
+
+/* Carousel */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 420px;
+  z-index: 10;
+}
+
+.carousel-fade-left,
+.carousel-fade-right {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  height: 100%;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.carousel-fade-left {
+  left: 0;
+  background: linear-gradient(90deg, #faf8f5, transparent);
+}
+
+.carousel-fade-right {
+  right: 0;
+  background: linear-gradient(270deg, #faf8f5, transparent);
+}
+
+.card-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Challenge card */
+.challenge-card {
+  position: absolute;
+  width: 100%;
+  max-width: 320px;
   background: white;
   border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(201, 168, 108, 0.2);
+  padding: 30px 25px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
-.challenges-header {
+.challenge-card.active {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.card-accent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f4e4e1, #e0dae8, #d4ddd6);
+  border-radius: 16px 16px 0 0;
+}
+
+.card-category {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #c9a86c;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
   text-align: center;
-  margin-bottom: 40px;
-}
-
-.challenges-header h2 {
-  color: #674F2D;
-  font-size: 2rem;
-  margin: 0 0 10px 0;
-  font-family: 'Playfair Display', Georgia, serif;
-}
-
-.challenges-header p {
-  color: #674F2D;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.challenges-coming-soon {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.coming-soon-icon {
-  font-size: 80px;
   margin-bottom: 20px;
-  animation: bounce 2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
-@keyframes bounce {
-  0%, 100% {
+.category-line {
+  width: 30px;
+  height: 1px;
+  background: #dfc99f;
+}
+
+.card-emoji {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  filter: grayscale(20%);
+}
+
+.card-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 300;
+  color: #5a5a5a;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-number {
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  color: #8a8a8a;
+  font-weight: 300;
+}
+
+/* Shuffle button */
+.shuffle-button {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: #5a5a5a;
+  background: linear-gradient(135deg, #ffffff, #f5ead7);
+  border: 1px solid rgba(201, 168, 108, 0.4);
+  border-radius: 50px;
+  padding: 14px 40px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.shuffle-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  border-color: rgba(201, 168, 108, 0.6);
+}
+
+.shuffle-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.shuffle-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Category pills */
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 500px;
+  z-index: 10;
+}
+
+.category-pill {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: #8a8a8a;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(201, 168, 108, 0.2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  transition: all 0.3s ease;
+  opacity: 0.6;
+}
+
+.category-pill.active {
+  color: #c9a86c;
+  border-color: #c9a86c;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(201, 168, 108, 0.2);
+}
+
+/* Challenge Instructions */
+.challenge-instructions {
+  width: 100%;
+  max-width: 500px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(252, 245, 240, 0.9));
+  border: 1px solid rgba(201, 168, 108, 0.3);
+  border-radius: 20px;
+  padding: 30px 25px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
-  50% {
-    transform: translateY(-20px);
-  }
 }
 
-.challenges-coming-soon h3 {
-  color: #674F2D;
-  font-size: 1.8rem;
-  margin: 0 0 15px 0;
-  font-family: 'Playfair Display', Georgia, serif;
+.instructions-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.challenges-coming-soon p {
-  color: #8B6F47;
-  font-size: 1.1rem;
+.instructions-icon {
+  font-size: 2.5rem;
+  filter: grayscale(20%);
+}
+
+.instructions-header h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: #4a4a4a;
   margin: 0;
+  text-align: center;
+}
+
+.instructions-text {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: #6a6a6a;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0 0 25px 0;
+}
+
+.challenge-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.action-button {
+  flex: 1;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-button.primary {
+  background: linear-gradient(135deg, #c9a86c, #dfc99f);
+  color: white;
+  box-shadow: 0 4px 12px rgba(201, 168, 108, 0.3);
+}
+
+.action-button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(201, 168, 108, 0.4);
+}
+
+.action-button.secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #6a6a6a;
+  border: 1px solid rgba(201, 168, 108, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.action-button.secondary:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(201, 168, 108, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.action-button:active {
+  transform: translateY(0);
+}
+
+.action-icon {
+  font-size: 1.1rem;
+}
+
+.challenge-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(252, 234, 215, 0.5);
+  border-radius: 10px;
+  border: 1px solid rgba(201, 168, 108, 0.2);
+}
+
+.tip-icon {
+  font-size: 1rem;
+}
+
+.tip-text {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: #7a6a4a;
+  font-style: italic;
 }
 
 /* Responsive Design */
@@ -720,7 +1153,7 @@ body {
     font-size: 1rem;
   }
 
-  .wedding-date {
+  .wedding-date-header {
     font-size: 0.9rem;
   }
 
@@ -754,24 +1187,84 @@ body {
     font-size: 12px;
   }
 
-  .challenges-header h2 {
-    font-size: 1.5rem;
+  .photo-challenge-spinner {
+    padding: 40px 15px;
+    min-height: 500px;
+    gap: 30px;
   }
 
-  .challenges-header p {
-    font-size: 0.95rem;
+  .challenge-header h2 {
+    font-size: 2rem;
   }
 
-  .coming-soon-icon {
-    font-size: 60px;
+  .carousel-container {
+    max-width: 320px;
+    height: 380px;
   }
 
-  .challenges-coming-soon h3 {
+  .challenge-card {
+    max-width: 280px;
+    padding: 25px 20px;
+  }
+
+  .card-text {
+    font-size: 1.2rem;
+    min-height: 70px;
+  }
+
+  .card-emoji {
+    font-size: 2rem;
+  }
+
+  .shuffle-button {
+    font-size: 0.8rem;
+    padding: 12px 32px;
+  }
+
+  .category-pills {
+    max-width: 100%;
+    gap: 8px;
+  }
+
+  .category-pill {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+
+  .challenge-instructions {
+    padding: 25px 20px;
+    max-width: 100%;
+  }
+
+  .instructions-header h3 {
     font-size: 1.4rem;
   }
 
-  .challenges-coming-soon p {
-    font-size: 1rem;
+  .instructions-text {
+    font-size: 0.9rem;
+  }
+
+  .challenge-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .action-button {
+    font-size: 0.85rem;
+    padding: 12px 16px;
+  }
+
+  .challenge-tip {
+    padding: 10px 14px;
+  }
+
+  .tip-text {
+    font-size: 0.8rem;
+  }
+
+  .corner-accent {
+    width: 30px;
+    height: 30px;
   }
 
   .recent-photo-container {
