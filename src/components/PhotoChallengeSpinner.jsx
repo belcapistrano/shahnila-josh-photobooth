@@ -198,9 +198,63 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
             <div className="instructions-icon">📸</div>
             <h3>Your Challenge Awaits!</h3>
           </div>
-          <p className="instructions-text">
-            {challenges[currentIndex].context || 'Capture this moment and make it unforgettable. Head to the camera, strike your pose, and share your creation with everyone!'}
-          </p>
+
+          <div className="instructions-steps">
+            <div className="instruction-step">
+              <div className="step-number">1</div>
+              <div className="step-content">
+                <h4 className="step-title">Read Your Challenge</h4>
+                <ul className="step-bullets">
+                  <li className="step-text">
+                    {challenges[currentIndex].context || 'Capture this moment and make it unforgettable!'}
+                  </li>
+                  <li className="step-text">
+                    <strong>Category:</strong> {challenges[currentIndex].category}
+                  </li>
+                  <li className="step-text">
+                    <strong>Tip:</strong> Be creative and have fun with your interpretation!
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="instruction-step">
+              <div className="step-number">2</div>
+              <div className="step-content">
+                <h4 className="step-title">Get Ready</h4>
+                <ul className="step-bullets">
+                  <li className="step-text">
+                    Find a <strong>good spot</strong> with proper lighting
+                  </li>
+                  <li className="step-text">
+                    Gather any <strong>props</strong> or people you need
+                  </li>
+                  <li className="step-text">
+                    <strong>Practice</strong> your pose or expression
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="instruction-step">
+              <div className="step-number">3</div>
+              <div className="step-content">
+                <h4 className="step-title">Take Your Photo</h4>
+                <ul className="step-bullets">
+                  <li className="step-text">
+                    Click <strong>"Take Photo"</strong> below to open the camera
+                  </li>
+                  <li className="step-text">
+                    Add <strong>frames & stickers</strong> if you want
+                  </li>
+                  <li className="step-text">
+                    <strong>Capture</strong> your moment and share it!
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           <div className="challenge-actions">
             <button className="action-button primary" onClick={onTakePhoto}>
               <span className="action-icon">📷</span>
@@ -210,10 +264,6 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
               <span className="action-icon">🔄</span>
               Skip Challenge
             </button>
-          </div>
-          <div className="challenge-tip">
-            <span className="tip-icon">💡</span>
-            <span className="tip-text">Tip: Get creative and have fun with it!</span>
           </div>
         </div>
       )}
