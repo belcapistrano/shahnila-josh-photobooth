@@ -135,6 +135,16 @@ function Camera({ onCapture, challenge }) {
                 Loading camera...
               </div>
             )}
+            {!isActive && !burstActive && (
+              <div className="pre-capture-indicator">
+                <span className="indicator-label">3 photos</span>
+                <div className="photo-dots">
+                  {Array.from({ length: BURST_COUNT }).map((_, i) => (
+                    <div key={i} className="photo-dot" />
+                  ))}
+                </div>
+              </div>
+            )}
             <CountdownTimer count={count || burstCountdown} isActive={isActive || burstCountdown > 0} />
             <FlashEffect trigger={flashTrigger} />
             <BurstIndicator

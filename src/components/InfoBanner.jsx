@@ -8,7 +8,7 @@ function InfoBanner() {
           <line x1="12" y1="8" x2="12.01" y2="8"></line>
         </svg>
         <p>
-          All photos are shared publicly! When you capture a photo, everyone at the wedding can view it in the gallery. Let's create beautiful memories together!
+          All photos are shared publicly! The photobooth captures 3 photos in a row with a countdown between each shot. When you're ready, strike a pose and let's create beautiful memories together!
         </p>
       </div>
     </div>
