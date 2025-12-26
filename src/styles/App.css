@@ -552,6 +552,101 @@ body {
   background: #c0392b;
 }
 
+/* Recent Photo Display */
+.recent-photo-container {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slide-up 0.5s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recent-photo-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.recent-photo-header h3 {
+  color: #674F2D;
+  font-size: 1.8rem;
+  margin: 0 0 8px 0;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.recent-photo-header p {
+  color: #8B6F47;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.recent-photo-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.recent-photo-content img {
+  max-width: 100%;
+  width: auto;
+  max-height: 400px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.recent-photo-actions {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.recent-photo-actions button {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.btn-share-recent {
+  background: #674F2D;
+  color: white;
+}
+
+.btn-share-recent:hover {
+  background: #5a432a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.3);
+}
+
+.btn-delete-recent {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-delete-recent:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
 /* Challenges Styles */
 .challenges-container {
   background: white;
@@ -677,6 +772,33 @@ body {
 
   .challenges-coming-soon p {
     font-size: 1rem;
+  }
+
+  .recent-photo-container {
+    padding: 20px 15px;
+    margin-bottom: 15px;
+  }
+
+  .recent-photo-header h3 {
+    font-size: 1.5rem;
+  }
+
+  .recent-photo-header p {
+    font-size: 0.9rem;
+  }
+
+  .recent-photo-content img {
+    max-height: 300px;
+  }
+
+  .recent-photo-actions {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .recent-photo-actions button {
+    padding: 10px 20px;
+    font-size: 14px;
   }
 
   .gallery-grid {

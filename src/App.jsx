@@ -4,11 +4,13 @@ import PhotoGallery from './components/PhotoGallery'
 import Challenges from './components/Challenges'
 import InfoBanner from './components/InfoBanner'
 import TabNavigation from './components/TabNavigation'
+import RecentPhoto from './components/RecentPhoto'
 import useLocalStorage from './hooks/useLocalStorage'
 
 function App() {
   const [photos, setPhotos] = useLocalStorage('photobooth-photos', [])
   const [activeTab, setActiveTab] = useState('camera')
+  const [recentPhoto, setRecentPhoto] = useState(null)
 
   const handlePhotoCapture = (photoData, filter) => {
     const newPhoto = {
@@ -18,15 +20,21 @@ function App() {
       filter: filter || 'none'
     }
     setPhotos(prev => [newPhoto, ...prev])
+    setRecentPhoto(newPhoto)
   }
 
   const handleDeletePhoto = (id) => {
     setPhotos(prev => prev.filter(photo => photo.id !== id))
+    // Clear recent photo if it's the one being deleted
+    if (recentPhoto && recentPhoto.id === id) {
+      setRecentPhoto(null)
+    }
   }
 
   const handleClearAll = () => {
     if (window.confirm('Are you sure you want to delete all photos?')) {
       setPhotos([])
+      setRecentPhoto(null)
     }
   }
 
@@ -51,6 +59,7 @@ function App() {
         )}
         {activeTab === 'challenges' && <Challenges />}
       </main>
+      <RecentPhoto photo={recentPhoto} onDelete={handleDeletePhoto} />
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   )
