@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ref, uploadString, deleteObject, getDownloadURL, getBlob, uploadBytes } from 'firebase/storage'
+import { ref, uploadString, getDownloadURL } from 'firebase/storage'
 import {
   collection,
   addDoc,
@@ -137,7 +137,7 @@ function useFirebasePhotos() {
     }
   }
 
-  // Soft delete: Move photo to deleted folder instead of permanently deleting
+  // Soft delete: Move metadata to deleted collection, keep photo in storage
   const deletePhoto = async (photoId, storagePath) => {
     try {
       // If Firebase is not configured, use local storage
@@ -157,45 +157,20 @@ function useFirebasePhotos() {
 
       const photoData = photoDoc.data()
 
-      // Move photo to deleted folder in Storage
-      if (storagePath) {
-        try {
-          const originalRef = ref(storage, storagePath)
-          const blob = await getBlob(originalRef)
-
-          // Create new path in deleted folder
-          const deletedPath = storagePath.replace('photos/', 'deleted/')
-          const deletedRef = ref(storage, deletedPath)
-
-          // Upload to deleted folder
-          await uploadBytes(deletedRef, blob)
-
-          // Get new download URL
-          const deletedDownloadURL = await getDownloadURL(deletedRef)
-
-          // Save to deleted-photos collection with backup info
-          await addDoc(collection(db, DELETED_PHOTOS_COLLECTION), {
-            ...photoData,
-            originalId: photoId,
-            deletedAt: serverTimestamp(),
-            deletedTimestamp: new Date().toISOString(),
-            originalStoragePath: storagePath,
-            deletedStoragePath: deletedPath,
-            deletedDownloadURL
-          })
-
-          // Delete from original storage location
-          await deleteObject(originalRef)
-        } catch (storageErr) {
-          console.error('Error moving photo to deleted folder:', storageErr)
-          // Continue with Firestore deletion even if storage move fails
-        }
-      }
+      // Save to deleted-photos collection with backup info
+      // Keep the photo in storage but archive the metadata
+      await addDoc(collection(db, DELETED_PHOTOS_COLLECTION), {
+        ...photoData,
+        originalId: photoId,
+        deletedAt: serverTimestamp(),
+        deletedTimestamp: new Date().toISOString(),
+        storagePath: storagePath
+      })
 
       // Delete from original Firestore collection
       await deleteDoc(photoDocRef)
 
-      console.log('Photo moved to deleted folder successfully')
+      console.log('Photo metadata moved to deleted collection successfully')
     } catch (err) {
       console.error('Error deleting photo:', err)
       throw err

@@ -103,8 +103,10 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   }
 
   const handleDelete = () => {
-    if (onDelete) {
-      onDelete(photo.id, photo.storagePath)
+    if (window.confirm('Are you sure you want to delete this photo?')) {
+      if (onDelete) {
+        onDelete(photo.id, photo.storagePath)
+      }
     }
   }
 
