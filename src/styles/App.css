@@ -940,6 +940,46 @@ body {
   font-weight: 300;
 }
 
+/* Shuffle section */
+.shuffle-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+.shuffle-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: bounce-gentle 2s ease-in-out infinite;
+}
+
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.hint-arrow {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.hint-text {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #c9a86c;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 /* Shuffle button */
 .shuffle-button {
   font-family: 'Jost', sans-serif;
@@ -956,21 +996,37 @@ body {
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   z-index: 10;
+  position: relative;
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(201, 168, 108, 0.3);
+  }
 }
 
 .shuffle-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   border-color: rgba(201, 168, 108, 0.6);
+  animation: none;
 }
 
 .shuffle-button:active:not(:disabled) {
   transform: translateY(0);
+  animation: none;
 }
 
 .shuffle-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  animation: none;
 }
 
 /* Category pills */
@@ -1214,6 +1270,18 @@ body {
 
   .card-emoji {
     font-size: 2rem;
+  }
+
+  .shuffle-hint {
+    gap: 4px;
+  }
+
+  .hint-arrow {
+    font-size: 1.2rem;
+  }
+
+  .hint-text {
+    font-size: 0.75rem;
   }
 
   .shuffle-button {

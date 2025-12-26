@@ -175,13 +175,21 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
       </div>
 
       {/* Shuffle button */}
-      <button
-        className="shuffle-button"
-        onClick={shuffle}
-        disabled={isShuffling}
-      >
-        {isShuffling ? 'Shuffling...' : 'Shuffle'}
-      </button>
+      <div className="shuffle-section">
+        {!isShuffling && !activeCategory && (
+          <div className="shuffle-hint">
+            <span className="hint-arrow">👇</span>
+            <span className="hint-text">Click to get your challenge!</span>
+          </div>
+        )}
+        <button
+          className="shuffle-button"
+          onClick={shuffle}
+          disabled={isShuffling}
+        >
+          {isShuffling ? 'Shuffling...' : 'Shuffle'}
+        </button>
+      </div>
 
       {/* Challenge Instructions */}
       {!isShuffling && activeCategory && (
