@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -38,8 +38,8 @@ body {
   font-size: 3rem;
   text-shadow: 2px 2px 4px rgba(103, 79, 45, 0.2);
   margin-bottom: 10px;
-  font-family: Georgia, serif;
-  font-weight: 400;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
 }
 
 .wedding-subtitle {
@@ -165,9 +165,9 @@ body {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 2px solid #FF69B4;
+  border: 2px solid #674F2D;
   background: white;
-  color: #FF69B4;
+  color: #674F2D;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -177,7 +177,7 @@ body {
 }
 
 .flip-camera-button:hover:not(:disabled) {
-  background: #FF69B4;
+  background: #674F2D;
   color: white;
   transform: scale(1.1);
 }
@@ -330,7 +330,7 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  border: 4px solid #FF69B4;
+  border: 4px solid #674F2D;
   background: white;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -342,7 +342,7 @@ body {
 
 .capture-button:hover:not(:disabled) {
   transform: scale(1.1);
-  border-color: #FF1493;
+  border-color: #674F2D;
 }
 
 .capture-button:active:not(:disabled) {
@@ -358,7 +358,7 @@ body {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #FF69B4;
+  background: #674F2D;
 }
 
 /* Gallery Styles */
@@ -450,12 +450,12 @@ body {
 }
 
 .btn-download {
-  background: #FF69B4;
+  background: #674F2D;
   color: white;
 }
 
 .btn-download:hover {
-  background: #FF1493;
+  background: #5a432a;
 }
 
 .btn-delete {
