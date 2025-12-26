@@ -163,7 +163,8 @@ function useFirebasePhotos() {
     error,
     uploadPhoto,
     deletePhoto,
-    clearAllPhotos
+    clearAllPhotos,
+    isUsingFirebase: useFirebase && storage && db && !error
   }
 }
 

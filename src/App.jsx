@@ -8,7 +8,7 @@ import RecentPhoto from './components/RecentPhoto'
 import useFirebasePhotos from './hooks/useFirebasePhotos'
 
 function App() {
-  const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos } = useFirebasePhotos()
+  const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, isUsingFirebase } = useFirebasePhotos()
   const [activeTab, setActiveTab] = useState('camera')
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -82,6 +82,7 @@ function App() {
             photos={photos}
             onDelete={handleDeletePhoto}
             onClearAll={handleClearAll}
+            isUsingFirebase={isUsingFirebase}
           />
         )}
         {activeTab === 'challenges' && <Challenges onTakePhoto={handleTakePhoto} />}

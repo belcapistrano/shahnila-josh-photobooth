@@ -1,6 +1,6 @@
 import PhotoCard from './PhotoCard'
 
-function PhotoGallery({ photos, onDelete, onClearAll }) {
+function PhotoGallery({ photos, onDelete, onClearAll, isUsingFirebase }) {
   if (photos.length === 0) {
     return (
       <div className="gallery-empty">
@@ -12,7 +12,13 @@ function PhotoGallery({ photos, onDelete, onClearAll }) {
   return (
     <div className="photo-gallery">
       <div className="gallery-header">
-        <h2>Gallery ({photos.length})</h2>
+        <div className="gallery-header-left">
+          <h2>Gallery ({photos.length})</h2>
+          <div className={`storage-indicator ${isUsingFirebase ? 'cloud' : 'local'}`}>
+            <span className="storage-icon">{isUsingFirebase ? '☁️' : '💾'}</span>
+            <span className="storage-text">{isUsingFirebase ? 'Cloud Storage' : 'Local Storage'}</span>
+          </div>
+        </div>
         <button onClick={onClearAll} className="btn-clear-all">
           Clear All
         </button>

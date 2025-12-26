@@ -465,9 +465,48 @@ body {
   margin-bottom: 20px;
 }
 
+.gallery-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .photo-gallery h2 {
   margin: 0;
   color: #674F2D;
+}
+
+.storage-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.storage-indicator.cloud {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1976d2;
+  border: 1px solid #90caf9;
+}
+
+.storage-indicator.local {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  color: #f57c00;
+  border: 1px solid #ffb74d;
+}
+
+.storage-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.storage-text {
+  font-family: 'Jost', sans-serif;
+  letter-spacing: 0.02em;
 }
 
 .btn-clear-all {
@@ -1515,6 +1554,18 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+
+  .gallery-header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .storage-indicator {
+    font-size: 0.75rem;
+    padding: 5px 10px;
   }
 
   .btn-clear-all {
