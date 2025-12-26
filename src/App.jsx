@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Camera from './components/Camera'
 import PhotoGallery from './components/PhotoGallery'
 import Challenges from './components/Challenges'
@@ -13,6 +13,7 @@ function App() {
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [activeChallenge, setActiveChallenge] = useState(null)
+  const recentPhotoRef = useRef(null)
 
   const handlePhotoCapture = async (photoData, filter) => {
     // Don't upload immediately - just store for preview
@@ -27,6 +28,18 @@ function App() {
     // Clear the challenge after capturing the photo
     setActiveChallenge(null)
   }
+
+  // Auto-scroll to recent photo when it's set
+  useEffect(() => {
+    if (recentPhoto && recentPhotoRef.current) {
+      setTimeout(() => {
+        recentPhotoRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }, 100)
+    }
+  }, [recentPhoto])
 
   const handleSaveRecentPhoto = async () => {
     if (!recentPhoto || !recentPhoto.isPending) return
@@ -123,6 +136,7 @@ function App() {
         {activeTab === 'challenges' && <Challenges onTakePhoto={handleTakePhoto} />}
       </main>
       <RecentPhoto
+        ref={recentPhotoRef}
         photo={recentPhoto}
         onDelete={handleDeleteRecentPhoto}
         onSave={handleSaveRecentPhoto}

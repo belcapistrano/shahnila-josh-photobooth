@@ -830,6 +830,9 @@ body {
 .btn-save-recent {
   background: #27ae60;
   color: white;
+  padding: 18px 32px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
 }
 
 .btn-save-recent:hover {

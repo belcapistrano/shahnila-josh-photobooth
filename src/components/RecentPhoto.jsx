@@ -1,4 +1,6 @@
-function RecentPhoto({ photo, onSave, onDelete }) {
+import { forwardRef } from 'react'
+
+const RecentPhoto = forwardRef(function RecentPhoto({ photo, onSave, onDelete }, ref) {
   if (!photo) return null
 
   // Use dataUrl if available (for recent photos), otherwise use downloadURL
@@ -77,7 +79,7 @@ function RecentPhoto({ photo, onSave, onDelete }) {
   }
 
   return (
-    <div className="recent-photo-container">
+    <div className="recent-photo-container" ref={ref}>
       <div className="recent-photo-header">
         <h3>Your Photo Strip!</h3>
         <p>{photo.isPending ? 'Save to gallery or discard' : 'Share it or find it in the gallery'}</p>
@@ -111,6 +113,6 @@ function RecentPhoto({ photo, onSave, onDelete }) {
       </div>
     </div>
   )
-}
+})
 
 export default RecentPhoto
