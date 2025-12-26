@@ -106,12 +106,6 @@ function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
     <div className="photo-card">
       <div className="photo-card-image-container">
         <img src={imageUrl} alt={`Photo taken at ${photo.timestamp}`} />
-        {photo.challenge && (
-          <div className="photo-challenge-tag">
-            <span className="challenge-tag-emoji">{photo.challenge.emoji}</span>
-            <span className="challenge-tag-text">{photo.challenge.text}</span>
-          </div>
-        )}
         <button
           className={`photo-like-button ${isAnimating ? 'animate' : ''}`}
           onClick={handleLike}
@@ -134,12 +128,20 @@ function PhotoCard({ photo, onLike, isLiked = false, onToggleLike }) {
             {photo.likes || 0} {(photo.likes || 0) === 1 ? 'like' : 'likes'}
           </span>
         </div>
+        {photo.challenge && (
+          <div className="photo-challenge-tag">
+            <span className="challenge-tag-emoji">{photo.challenge.emoji}</span>
+            <span className="challenge-tag-text">{photo.challenge.text}</span>
+          </div>
+        )}
       </div>
-      <div className="photo-card-actions">
-        <button onClick={handleShare} className="btn-download">
-          {navigator.share ? 'Save / Share' : 'Download'}
-        </button>
-      </div>
+      {!navigator.share && (
+        <div className="photo-card-actions">
+          <button onClick={handleShare} className="btn-download">
+            Download
+          </button>
+        </div>
+      )}
     </div>
   )
 }

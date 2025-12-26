@@ -615,33 +615,26 @@ body {
 }
 
 .photo-challenge-tag {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1.5px solid #c9a86c;
-  border-radius: 20px;
-  padding: 6px 14px;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  max-width: calc(100% - 80px);
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #f4e4e1, #e0dae8);
+  border: 1.5px solid #c9a86c;
+  border-radius: 8px;
 }
 
 .challenge-tag-emoji {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
 }
 
 .challenge-tag-text {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 500;
   color: #5a5a5a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
 }
 
 .photo-like-button {
