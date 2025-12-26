@@ -13,11 +13,32 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 }
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
+// Check if Firebase is configured
+export const isFirebaseConfigured = () => {
+  return !!(
+    firebaseConfig.apiKey &&
+    firebaseConfig.projectId &&
+    firebaseConfig.apiKey !== 'your_api_key_here'
+  )
+}
 
-// Initialize Firebase services
-export const storage = getStorage(app)
-export const db = getFirestore(app)
+// Initialize Firebase only if configured
+let app = null
+let storage = null
+let db = null
 
+try {
+  if (isFirebaseConfigured()) {
+    app = initializeApp(firebaseConfig)
+    storage = getStorage(app)
+    db = getFirestore(app)
+    console.log('Firebase initialized successfully')
+  } else {
+    console.warn('Firebase not configured. Using local storage fallback.')
+  }
+} catch (error) {
+  console.error('Error initializing Firebase:', error)
+}
+
+export { storage, db }
 export default app

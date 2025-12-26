@@ -17,7 +17,7 @@ function App() {
     try {
       setUploading(true)
 
-      // Upload to Firebase
+      // Upload to Firebase (or fallback to local storage)
       const uploadedPhoto = await uploadPhoto(photoData, filter)
 
       // Set as recent photo for preview (with dataUrl for local display)
@@ -26,8 +26,8 @@ function App() {
         dataUrl: photoData
       })
     } catch (error) {
-      console.error('Error uploading photo:', error)
-      alert('Failed to upload photo. Please try again.')
+      console.error('Error capturing photo:', error)
+      // Error is already handled in useFirebasePhotos hook with fallback
     } finally {
       setUploading(false)
     }
@@ -43,7 +43,7 @@ function App() {
       }
     } catch (error) {
       console.error('Error deleting photo:', error)
-      alert('Failed to delete photo. Please try again.')
+      // Error is already handled in useFirebasePhotos hook with fallback
     }
   }
 
@@ -54,7 +54,7 @@ function App() {
         setRecentPhoto(null)
       } catch (error) {
         console.error('Error clearing photos:', error)
-        alert('Failed to clear all photos. Please try again.')
+        // Error is already handled in useFirebasePhotos hook with fallback
       }
     }
   }

@@ -48,7 +48,7 @@ function PhotoCard({ photo, onDelete }) {
 
   return (
     <div className="photo-card">
-      <img src={imageUrl} alt={`Photo taken at ${photo.timestamp}`} crossOrigin="anonymous" />
+      <img src={imageUrl} alt={`Photo taken at ${photo.timestamp}`} />
       <div className="photo-card-actions">
         <button onClick={handleShare} className="btn-download">
           Save

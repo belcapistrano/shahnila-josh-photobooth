@@ -11,8 +11,11 @@ function useShutterSound() {
 
     return () => {
       // Clean up on unmount
-      if (audioContextRef.current) {
-        audioContextRef.current.close()
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close().catch(err => {
+          // Ignore errors when closing AudioContext
+          console.debug('AudioContext close error (safe to ignore):', err)
+        })
       }
     }
   }, [])

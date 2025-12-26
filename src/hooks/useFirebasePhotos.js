@@ -10,17 +10,27 @@ import {
   onSnapshot,
   serverTimestamp
 } from 'firebase/firestore'
-import { storage, db } from '../config/firebase'
+import { storage, db, isFirebaseConfigured } from '../config/firebase'
+import useLocalStorage from './useLocalStorage'
 
 const PHOTOS_COLLECTION = 'wedding-photos'
 
 function useFirebasePhotos() {
   const [photos, setPhotos] = useState([])
+  const [localPhotos, setLocalPhotos] = useLocalStorage('photobooth-photos', [])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const useFirebase = isFirebaseConfigured()
 
-  // Real-time listener for photos
+  // Real-time listener for photos (only if Firebase is configured)
   useEffect(() => {
+    if (!useFirebase || !db) {
+      // Use local storage fallback
+      setPhotos(localPhotos)
+      setLoading(false)
+      return
+    }
+
     const photosRef = collection(db, PHOTOS_COLLECTION)
     const q = query(photosRef, orderBy('timestamp', 'desc'))
 
@@ -36,19 +46,35 @@ function useFirebasePhotos() {
       },
       (err) => {
         console.error('Error fetching photos:', err)
+        console.warn('Falling back to local storage due to Firebase error')
         setError(err.message)
+        // Fallback to local storage on error
+        setPhotos(localPhotos)
         setLoading(false)
       }
     )
 
     return () => unsubscribe()
-  }, [])
+  }, [useFirebase, localPhotos])
 
   // Upload photo to Firebase Storage and save metadata to Firestore
   const uploadPhoto = async (photoData, filter = 'none') => {
+    const timestamp = Date.now()
+
+    // If Firebase is not configured, use local storage
+    if (!useFirebase || !storage || !db) {
+      const newPhoto = {
+        id: timestamp,
+        dataUrl: photoData,
+        timestamp: new Date().toISOString(),
+        filter: filter || 'none'
+      }
+      setLocalPhotos(prev => [newPhoto, ...prev])
+      return newPhoto
+    }
+
     try {
-      // Generate unique filename
-      const timestamp = Date.now()
+      // Firebase upload
       const filename = `photos/${timestamp}.jpg`
       const storageRef = ref(storage, filename)
 
@@ -74,14 +100,30 @@ function useFirebasePhotos() {
         timestamp: new Date().toISOString()
       }
     } catch (err) {
-      console.error('Error uploading photo:', err)
-      throw err
+      console.error('Firebase upload failed:', err)
+      console.warn('Falling back to local storage')
+
+      // Fallback to local storage on error
+      const newPhoto = {
+        id: timestamp,
+        dataUrl: photoData,
+        timestamp: new Date().toISOString(),
+        filter: filter || 'none'
+      }
+      setLocalPhotos(prev => [newPhoto, ...prev])
+      return newPhoto
     }
   }
 
   // Delete photo from Storage and Firestore
   const deletePhoto = async (photoId, storagePath) => {
     try {
+      // If Firebase is not configured, use local storage
+      if (!useFirebase || !storage || !db) {
+        setLocalPhotos(prev => prev.filter(photo => photo.id !== photoId))
+        return
+      }
+
       // Delete from Firestore
       await deleteDoc(doc(db, PHOTOS_COLLECTION, photoId))
 
@@ -99,6 +141,12 @@ function useFirebasePhotos() {
   // Delete all photos
   const clearAllPhotos = async () => {
     try {
+      // If Firebase is not configured, use local storage
+      if (!useFirebase || !storage || !db) {
+        setLocalPhotos([])
+        return
+      }
+
       const deletePromises = photos.map(photo =>
         deletePhoto(photo.id, photo.storagePath)
       )
