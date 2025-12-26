@@ -761,6 +761,7 @@ body {
   padding: 25px;
   margin-bottom: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 3px solid #F5F5DC;
   animation: slide-up 0.5s ease-out;
 }
 
@@ -788,7 +789,7 @@ body {
 }
 
 .recent-photo-header p {
-  color: #8B6F47;
+  color: #674F2D;
   font-size: 1rem;
   margin: 0;
 }
@@ -806,6 +807,7 @@ body {
   max-height: 400px;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border: 3px solid #F5F5DC;
 }
 
 .recent-photo-actions {
