@@ -32,7 +32,23 @@ function useCamera(videoRef) {
         setLoading(false)
       } catch (err) {
         console.error('Error accessing camera:', err)
-        setError(err.message || 'Failed to access camera')
+        let errorMessage = 'Failed to access camera'
+
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          errorMessage = 'Camera permission denied. Please allow camera access in your browser settings.'
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+          errorMessage = 'No camera found. Please connect a camera and try again.'
+        } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+          errorMessage = 'Camera is already in use by another application.'
+        } else if (err.name === 'OverconstrainedError') {
+          errorMessage = 'Camera does not support the requested settings.'
+        } else if (err.name === 'NotSupportedError') {
+          errorMessage = 'Camera access not supported. Make sure you are using HTTPS.'
+        } else if (err.name === 'TypeError') {
+          errorMessage = 'Camera API not available. Make sure you are using HTTPS.'
+        }
+
+        setError(errorMessage)
         setLoading(false)
       }
     }
