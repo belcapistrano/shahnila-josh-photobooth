@@ -141,37 +141,40 @@ function Camera({ onCapture }) {
         </>
       )}
       <div className="camera-actions">
-        {isActive && !burstActive && (
-          <button onClick={handleCancelCountdown} className="cancel-button">
-            Cancel
-          </button>
-        )}
-        <CaptureButton
-          onClick={handleCapture}
-          disabled={!stream || isActive || burstActive}
-        />
         {!isActive && !burstActive && (
           <button
             onClick={handleFlipCamera}
             className="flip-camera-button"
             disabled={loading}
           >
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="currentColor">
-              {/* Camera body */}
-              <path d="M10 7L8.5 5H5.5L4 7H2C1.45 7 1 7.45 1 8V20C1 20.55 1.45 21 2 21H26C26.55 21 27 20.55 27 20V8C27 7.45 26.55 7 26 7H24L22.5 5H19.5L18 7H10Z"/>
-              {/* Camera lens */}
-              <circle cx="14" cy="13.5" r="4"/>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+              {/* Top curved arrow - clockwise from left to right */}
+              <path d="M 8 12 Q 8 6 16 6 Q 24 6 24 12"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    fill="none"
+                    strokeLinecap="round"/>
+              <path d="M 24 12 L 26 9 L 23 10 Z" fill="currentColor"/>
 
-              {/* Top left arrow */}
-              <path d="M5 3L3 5L5 7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M3 5C3 5 4 5 5 5C6.5 5 8 6 8.5 7.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              {/* Bottom curved arrow - clockwise from right to left */}
+              <path d="M 24 20 Q 24 26 16 26 Q 8 26 8 20"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    fill="none"
+                    strokeLinecap="round"/>
+              <path d="M 8 20 L 6 23 L 9 22 Z" fill="currentColor"/>
 
-              {/* Bottom right arrow */}
-              <path d="M23 24L25 22L23 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M25 22C25 22 24 22 23 22C21.5 22 20 21 19.5 19.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              {/* Camera icon in center */}
+              <rect x="12" y="14" width="8" height="5" rx="0.5" fill="currentColor"/>
+              <path d="M 14 14 L 15 12.5 L 17 12.5 L 18 14" fill="currentColor"/>
+              <circle cx="16" cy="16.5" r="1.5" fill="white"/>
             </svg>
           </button>
         )}
+        <CaptureButton
+          onClick={handleCapture}
+          disabled={!stream || isActive || burstActive}
+        />
       </div>
     </div>
   )

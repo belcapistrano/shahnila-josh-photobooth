@@ -22,7 +22,87 @@ body {
 
 .app-header {
   text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Info Banner Styles */
+.info-banner {
+  background: linear-gradient(135deg, #674F2D 0%, #8B6F47 100%);
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.2);
+}
+
+.info-banner-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.info-banner-content svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  stroke: white;
+}
+
+.info-banner-content p {
+  color: white;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Tab Navigation Styles */
+.tab-navigation {
+  display: flex;
+  gap: 10px;
   margin-bottom: 30px;
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border: 2px solid transparent;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.tab-button:hover {
+  background: #F5F5DC;
+}
+
+.tab-button.active {
+  background: #674F2D;
+  border-color: #674F2D;
+}
+
+.tab-icon {
+  font-size: 24px;
+}
+
+.tab-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #674F2D;
+}
+
+.tab-button.active .tab-label {
+  color: white;
 }
 
 .wedding-title {
@@ -101,9 +181,12 @@ body {
 }
 
 .camera-actions {
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 15px;
+  min-height: 80px;
 }
 
 /* Countdown Timer Styles */
@@ -145,6 +228,8 @@ body {
 
 /* Cancel Button */
 .cancel-button {
+  position: absolute;
+  right: 0;
   padding: 10px 20px;
   border: 2px solid #e74c3c;
   background: white;
@@ -467,6 +552,65 @@ body {
   background: #c0392b;
 }
 
+/* Challenges Styles */
+.challenges-container {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.challenges-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.challenges-header h2 {
+  color: #674F2D;
+  font-size: 2rem;
+  margin: 0 0 10px 0;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.challenges-header p {
+  color: #674F2D;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.challenges-coming-soon {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.coming-soon-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.challenges-coming-soon h3 {
+  color: #674F2D;
+  font-size: 1.8rem;
+  margin: 0 0 15px 0;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.challenges-coming-soon p {
+  color: #8B6F47;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .wedding-title {
@@ -483,6 +627,56 @@ body {
 
   .wedding-date {
     font-size: 0.9rem;
+  }
+
+  .info-banner {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+  }
+
+  .info-banner-content {
+    gap: 10px;
+  }
+
+  .info-banner-content p {
+    font-size: 0.85rem;
+  }
+
+  .tab-navigation {
+    padding: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tab-button {
+    padding: 10px 8px;
+  }
+
+  .tab-icon {
+    font-size: 20px;
+  }
+
+  .tab-label {
+    font-size: 12px;
+  }
+
+  .challenges-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .challenges-header p {
+    font-size: 0.95rem;
+  }
+
+  .coming-soon-icon {
+    font-size: 60px;
+  }
+
+  .challenges-coming-soon h3 {
+    font-size: 1.4rem;
+  }
+
+  .challenges-coming-soon p {
+    font-size: 1rem;
   }
 
   .gallery-grid {

@@ -1,9 +1,14 @@
+import { useState } from 'react'
 import Camera from './components/Camera'
 import PhotoGallery from './components/PhotoGallery'
+import Challenges from './components/Challenges'
+import InfoBanner from './components/InfoBanner'
+import TabNavigation from './components/TabNavigation'
 import useLocalStorage from './hooks/useLocalStorage'
 
 function App() {
   const [photos, setPhotos] = useLocalStorage('photobooth-photos', [])
+  const [activeTab, setActiveTab] = useState('camera')
 
   const handlePhotoCapture = (photoData, filter) => {
     const newPhoto = {
@@ -34,14 +39,19 @@ function App() {
           <p className="wedding-date">♥ [Wedding Date] ♥</p>
         </div>
       </header>
+      <InfoBanner />
       <main className="app-main">
-        <Camera onCapture={handlePhotoCapture} />
-        <PhotoGallery
-          photos={photos}
-          onDelete={handleDeletePhoto}
-          onClearAll={handleClearAll}
-        />
+        {activeTab === 'camera' && <Camera onCapture={handlePhotoCapture} />}
+        {activeTab === 'gallery' && (
+          <PhotoGallery
+            photos={photos}
+            onDelete={handleDeletePhoto}
+            onClearAll={handleClearAll}
+          />
+        )}
+        {activeTab === 'challenges' && <Challenges />}
       </main>
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   )
 }
