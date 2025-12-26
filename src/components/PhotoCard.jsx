@@ -1,8 +1,13 @@
 function PhotoCard({ photo, onDelete }) {
+  // Use downloadURL from Firebase or dataUrl as fallback
+  const imageUrl = photo.downloadURL || photo.dataUrl
+
   const handleDownload = () => {
     const link = document.createElement('a')
-    link.href = photo.dataUrl
+    link.href = imageUrl
     link.download = `photobooth-${photo.id}.png`
+    link.target = '_blank'
+    link.rel = 'noopener noreferrer'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -10,8 +15,8 @@ function PhotoCard({ photo, onDelete }) {
 
   const handleShare = async () => {
     try {
-      // Convert data URL to blob
-      const response = await fetch(photo.dataUrl)
+      // Convert URL to blob
+      const response = await fetch(imageUrl)
       const blob = await response.blob()
       const file = new File([blob], `photobooth-${photo.id}.png`, { type: 'image/png' })
 
@@ -37,13 +42,13 @@ function PhotoCard({ photo, onDelete }) {
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(photo.id)
+      onDelete(photo.id, photo.storagePath)
     }
   }
 
   return (
     <div className="photo-card">
-      <img src={photo.dataUrl} alt={`Photo taken at ${photo.timestamp}`} />
+      <img src={imageUrl} alt={`Photo taken at ${photo.timestamp}`} crossOrigin="anonymous" />
       <div className="photo-card-actions">
         <button onClick={handleShare} className="btn-download">
           Save

@@ -1,9 +1,12 @@
 function RecentPhoto({ photo, onShare, onDelete }) {
   if (!photo) return null
 
+  // Use dataUrl if available (for recent photos), otherwise use downloadURL
+  const imageUrl = photo.dataUrl || photo.downloadURL
+
   const handleShare = async () => {
     try {
-      const response = await fetch(photo.dataUrl)
+      const response = await fetch(imageUrl)
       const blob = await response.blob()
       const file = new File([blob], `photobooth-${photo.id}.png`, { type: 'image/png' })
 
@@ -16,8 +19,10 @@ function RecentPhoto({ photo, onShare, onDelete }) {
       } else {
         // Fallback to download
         const link = document.createElement('a')
-        link.href = photo.dataUrl
+        link.href = imageUrl
         link.download = `photobooth-${photo.id}.png`
+        link.target = '_blank'
+        link.rel = 'noopener noreferrer'
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -26,8 +31,10 @@ function RecentPhoto({ photo, onShare, onDelete }) {
       if (error.name !== 'AbortError') {
         console.log('Share failed, downloading instead')
         const link = document.createElement('a')
-        link.href = photo.dataUrl
+        link.href = imageUrl
         link.download = `photobooth-${photo.id}.png`
+        link.target = '_blank'
+        link.rel = 'noopener noreferrer'
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -37,7 +44,7 @@ function RecentPhoto({ photo, onShare, onDelete }) {
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(photo.id)
+      onDelete(photo.id, photo.storagePath)
     }
   }
 
@@ -48,7 +55,7 @@ function RecentPhoto({ photo, onShare, onDelete }) {
         <p>Share it or find it in the gallery</p>
       </div>
       <div className="recent-photo-content">
-        <img src={photo.dataUrl} alt="Recently captured photo strip" />
+        <img src={imageUrl} alt="Recently captured photo strip" />
         <div className="recent-photo-actions">
           <button onClick={handleShare} className="btn-share-recent">
             Share Photo

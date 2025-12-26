@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { challenges, categories } from '../data/challenges'
+import { challenges } from '../data/challenges'
 
 function PhotoChallengeSpinner({ onTakePhoto }) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -179,21 +179,23 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
       )}
 
       {/* Shuffle button */}
-      <div className="shuffle-section">
-        {!isShuffling && !activeCategory && (
-          <div className="shuffle-hint">
-            <span className="hint-arrow">👇</span>
-            <span className="hint-text">Click to get your challenge!</span>
-          </div>
-        )}
-        <button
-          className="shuffle-button"
-          onClick={shuffle}
-          disabled={isShuffling}
-        >
-          {isShuffling ? 'Shuffling...' : 'Shuffle'}
-        </button>
-      </div>
+      {!activeCategory && (
+        <div className="shuffle-section">
+          {!isShuffling && (
+            <div className="shuffle-hint">
+              <span className="hint-arrow">👇</span>
+              <span className="hint-text">Click to get your challenge!</span>
+            </div>
+          )}
+          <button
+            className="shuffle-button"
+            onClick={shuffle}
+            disabled={isShuffling}
+          >
+            {isShuffling ? 'Shuffling...' : 'Shuffle'}
+          </button>
+        </div>
+      )}
 
       {/* Challenge Instructions */}
       {!isShuffling && activeCategory && (
@@ -266,23 +268,11 @@ function PhotoChallengeSpinner({ onTakePhoto }) {
             </button>
             <button className="action-button secondary" onClick={shuffle}>
               <span className="action-icon">🔄</span>
-              Skip Challenge
+              Reshuffle
             </button>
           </div>
         </div>
       )}
-
-      {/* Category pills */}
-      <div className="category-pills">
-        {categories.map((category) => (
-          <div
-            key={category}
-            className={`category-pill ${activeCategory === category ? 'active' : ''}`}
-          >
-            {category}
-          </div>
-        ))}
-      </div>
     </div>
   )
 }

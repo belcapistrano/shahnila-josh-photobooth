@@ -5,36 +5,57 @@ import Challenges from './components/Challenges'
 import InfoBanner from './components/InfoBanner'
 import TabNavigation from './components/TabNavigation'
 import RecentPhoto from './components/RecentPhoto'
-import useLocalStorage from './hooks/useLocalStorage'
+import useFirebasePhotos from './hooks/useFirebasePhotos'
 
 function App() {
-  const [photos, setPhotos] = useLocalStorage('photobooth-photos', [])
+  const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos } = useFirebasePhotos()
   const [activeTab, setActiveTab] = useState('camera')
   const [recentPhoto, setRecentPhoto] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
-  const handlePhotoCapture = (photoData, filter) => {
-    const newPhoto = {
-      id: Date.now(),
-      dataUrl: photoData,
-      timestamp: new Date().toISOString(),
-      filter: filter || 'none'
+  const handlePhotoCapture = async (photoData, filter) => {
+    try {
+      setUploading(true)
+
+      // Upload to Firebase
+      const uploadedPhoto = await uploadPhoto(photoData, filter)
+
+      // Set as recent photo for preview (with dataUrl for local display)
+      setRecentPhoto({
+        ...uploadedPhoto,
+        dataUrl: photoData
+      })
+    } catch (error) {
+      console.error('Error uploading photo:', error)
+      alert('Failed to upload photo. Please try again.')
+    } finally {
+      setUploading(false)
     }
-    setPhotos(prev => [newPhoto, ...prev])
-    setRecentPhoto(newPhoto)
   }
 
-  const handleDeletePhoto = (id) => {
-    setPhotos(prev => prev.filter(photo => photo.id !== id))
-    // Clear recent photo if it's the one being deleted
-    if (recentPhoto && recentPhoto.id === id) {
-      setRecentPhoto(null)
+  const handleDeletePhoto = async (id, storagePath) => {
+    try {
+      await deletePhoto(id, storagePath)
+
+      // Clear recent photo if it's the one being deleted
+      if (recentPhoto && recentPhoto.id === id) {
+        setRecentPhoto(null)
+      }
+    } catch (error) {
+      console.error('Error deleting photo:', error)
+      alert('Failed to delete photo. Please try again.')
     }
   }
 
-  const handleClearAll = () => {
+  const handleClearAll = async () => {
     if (window.confirm('Are you sure you want to delete all photos?')) {
-      setPhotos([])
-      setRecentPhoto(null)
+      try {
+        await clearAllPhotos()
+        setRecentPhoto(null)
+      } catch (error) {
+        console.error('Error clearing photos:', error)
+        alert('Failed to clear all photos. Please try again.')
+      }
     }
   }
 
