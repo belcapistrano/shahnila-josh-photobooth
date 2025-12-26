@@ -25,12 +25,31 @@ function useCamera(videoRef) {
         currentStream = mediaStream
 
         if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream
+          const video = videoRef.current
+          console.log('Setting video srcObject, video element:', video)
+          console.log('MediaStream tracks:', mediaStream.getTracks())
 
-          // Ensure video plays (especially important on mobile)
-          videoRef.current.play().catch(err => {
-            console.error('Error playing video:', err)
-          })
+          video.srcObject = mediaStream
+
+          // Wait for video metadata to load before playing
+          const playVideo = () => {
+            console.log('Video metadata loaded, attempting to play')
+            video.play()
+              .then(() => {
+                console.log('Video playing successfully')
+              })
+              .catch(err => {
+                console.error('Error playing video:', err)
+              })
+          }
+
+          // If metadata already loaded, play immediately
+          if (video.readyState >= 2) {
+            playVideo()
+          } else {
+            // Otherwise wait for metadata
+            video.addEventListener('loadedmetadata', playVideo, { once: true })
+          }
         }
 
         setStream(mediaStream)
