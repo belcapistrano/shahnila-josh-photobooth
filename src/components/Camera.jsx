@@ -156,16 +156,14 @@ function Camera({ onCapture }) {
             className="flip-camera-button"
             disabled={loading}
           >
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2">
-              {/* Circular arrows */}
-              <path d="M 4 14 A 10 10 0 0 1 14 4" strokeLinecap="round"/>
-              <path d="M 24 14 A 10 10 0 0 1 14 24" strokeLinecap="round"/>
-              {/* Arrow heads */}
-              <path d="M 3 11 L 4 14 L 7 13" fill="currentColor" strokeWidth="0"/>
-              <path d="M 25 17 L 24 14 L 21 15" fill="currentColor" strokeWidth="0"/>
-              {/* Camera circles */}
-              <circle cx="14" cy="14" r="3.5" fill="currentColor"/>
-              <circle cx="14" cy="14" r="2" fill="white"/>
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              {/* Top arrow curving right */}
+              <path d="M 20 9 A 8 8 0 0 0 6 9"/>
+              <polyline points="17,6 20,9 17,12" fill="none"/>
+
+              {/* Bottom arrow curving left */}
+              <path d="M 6 17 A 8 8 0 0 0 20 17"/>
+              <polyline points="9,14 6,17 9,20" fill="none"/>
             </svg>
           </button>
         )}
