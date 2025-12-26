@@ -26,6 +26,11 @@ function useCamera(videoRef) {
 
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream
+
+          // Ensure video plays (especially important on mobile)
+          videoRef.current.play().catch(err => {
+            console.error('Error playing video:', err)
+          })
         }
 
         setStream(mediaStream)
