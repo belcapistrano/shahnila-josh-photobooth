@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
 
-const RecentPhoto = forwardRef(function RecentPhoto({ photo, onSave, onDelete }, ref) {
+const RecentPhoto = forwardRef(function RecentPhoto({ photo, onSave, onDelete, isUploading }, ref) {
   if (!photo) return null
 
   // Use dataUrl if available (for recent photos), otherwise use downloadURL
@@ -89,13 +89,32 @@ const RecentPhoto = forwardRef(function RecentPhoto({ photo, onSave, onDelete },
         <div className="recent-photo-actions">
           {photo.isPending ? (
             <>
-              <button onClick={handleSaveToGallery} className="btn-save-recent">
-                Save to Gallery
+              <button
+                onClick={handleSaveToGallery}
+                className="btn-save-recent"
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <>
+                    <span className="loading-spinner"></span>
+                    Saving...
+                  </>
+                ) : (
+                  'Save to Gallery'
+                )}
               </button>
-              <button onClick={handleShare} className="btn-share-recent">
+              <button
+                onClick={handleShare}
+                className="btn-share-recent"
+                disabled={isUploading}
+              >
                 Share
               </button>
-              <button onClick={handleDelete} className="btn-delete-recent">
+              <button
+                onClick={handleDelete}
+                className="btn-delete-recent"
+                disabled={isUploading}
+              >
                 Discard
               </button>
             </>

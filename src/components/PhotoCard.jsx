@@ -1,9 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   // Use downloadURL from Firebase or dataUrl as fallback
   const imageUrl = photo.downloadURL || photo.dataUrl
   const [isAnimating, setIsAnimating] = useState(false)
+  const [timeRemaining, setTimeRemaining] = useState(null)
+  const [canDelete, setCanDelete] = useState(false)
+
+  // Calculate time remaining for deletion (15 minutes window)
+  useEffect(() => {
+    const calculateTimeRemaining = () => {
+      const photoTime = new Date(photo.createdAt || photo.timestamp).getTime()
+      const currentTime = Date.now()
+      const elapsed = currentTime - photoTime
+      const deleteWindow = 15 * 60 * 1000 // 15 minutes in milliseconds
+      const remaining = deleteWindow - elapsed
+
+      if (remaining > 0) {
+        setCanDelete(true)
+        setTimeRemaining(remaining)
+      } else {
+        setCanDelete(false)
+        setTimeRemaining(null)
+      }
+    }
+
+    calculateTimeRemaining()
+    const interval = setInterval(calculateTimeRemaining, 1000) // Update every second
+
+    return () => clearInterval(interval)
+  }, [photo.createdAt, photo.timestamp])
 
   const handleLike = () => {
     if (onLike && onToggleLike) {
@@ -110,6 +136,13 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     }
   }
 
+  const formatTimeRemaining = (milliseconds) => {
+    if (!milliseconds) return ''
+    const minutes = Math.floor(milliseconds / 60000)
+    const seconds = Math.floor((milliseconds % 60000) / 1000)
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
   return (
     <div className="photo-card">
       <div className="photo-card-image-container">
@@ -148,6 +181,16 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
         )}
       </div>
       <div className="photo-card-actions">
+        {canDelete && (
+          <div className="delete-timer-section">
+            <button onClick={handleDelete} className="btn-delete">
+              Delete
+            </button>
+            <span className="delete-timer">
+              {formatTimeRemaining(timeRemaining)} left
+            </span>
+          </div>
+        )}
         <button onClick={handleDownload} className="btn-download">
           Download
         </button>

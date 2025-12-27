@@ -149,6 +149,7 @@ function App() {
         photo={recentPhoto}
         onDelete={handleDeleteRecentPhoto}
         onSave={handleSaveRecentPhoto}
+        isUploading={uploading}
       />
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>

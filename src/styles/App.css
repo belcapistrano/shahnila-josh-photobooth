@@ -784,19 +784,29 @@ body {
 
 .photo-card-actions {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 8px;
   padding: 10px;
   background: #f8f9fa;
 }
 
-.photo-card-actions {
-  display: none;
+.delete-timer-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
-@media (min-width: 769px) {
-  .photo-card-actions {
-    display: flex;
-  }
+.delete-timer-section .btn-delete {
+  flex: 0 0 auto;
+  min-width: 80px;
+}
+
+.delete-timer {
+  font-size: 0.85rem;
+  color: #e74c3c;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .photo-card-actions button {
@@ -808,6 +818,13 @@ body {
   font-weight: 600;
   transition: all 0.2s ease;
   font-size: 0.95rem;
+}
+
+/* Hide download button on mobile, but always show delete button when available */
+@media (max-width: 768px) {
+  .photo-card-actions .btn-download {
+    display: none;
+  }
 }
 
 .btn-download {
@@ -937,6 +954,41 @@ body {
   background: #c0392b;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled button states */
+.recent-photo-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.recent-photo-actions button:disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-save-recent:disabled {
+  background: #27ae60;
 }
 
 /* Challenges Styles */
