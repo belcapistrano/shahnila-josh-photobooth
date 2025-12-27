@@ -1925,3 +1925,29 @@ body {
     height: 10px;
   }
 }
+
+/* Mobile Landscape Mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  .camera-container {
+    flex-direction: row;
+    gap: 20px;
+    padding: 10px;
+  }
+
+  .camera-preview {
+    flex: 1;
+    max-height: 100%;
+  }
+
+  .camera-actions {
+    flex-direction: column;
+    justify-content: center;
+    min-height: auto;
+    gap: 20px;
+    padding: 10px;
+  }
+
+  .flip-camera-button {
+    margin: 0;
+  }
+}
