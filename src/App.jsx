@@ -119,6 +119,19 @@ function App() {
     setShowBanner(false)
   }
 
+  // Switch to gallery when user returns to app while on camera tab
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && activeTab === 'camera') {
+        console.log('User returned to app on camera tab, switching to gallery...')
+        setActiveTab('gallery')
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [activeTab])
+
   return (
     <div className="app">
       <header className="app-header">
