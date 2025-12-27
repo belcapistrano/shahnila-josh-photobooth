@@ -113,7 +113,11 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   return (
     <div className="photo-card">
       <div className="photo-card-image-container">
-        <img src={imageUrl} alt={`Photo taken at ${photo.timestamp}`} />
+        <img
+          src={imageUrl}
+          alt={`Photo taken at ${photo.timestamp}`}
+          loading="lazy"
+        />
         <button
           className={`photo-like-button ${isAnimating ? 'animate' : ''}`}
           onClick={handleLike}
