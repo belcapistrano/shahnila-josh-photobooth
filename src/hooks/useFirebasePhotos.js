@@ -24,7 +24,22 @@ function useFirebasePhotos() {
   const [localPhotos, setLocalPhotos] = useLocalStorage('photobooth-photos', [])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
   const useFirebase = isFirebaseConfigured()
+
+  // Add visibility change listener to refresh on tab focus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && useFirebase && db) {
+        // Tab became visible, trigger refresh
+        console.log('Tab visible, refreshing gallery...')
+        setRefreshTrigger(prev => prev + 1)
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [useFirebase])
 
   // Real-time listener for photos (only if Firebase is configured)
   useEffect(() => {
@@ -47,6 +62,7 @@ function useFirebasePhotos() {
         }))
         setPhotos(photosList)
         setLoading(false)
+        console.log(`Gallery refreshed: ${photosList.length} photos loaded`)
       },
       (err) => {
         console.error('Error fetching photos:', err)
@@ -59,7 +75,7 @@ function useFirebasePhotos() {
     )
 
     return () => unsubscribe()
-  }, [useFirebase, localPhotos])
+  }, [useFirebase, localPhotos, refreshTrigger])
 
   // Upload photo to Firebase Storage and save metadata to Firestore
   const uploadPhoto = async (photoData, filter = 'none', challenge = null) => {
