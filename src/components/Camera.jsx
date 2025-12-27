@@ -163,7 +163,7 @@ function Camera({ onCapture, challenge }) {
             className="flip-camera-button"
             disabled={loading}
           >
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="currentColor">
               {/* Top curved arrow - clockwise from left to right */}
               <path d="M 8 12 Q 8 6 16 6 Q 24 6 24 12"
                     stroke="currentColor"
@@ -185,6 +185,7 @@ function Camera({ onCapture, challenge }) {
               <path d="M 14 14 L 15 12.5 L 17 12.5 L 18 14" fill="currentColor"/>
               <circle cx="16" cy="16.5" r="1.5" fill="white"/>
             </svg>
+            <span className="flip-camera-label">Flip</span>
           </button>
         )}
         <CaptureButton

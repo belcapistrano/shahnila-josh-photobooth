@@ -324,24 +324,32 @@ body {
 
 /* Flip Camera Button */
 .flip-camera-button {
-  width: 45px;
+  min-width: 60px;
   height: 45px;
-  border-radius: 50%;
+  border-radius: 22px;
   border: 2px solid #674F2D;
   background: white;
   color: #674F2D;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 4px 8px;
+  gap: 2px;
+}
+
+.flip-camera-label {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
 }
 
 .flip-camera-button:hover:not(:disabled) {
   background: #674F2D;
   color: white;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .flip-camera-button:active:not(:disabled) {
@@ -525,9 +533,9 @@ body {
 
 /* Capture Button Styles */
 .capture-button {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
+  min-width: 85px;
+  height: 85px;
+  border-radius: 42px;
   border: 4px solid #674F2D;
   background: white;
   cursor: pointer;
@@ -535,12 +543,37 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  padding: 8px 12px;
+}
+
+.capture-button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.capture-button-inner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #674F2D;
+}
+
+.capture-button-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #674F2D;
+  line-height: 1;
 }
 
 .capture-button:hover:not(:disabled) {
-  transform: scale(1.1);
+  transform: scale(1.05);
   border-color: #674F2D;
+}
+
+.capture-button:hover:not(:disabled) .capture-button-inner {
+  background: #5a432a;
 }
 
 .capture-button:active:not(:disabled) {
@@ -550,13 +583,6 @@ body {
 .capture-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.capture-button-inner {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: #674F2D;
 }
 
 /* Gallery Styles */
@@ -1840,13 +1866,17 @@ body {
   }
 
   .capture-button {
-    width: 70px;
-    height: 70px;
+    min-width: 80px;
+    height: 80px;
   }
 
   .capture-button-inner {
-    width: 50px;
-    height: 50px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .capture-button-label {
+    font-size: 11px;
   }
 
   .countdown-number {

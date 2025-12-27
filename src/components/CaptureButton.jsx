@@ -6,7 +6,10 @@ function CaptureButton({ onClick, disabled }) {
       disabled={disabled}
       aria-label="Capture photo"
     >
-      <div className="capture-button-inner" />
+      <div className="capture-button-content">
+        <div className="capture-button-inner" />
+        <span className="capture-button-label">Start</span>
+      </div>
     </button>
   )
 }

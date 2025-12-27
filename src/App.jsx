@@ -9,7 +9,7 @@ import useFirebasePhotos from './hooks/useFirebasePhotos'
 
 function App() {
   const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, likePhoto, isUsingFirebase } = useFirebasePhotos()
-  const [activeTab, setActiveTab] = useState('camera')
+  const [activeTab, setActiveTab] = useState('gallery')
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [activeChallenge, setActiveChallenge] = useState(null)
