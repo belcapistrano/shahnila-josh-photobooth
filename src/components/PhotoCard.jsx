@@ -144,13 +144,8 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
         )}
       </div>
       <div className="photo-card-actions">
-        {!navigator.share && (
-          <button onClick={handleShare} className="btn-download">
-            Download
-          </button>
-        )}
-        <button onClick={handleDelete} className="btn-delete">
-          Delete
+        <button onClick={handleShare} className="btn-download">
+          {navigator.share ? 'Share' : 'Download'}
         </button>
       </div>
     </div>
