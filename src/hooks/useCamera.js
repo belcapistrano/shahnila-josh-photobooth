@@ -78,20 +78,6 @@ function useCamera(videoRef, facingMode = 'user') {
             // Otherwise wait for metadata
             video.addEventListener('loadedmetadata', playVideo, { once: true })
           }
-
-          // Handle stream ending unexpectedly (mobile browser suspension)
-          mediaStream.getTracks().forEach(track => {
-            track.addEventListener('ended', () => {
-              if (mounted) {
-                console.log('Camera track ended, attempting restart...')
-                setTimeout(() => {
-                  if (mounted && !streamRef.current?.active) {
-                    startCamera()
-                  }
-                }, 500)
-              }
-            })
-          })
         }
 
         if (mounted) {
@@ -144,39 +130,12 @@ function useCamera(videoRef, facingMode = 'user') {
       }
     }
 
-    // Handle visibility change to restart camera on mobile
-    const handleVisibilityChange = () => {
-      if (!document.hidden && mounted) {
-        // Page became visible again
-        // Check if stream is still active
-        const isStreamActive = streamRef.current?.active
-        if (!isStreamActive) {
-          console.log('Camera stream inactive, restarting...')
-          startCamera()
-        } else if (videoRef.current && !videoRef.current.srcObject) {
-          // Video element lost its stream, reconnect
-          console.log('Video element lost stream, reconnecting...')
-          if (streamRef.current) {
-            videoRef.current.srcObject = streamRef.current
-            videoRef.current.play().catch(err => {
-              console.error('Error replaying video:', err)
-              startCamera()
-            })
-          }
-        }
-      }
-    }
-
     startCamera()
-
-    // Listen for visibility changes
-    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     // Cleanup function
     return () => {
       mounted = false
       console.log('Camera component unmounting, cleaning up streams...')
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
       stopCurrentStream()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
