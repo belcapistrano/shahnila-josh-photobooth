@@ -63,6 +63,9 @@ function App() {
         ...uploadedPhoto,
         dataUrl: recentPhoto.dataUrl
       })
+
+      // Switch to gallery tab after successful save
+      setActiveTab('gallery')
     } catch (error) {
       console.error('Error saving photo:', error)
     } finally {
