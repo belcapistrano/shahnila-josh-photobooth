@@ -906,17 +906,14 @@ body {
 }
 
 .photo-like-overlay {
-  position: absolute;
-  bottom: 0px;
-  left: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 10;
+  margin-bottom: 8px;
 }
 
 .photo-like-button {
-  background: rgba(0, 0, 0, 0.3);
+  background: transparent;
   border: none;
   border-radius: 50%;
   width: 42px;
@@ -926,11 +923,9 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
 }
 
 .photo-like-button:hover {
-  background: rgba(0, 0, 0, 0.5);
   transform: scale(1.1);
 }
 
@@ -939,14 +934,9 @@ body {
 }
 
 .likes-count-overlay {
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
+  color: #262626;
+  font-size: 15px;
   font-weight: 600;
-  backdrop-filter: blur(4px);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes heart-pop {
