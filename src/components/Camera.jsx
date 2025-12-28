@@ -18,6 +18,7 @@ const PREVIEW_DURATION = 1000 // milliseconds to show preview
 function Camera({ onCapture, challenge }) {
   const videoRef = useRef(null)
   const [facingMode, setFacingMode] = useState('user') // 'user' for front, 'environment' for back
+  const [burstMode, setBurstMode] = useState(true) // true for 3 photos, false for 1 photo
   const { stream, error, loading } = useCamera(videoRef, facingMode)
   const { capturePhoto } = usePhotoCapture(videoRef, facingMode === 'user')
   const { count, isActive, startCountdown, cancelCountdown } = useCountdown(3)
@@ -35,6 +36,32 @@ function Camera({ onCapture, challenge }) {
       await new Promise(resolve => setTimeout(resolve, 1000))
     }
     setBurstCountdown(0)
+  }
+
+  const captureSinglePhoto = async () => {
+    setBurstActive(true)
+
+    // Trigger flash and sound
+    setFlashTrigger(prev => prev + 1)
+    playShutter()
+
+    // Capture photo
+    const photoData = capturePhoto()
+    if (photoData) {
+      // Show preview of captured photo
+      setPreviewPhoto(photoData)
+      setShowPreview(true)
+      await new Promise(resolve => setTimeout(resolve, PREVIEW_DURATION))
+      setShowPreview(false)
+
+      // Send single photo directly
+      if (onCapture) {
+        onCapture(photoData, 'none')
+      }
+    }
+
+    setBurstActive(false)
+    setPreviewPhoto(null)
   }
 
   const captureBurstPhotos = async () => {
@@ -85,8 +112,16 @@ function Camera({ onCapture, challenge }) {
 
   const handleCapture = () => {
     startCountdown(() => {
-      captureBurstPhotos()
+      if (burstMode) {
+        captureBurstPhotos()
+      } else {
+        captureSinglePhoto()
+      }
     })
+  }
+
+  const toggleBurstMode = () => {
+    setBurstMode(prev => !prev)
   }
 
   const handleCancelCountdown = () => {
@@ -137,9 +172,9 @@ function Camera({ onCapture, challenge }) {
             )}
             {!isActive && !burstActive && (
               <div className="pre-capture-indicator">
-                <span className="indicator-label">3 photos</span>
+                <span className="indicator-label">{burstMode ? '3 photos' : '1 photo'}</span>
                 <div className="photo-dots">
-                  {Array.from({ length: BURST_COUNT }).map((_, i) => (
+                  {Array.from({ length: burstMode ? BURST_COUNT : 1 }).map((_, i) => (
                     <div key={i} className="photo-dot" />
                   ))}
                 </div>
@@ -147,46 +182,71 @@ function Camera({ onCapture, challenge }) {
             )}
             <CountdownTimer count={count || burstCountdown} isActive={isActive || burstCountdown > 0} />
             <FlashEffect trigger={flashTrigger} />
-            <BurstIndicator
-              currentPhoto={burstProgress}
-              totalPhotos={BURST_COUNT}
-              isActive={burstActive && burstCountdown === 0 && !showPreview}
-            />
+            {burstMode && (
+              <BurstIndicator
+                currentPhoto={burstProgress}
+                totalPhotos={BURST_COUNT}
+                isActive={burstActive && burstCountdown === 0 && !showPreview}
+              />
+            )}
             <PhotoPreview photoData={previewPhoto} isVisible={showPreview} />
           </div>
         </>
       )}
       <div className="camera-actions">
         {!isActive && !burstActive && (
-          <button
-            onClick={handleFlipCamera}
-            className="flip-camera-button"
-            disabled={loading}
-          >
-            <svg width="24" height="24" viewBox="0 0 32 32" fill="currentColor">
-              {/* Top curved arrow - clockwise from left to right */}
-              <path d="M 8 12 Q 8 6 16 6 Q 24 6 24 12"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeLinecap="round"/>
-              <path d="M 24 12 L 26 9 L 23 10 Z" fill="currentColor"/>
+          <>
+            <button
+              onClick={toggleBurstMode}
+              className="burst-mode-toggle"
+              disabled={loading}
+              title={burstMode ? 'Switch to single photo' : 'Switch to 3 photos'}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {burstMode ? (
+                  // 3 photos icon
+                  <>
+                    <rect x="3" y="5" width="6" height="8" rx="1" />
+                    <rect x="9" y="5" width="6" height="8" rx="1" />
+                    <rect x="15" y="5" width="6" height="8" rx="1" />
+                  </>
+                ) : (
+                  // 1 photo icon
+                  <rect x="6" y="4" width="12" height="16" rx="1" />
+                )}
+              </svg>
+              <span className="burst-mode-label">{burstMode ? '3x' : '1x'}</span>
+            </button>
+            <button
+              onClick={handleFlipCamera}
+              className="flip-camera-button"
+              disabled={loading}
+            >
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="currentColor">
+                {/* Top curved arrow - clockwise from left to right */}
+                <path d="M 8 12 Q 8 6 16 6 Q 24 6 24 12"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      fill="none"
+                      strokeLinecap="round"/>
+                <path d="M 24 12 L 26 9 L 23 10 Z" fill="currentColor"/>
 
-              {/* Bottom curved arrow - clockwise from right to left */}
-              <path d="M 24 20 Q 24 26 16 26 Q 8 26 8 20"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeLinecap="round"/>
-              <path d="M 8 20 L 6 23 L 9 22 Z" fill="currentColor"/>
+                {/* Bottom curved arrow - clockwise from right to left */}
+                <path d="M 24 20 Q 24 26 16 26 Q 8 26 8 20"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      fill="none"
+                      strokeLinecap="round"/>
+                <path d="M 8 20 L 6 23 L 9 22 Z" fill="currentColor"/>
 
-              {/* Camera icon in center */}
-              <rect x="12" y="14" width="8" height="5" rx="0.5" fill="currentColor"/>
-              <path d="M 14 14 L 15 12.5 L 17 12.5 L 18 14" fill="currentColor"/>
-              <circle cx="16" cy="16.5" r="1.5" fill="white"/>
-            </svg>
-            <span className="flip-camera-label">Flip</span>
-          </button>
+                {/* Camera icon in center */}
+                <rect x="12" y="14" width="8" height="5" rx="0.5" fill="currentColor"/>
+                <path d="M 14 14 L 15 12.5 L 17 12.5 L 18 14" fill="currentColor"/>
+                <circle cx="16" cy="16.5" r="1.5" fill="white"/>
+              </svg>
+              <span className="flip-camera-label">Flip</span>
+            </button>
+          </>
         )}
         <CaptureButton
           onClick={handleCapture}

@@ -361,6 +361,45 @@ body {
   cursor: not-allowed;
 }
 
+/* Burst Mode Toggle Button */
+.burst-mode-toggle {
+  min-width: 60px;
+  height: 45px;
+  border-radius: 22px;
+  border: 2px solid #674F2D;
+  background: white;
+  color: #674F2D;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  gap: 2px;
+}
+
+.burst-mode-label {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.burst-mode-toggle:hover:not(:disabled) {
+  background: #674F2D;
+  color: white;
+  transform: scale(1.05);
+}
+
+.burst-mode-toggle:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.burst-mode-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Flash Effect */
 .flash-overlay {
   position: absolute;
@@ -1947,7 +1986,8 @@ body {
     padding: 10px;
   }
 
-  .flip-camera-button {
+  .flip-camera-button,
+  .burst-mode-toggle {
     margin: 0;
   }
 }
