@@ -6,6 +6,7 @@ import InfoBanner from './components/InfoBanner'
 import TabNavigation from './components/TabNavigation'
 import RecentPhoto from './components/RecentPhoto'
 import useFirebasePhotos from './hooks/useFirebasePhotos'
+import { combinePhotosIntoStrip } from './utils/photoStrip'
 
 function App() {
   const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, likePhoto, isUsingFirebase } = useFirebasePhotos()
@@ -117,6 +118,20 @@ function App() {
     }
   }
 
+  const handleUploadPhoto = async (photoDataUrl) => {
+    try {
+      // Apply photostrip styling to uploaded photo
+      const stripData = await combinePhotosIntoStrip([photoDataUrl])
+
+      // Upload to Firebase/local storage
+      await uploadPhoto(stripData, 'none', null)
+
+      console.log('Photo uploaded successfully')
+    } catch (error) {
+      console.error('Error uploading photo:', error)
+    }
+  }
+
   const handleDismissBanner = () => {
     localStorage.setItem('infoBannerDismissed', 'true')
     setShowBanner(false)
@@ -162,6 +177,7 @@ function App() {
             onDelete={handleDeletePhoto}
             onClearAll={handleClearAll}
             onLike={handleLike}
+            onUpload={handleUploadPhoto}
             isUsingFirebase={isUsingFirebase}
           />
         )}
