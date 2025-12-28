@@ -907,7 +907,7 @@ body {
 
 .photo-like-overlay {
   position: absolute;
-  bottom: 12px;
+  bottom: 4px;
   left: 12px;
   display: flex;
   align-items: center;
