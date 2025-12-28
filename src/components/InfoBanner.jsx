@@ -8,7 +8,7 @@ function InfoBanner({ onClose }) {
           <line x1="12" y1="8" x2="12.01" y2="8"></line>
         </svg>
         <p>
-          All photos are shared publicly! Choose between 1 photo or 3 photos using the mode toggle. In 3-photo mode, the photobooth captures photos in a row with a countdown between each shot. When you're ready, strike a pose and let's create beautiful memories together!
+          All photos are shared publicly! By default, the photobooth captures 1 photo. You can switch to 3-photo mode using the toggle button (1x/3x). In 3-photo mode, the photobooth captures photos in a row with a countdown between each shot. When you're ready, strike a pose and let's create beautiful memories together!
         </p>
         <button className="info-banner-close" onClick={onClose} aria-label="Close banner">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

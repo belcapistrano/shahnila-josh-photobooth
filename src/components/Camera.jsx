@@ -18,7 +18,7 @@ const PREVIEW_DURATION = 1000 // milliseconds to show preview
 function Camera({ onCapture, challenge }) {
   const videoRef = useRef(null)
   const [facingMode, setFacingMode] = useState('user') // 'user' for front, 'environment' for back
-  const [burstMode, setBurstMode] = useState(true) // true for 3 photos, false for 1 photo
+  const [burstMode, setBurstMode] = useState(false) // true for 3 photos, false for 1 photo
   const { stream, error, loading } = useCamera(videoRef, facingMode)
   const { capturePhoto } = usePhotoCapture(videoRef, facingMode === 'user')
   const { count, isActive, startCountdown, cancelCountdown } = useCountdown(3)
