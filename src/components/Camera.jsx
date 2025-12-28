@@ -54,9 +54,14 @@ function Camera({ onCapture, challenge }) {
       await new Promise(resolve => setTimeout(resolve, PREVIEW_DURATION))
       setShowPreview(false)
 
-      // Send single photo directly
-      if (onCapture) {
-        onCapture(photoData, 'none')
+      // Create photo strip with single photo (to apply header/footer)
+      try {
+        const stripData = await combinePhotosIntoStrip([photoData])
+        if (stripData && onCapture) {
+          onCapture(stripData, 'none')
+        }
+      } catch (error) {
+        console.error('Error creating single photo strip:', error)
       }
     }
 
