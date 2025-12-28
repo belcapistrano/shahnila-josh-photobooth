@@ -135,6 +135,13 @@ function App() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [activeTab])
 
+  // Scroll to top when switching to gallery
+  useEffect(() => {
+    if (activeTab === 'gallery') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [activeTab])
+
   return (
     <div className="app">
       <header className="app-header">
