@@ -76,7 +76,25 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         <h2>Photobooth Pictures</h2>
         <div className="photographer-credit-inline">
           <span className="photographer-text">
-            Photography by <strong>Ray Tomaro</strong>
+            Photography by <strong>Ray Tomaro</strong> (
+            <a
+              href="http://www.raytomaro.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="photographer-link"
+            >
+              Website
+            </a>
+            {' | '}
+            <a
+              href="http://www.facebook.com/rtmediaphotovideo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="photographer-link"
+            >
+              Facebook
+            </a>
+            )
           </span>
         </div>
       </div>
