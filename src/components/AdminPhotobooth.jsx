@@ -78,24 +78,6 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
           <span className="photographer-text">
             Photography by <strong>Ray Tomaro</strong>
           </span>
-          <span className="photographer-separator">•</span>
-          <a
-            href="http://www.raytomaro.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="photographer-link"
-          >
-            Website
-          </a>
-          <span className="photographer-separator">•</span>
-          <a
-            href="http://www.facebook.com/rtmediaphotovideo.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="photographer-link"
-          >
-            Facebook
-          </a>
         </div>
       </div>
 
