@@ -23,9 +23,29 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
   }
 
   // Filter by folder
-  const currentPhotos = activeFolder === 'all'
+  let currentPhotos = activeFolder === 'all'
     ? dayFilteredPhotos
     : dayFilteredPhotos.filter(photo => photo.folder === activeFolder)
+
+  // When showing all photos, randomize order and prioritize images over videos
+  if (activeDay === 'all' && activeFolder === 'all') {
+    // Separate photos and videos
+    const images = currentPhotos.filter(photo => !photo.isVideo)
+    const videos = currentPhotos.filter(photo => photo.isVideo)
+
+    // Randomize each group
+    const shuffleArray = (array) => {
+      const shuffled = [...array]
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      }
+      return shuffled
+    }
+
+    // Combine: images first, then videos
+    currentPhotos = [...shuffleArray(images), ...shuffleArray(videos)]
+  }
 
   const handleToggleLike = (photoId) => {
     const newLikedPhotos = new Set(likedPhotos)
