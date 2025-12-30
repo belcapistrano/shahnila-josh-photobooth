@@ -109,7 +109,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*,video/*"
+          accept="image/*,video/mp4,video/quicktime"
           multiple
           style={{ display: 'none' }}
           onChange={handleFileSelect}
@@ -142,7 +142,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*,video/*"
+          accept="image/*,video/mp4,video/quicktime"
           multiple
           style={{ display: 'none' }}
           onChange={handleFileSelect}

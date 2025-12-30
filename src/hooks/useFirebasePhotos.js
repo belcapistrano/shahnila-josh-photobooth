@@ -90,8 +90,11 @@ function useFirebasePhotos() {
       const mimeMatch = dataUrl.match(/data:([^;]+);/)
       if (mimeMatch) {
         const mimeType = mimeMatch[1]
+        // Handle video formats - normalize to MP4 for universal compatibility
         if (mimeType.startsWith('video/mp4')) return '.mp4'
+        if (mimeType.startsWith('video/quicktime')) return '.mp4' // iOS videos
         if (mimeType.startsWith('video/')) return '.mp4'
+        // Handle image formats
         if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') return '.jpg'
         if (mimeType === 'image/png') return '.png'
       }

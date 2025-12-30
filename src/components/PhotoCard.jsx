@@ -316,13 +316,15 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
         {isVideo ? (
           <video
             ref={videoRef}
-            src={imageUrl}
             controls
             loop
             muted
             playsInline
+            preload="metadata"
+            webkit-playsinline="true"
             className={`photo-card-video ${isVideoPlaying ? 'playing' : ''}`}
           >
+            <source src={imageUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         ) : (
