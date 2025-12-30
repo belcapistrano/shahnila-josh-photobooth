@@ -82,6 +82,7 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   }, [isVideo])
 
   const handleLike = (e) => {
+    console.log('Heart button clicked - preventing default')
     e.preventDefault()
     e.stopPropagation()
 

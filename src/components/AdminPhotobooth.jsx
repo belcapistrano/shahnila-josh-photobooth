@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import PhotoCard from './PhotoCard'
 import { processAllExistingPhotos } from '../utils/processExistingPhotos'
 
@@ -13,6 +13,15 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
   const [displayedCount, setDisplayedCount] = useState(30)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const observerTarget = useRef(null)
+
+  // Initialize randomSeed from localStorage or create new one
+  const [randomSeed, setRandomSeed] = useState(() => {
+    const stored = localStorage.getItem('photoboothRandomSeed')
+    return stored ? parseInt(stored, 10) : Date.now()
+  })
+
+  // Store shuffled order to prevent re-shuffling when only likes change
+  const shuffledOrderRef = useRef(null)
 
   // Combine all photos
   const allPhotos = [...saturdayPhotos, ...sundayPhotos]
@@ -31,23 +40,39 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
     : dayFilteredPhotos.filter(photo => photo.folder === activeFolder)
 
   // When showing all photos, randomize order and prioritize images over videos
+  // Only re-shuffle when randomSeed changes (which happens on filter change)
   if (activeDay === 'all' && activeFolder === 'all') {
-    // Separate photos and videos
-    const images = currentPhotos.filter(photo => !photo.isVideo)
-    const videos = currentPhotos.filter(photo => photo.isVideo)
+    // Generate or retrieve shuffled order
+    if (!shuffledOrderRef.current || shuffledOrderRef.current.seed !== randomSeed) {
+      // Separate photos and videos
+      const images = currentPhotos.filter(photo => !photo.isVideo)
+      const videos = currentPhotos.filter(photo => photo.isVideo)
 
-    // Randomize each group
-    const shuffleArray = (array) => {
-      const shuffled = [...array]
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      // Randomize each group
+      const shuffleArray = (array) => {
+        const shuffled = [...array]
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        }
+        return shuffled
       }
-      return shuffled
+
+      // Store the ID order
+      const shuffledImages = shuffleArray(images)
+      const shuffledVideos = shuffleArray(videos)
+      const photoIdOrder = [...shuffledImages, ...shuffledVideos].map(p => p.id)
+
+      shuffledOrderRef.current = { seed: randomSeed, photoIdOrder }
     }
 
-    // Combine: images first, then videos
-    currentPhotos = [...shuffleArray(images), ...shuffleArray(videos)]
+    // Apply the stored order to current photos
+    const orderMap = new Map(shuffledOrderRef.current.photoIdOrder.map((id, index) => [id, index]))
+    currentPhotos = currentPhotos.slice().sort((a, b) => {
+      const orderA = orderMap.get(a.id) ?? 999999
+      const orderB = orderMap.get(b.id) ?? 999999
+      return orderA - orderB
+    })
   }
 
   // Get total count before pagination
@@ -56,6 +81,13 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
   // Apply pagination - only show displayedCount photos
   const displayedPhotos = currentPhotos.slice(0, displayedCount)
   const hasMore = displayedCount < totalPhotos
+
+  // Save randomSeed to localStorage whenever it changes
+  useEffect(() => {
+    if (randomSeed > 0) {
+      localStorage.setItem('photoboothRandomSeed', randomSeed.toString())
+    }
+  }, [randomSeed])
 
   // Reset displayed count when filters change
   useEffect(() => {
@@ -111,16 +143,23 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
     return !isLiked
   }
 
-  const handleDelete = (photoId) => {
+  const handleDelete = (photoId, day) => {
     if (onDelete) {
-      onDelete(photoId, activeDay)
+      onDelete(photoId, day)
     }
   }
 
-  const handleLike = (photoId, incrementValue) => {
+  const handleLike = (photoId, incrementValue, day) => {
     if (onLike) {
-      onLike(photoId, activeDay, incrementValue)
+      onLike(photoId, day, incrementValue)
     }
+  }
+
+  const handleShuffle = () => {
+    const newSeed = Date.now()
+    setRandomSeed(newSeed)
+    shuffledOrderRef.current = null // Clear cached order
+    setDisplayedCount(30) // Reset to top
   }
 
   const handleProcessExistingPhotos = async () => {
@@ -221,6 +260,19 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
           </div>
           <div className="photo-count">
             {loading ? 'Loading...' : `${totalPhotos} ${totalPhotos === 1 ? 'photo' : 'photos'}`}
+            {!loading && activeDay === 'all' && activeFolder === 'all' && totalPhotos > 0 && (
+              <button
+                type="button"
+                className="btn-shuffle"
+                onClick={(e) => {
+                  e.stopPropagation() // Prevent filter header click
+                  handleShuffle()
+                }}
+                title="Shuffle photos"
+              >
+                🔀
+              </button>
+            )}
           </div>
         </div>
 
@@ -358,8 +410,8 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
               <PhotoCard
                 key={photo.id}
                 photo={photo}
-                onLike={handleLike}
-                onDelete={handleDelete}
+                onLike={(photoId, incrementValue) => handleLike(photoId, incrementValue, photo.day)}
+                onDelete={(photoId) => handleDelete(photoId, photo.day)}
                 isLiked={likedPhotos.has(photo.id)}
                 onToggleLike={handleToggleLike}
               />

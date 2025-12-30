@@ -42,13 +42,32 @@ function usePhotoboothPhotos() {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const photosList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }))
-        setSaturdayPhotos(photosList)
+        setSaturdayPhotos(prevPhotos => {
+          const newPhotosList = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
+
+          // Check if this is just a like count update (no new/deleted photos)
+          if (prevPhotos.length === newPhotosList.length && prevPhotos.length > 0) {
+            const prevIds = prevPhotos.map(p => p.id).join(',')
+            const newIds = newPhotosList.map(p => p.id).join(',')
+
+            // If photo IDs are the same, just update the like counts without changing order
+            if (prevIds === newIds) {
+              const likesMap = new Map(newPhotosList.map(p => [p.id, p.likes]))
+              return prevPhotos.map(photo => ({
+                ...photo,
+                likes: likesMap.get(photo.id) ?? photo.likes
+              }))
+            }
+          }
+
+          // New photos added/deleted, or initial load - replace entire array
+          console.log(`Saturday photos loaded: ${newPhotosList.length}`)
+          return newPhotosList
+        })
         setLoading(false)
-        console.log(`Saturday photos loaded: ${photosList.length}`)
       },
       (err) => {
         console.error('Error fetching Saturday photos:', err)
@@ -74,12 +93,31 @@ function usePhotoboothPhotos() {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const photosList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }))
-        setSundayPhotos(photosList)
-        console.log(`Sunday photos loaded: ${photosList.length}`)
+        setSundayPhotos(prevPhotos => {
+          const newPhotosList = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
+
+          // Check if this is just a like count update (no new/deleted photos)
+          if (prevPhotos.length === newPhotosList.length && prevPhotos.length > 0) {
+            const prevIds = prevPhotos.map(p => p.id).join(',')
+            const newIds = newPhotosList.map(p => p.id).join(',')
+
+            // If photo IDs are the same, just update the like counts without changing order
+            if (prevIds === newIds) {
+              const likesMap = new Map(newPhotosList.map(p => [p.id, p.likes]))
+              return prevPhotos.map(photo => ({
+                ...photo,
+                likes: likesMap.get(photo.id) ?? photo.likes
+              }))
+            }
+          }
+
+          // New photos added/deleted, or initial load - replace entire array
+          console.log(`Sunday photos loaded: ${newPhotosList.length}`)
+          return newPhotosList
+        })
       },
       (err) => {
         console.error('Error fetching Sunday photos:', err)
@@ -249,28 +287,35 @@ function usePhotoboothPhotos() {
 
   // Like/Unlike a photo
   const likePhoto = async (photoId, day, incrementValue = 1) => {
-    try {
-      if (!useFirebase || !storage || !db) {
-        if (day === 'saturday') {
-          setLocalSaturdayPhotos(prev =>
-            prev.map(photo =>
-              photo.id === photoId
-                ? { ...photo, likes: Math.max(0, (photo.likes || 0) + incrementValue) }
-                : photo
-            )
-          )
-        } else {
-          setLocalSundayPhotos(prev =>
-            prev.map(photo =>
-              photo.id === photoId
-                ? { ...photo, likes: Math.max(0, (photo.likes || 0) + incrementValue) }
-                : photo
-            )
-          )
-        }
-        return
-      }
+    // Optimistic update: Update local state immediately for instant feedback
+    const updateLocalState = (setter) => {
+      setter(prev =>
+        prev.map(photo =>
+          photo.id === photoId
+            ? { ...photo, likes: Math.max(0, (photo.likes || 0) + incrementValue) }
+            : photo
+        )
+      )
+    }
 
+    if (day === 'saturday') {
+      updateLocalState(setSaturdayPhotos)
+    } else {
+      updateLocalState(setSundayPhotos)
+    }
+
+    // If Firebase is not configured, just use local storage
+    if (!useFirebase || !storage || !db) {
+      if (day === 'saturday') {
+        updateLocalState(setLocalSaturdayPhotos)
+      } else {
+        updateLocalState(setLocalSundayPhotos)
+      }
+      return
+    }
+
+    // Sync with Firebase in the background
+    try {
       const collectionName = day === 'saturday' ? SATURDAY_COLLECTION : SUNDAY_COLLECTION
       const photoRef = doc(db, collectionName, photoId)
       await updateDoc(photoRef, {
@@ -278,24 +323,8 @@ function usePhotoboothPhotos() {
       })
     } catch (err) {
       console.error('Error updating photo likes:', err)
-      // Fallback to local update on error
-      if (day === 'saturday') {
-        setLocalSaturdayPhotos(prev =>
-          prev.map(photo =>
-            photo.id === photoId
-              ? { ...photo, likes: Math.max(0, (photo.likes || 0) + incrementValue) }
-              : photo
-          )
-        )
-      } else {
-        setLocalSundayPhotos(prev =>
-          prev.map(photo =>
-            photo.id === photoId
-              ? { ...photo, likes: Math.max(0, (photo.likes || 0) + incrementValue) }
-              : photo
-          )
-        )
-      }
+      // Revert optimistic update on error by refreshing from Firebase
+      // The real-time listener will automatically sync the correct state
     }
   }
 
