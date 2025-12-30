@@ -81,7 +81,10 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     }
   }, [isVideo])
 
-  const handleLike = () => {
+  const handleLike = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     if (onLike && onToggleLike) {
       // Toggle the like state in localStorage
       const newLikedState = onToggleLike(photo.id)
@@ -95,7 +98,10 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     }
   }
 
-  const handleDownload = async () => {
+  const handleDownload = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     setIsDownloading(true)
     try {
       // Convert URL to blob
@@ -135,7 +141,10 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     }
   }
 
-  const handleNativeShare = async () => {
+  const handleNativeShare = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     try {
       // Convert URL to blob
       const response = await fetch(imageUrl, { mode: 'cors' })
@@ -190,13 +199,19 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     }
   }
 
-  const handleShareFacebook = () => {
+  const handleShareFacebook = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     const shareUrl = encodeURIComponent(imageUrl)
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`
     window.open(facebookUrl, '_blank', 'width=600,height=400')
   }
 
-  const handleShareInstagram = async () => {
+  const handleShareInstagram = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     // Instagram doesn't have a direct web share API
     // Best approach is to use native share on mobile (which includes Instagram)
     // or download the image for manual upload
@@ -236,13 +251,19 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     }
   }
 
-  const handleShareWhatsApp = () => {
+  const handleShareWhatsApp = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     const text = encodeURIComponent(`Check out this ${isVideo ? 'video' : 'photo'} from Shahnila & Josh's wedding! 💕 ${imageUrl}`)
     const whatsappUrl = `https://wa.me/?text=${text}`
     window.open(whatsappUrl, '_blank')
   }
 
-  const handleCopyLink = async () => {
+  const handleCopyLink = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     try {
       await navigator.clipboard.writeText(imageUrl)
       alert('Link copied to clipboard!')
@@ -266,7 +287,10 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     }
   }
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     if (window.confirm('Are you sure you want to delete this photo?')) {
       if (onDelete) {
         onDelete(photo.id, photo.storagePath)
