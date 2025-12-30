@@ -2121,6 +2121,205 @@ body {
   }
 }
 
+/* Admin Photobooth Styles */
+.admin-photobooth {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.admin-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #F5F5DC;
+}
+
+.admin-header h2 {
+  color: #674F2D;
+  margin: 0 0 8px 0;
+  font-size: 26px;
+  font-family: 'Georgia', serif;
+}
+
+.admin-subtitle {
+  color: #8B6F47;
+  margin: 0;
+  font-size: 14px;
+}
+
+.day-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.day-tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #F5F5DC;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.day-tab:hover {
+  background: #E8DCC4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.2);
+}
+
+.day-tab.active {
+  background: white;
+  border-color: #674F2D;
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.15);
+}
+
+.day-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.day-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.day-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #674F2D;
+}
+
+.day-date {
+  font-size: 13px;
+  color: #8B6F47;
+}
+
+.photo-count {
+  background: #674F2D;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 35px;
+  text-align: center;
+}
+
+.day-tab.active .photo-count {
+  background: #8B6F47;
+}
+
+.admin-upload-section {
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.btn-admin-upload {
+  padding: 14px 32px;
+  border: 2px solid #674F2D;
+  background: #674F2D;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-admin-upload:hover:not(:disabled) {
+  background: #5a432a;
+  border-color: #5a432a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(103, 79, 45, 0.3);
+}
+
+.btn-admin-upload:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.admin-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: #F5F5DC;
+  border-radius: 12px;
+  color: #674F2D;
+}
+
+.admin-empty p {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.admin-empty-hint {
+  font-size: 14px;
+  color: #8B6F47;
+}
+
+.admin-gallery-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Mobile Responsive for Admin Photobooth */
+@media (max-width: 768px) {
+  .admin-header h2 {
+    font-size: 22px;
+  }
+
+  .admin-subtitle {
+    font-size: 13px;
+  }
+
+  .day-tabs {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .day-tab {
+    padding: 14px 16px;
+  }
+
+  .day-icon {
+    font-size: 24px;
+  }
+
+  .day-name {
+    font-size: 16px;
+  }
+
+  .day-date {
+    font-size: 12px;
+  }
+
+  .photo-count {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+
+  .btn-admin-upload {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+}
+
 /* Mobile Landscape Mode */
 @media (max-height: 500px) and (orientation: landscape) {
   .camera-container {

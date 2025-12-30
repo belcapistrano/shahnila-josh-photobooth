@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import Camera from './components/Camera'
 import PhotoGallery from './components/PhotoGallery'
 import Challenges from './components/Challenges'
+import AdminPhotobooth from './components/AdminPhotobooth'
 import InfoBanner from './components/InfoBanner'
 import TabNavigation from './components/TabNavigation'
 import RecentPhoto from './components/RecentPhoto'
@@ -132,6 +133,35 @@ function App() {
     }
   }
 
+  const handleAdminUploadPhoto = async (photoDataUrl, day) => {
+    try {
+      // Apply photostrip styling to uploaded photo
+      const stripData = await combinePhotosIntoStrip([photoDataUrl])
+
+      // Upload to Firebase/local storage with day tag
+      const challenge = {
+        text: day === 'saturday' ? 'Saturday, December 27' : 'Sunday, December 28',
+        emoji: '📸',
+        category: 'photobooth'
+      }
+
+      await uploadPhoto(stripData, 'none', challenge)
+
+      console.log(`Photo uploaded successfully for ${day}`)
+    } catch (error) {
+      console.error('Error uploading admin photo:', error)
+    }
+  }
+
+  // Filter photos by day for admin photobooth
+  const saturdayPhotos = photos.filter(photo =>
+    photo.challenge?.category === 'photobooth' && photo.challenge?.text === 'Saturday, December 27'
+  )
+
+  const sundayPhotos = photos.filter(photo =>
+    photo.challenge?.category === 'photobooth' && photo.challenge?.text === 'Sunday, December 28'
+  )
+
   const handleDismissBanner = () => {
     localStorage.setItem('infoBannerDismissed', 'true')
     setShowBanner(false)
@@ -150,9 +180,9 @@ function App() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [activeTab])
 
-  // Scroll to top when switching to gallery
+  // Scroll to top when switching to gallery or photobooth
   useEffect(() => {
-    if (activeTab === 'gallery') {
+    if (activeTab === 'gallery' || activeTab === 'photobooth') {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, [activeTab])
@@ -178,6 +208,16 @@ function App() {
             onClearAll={handleClearAll}
             onLike={handleLike}
             onUpload={handleUploadPhoto}
+            isUsingFirebase={isUsingFirebase}
+          />
+        )}
+        {activeTab === 'photobooth' && (
+          <AdminPhotobooth
+            saturdayPhotos={saturdayPhotos}
+            sundayPhotos={sundayPhotos}
+            onUpload={handleAdminUploadPhoto}
+            onDelete={handleDeletePhoto}
+            onLike={handleLike}
             isUsingFirebase={isUsingFirebase}
           />
         )}
