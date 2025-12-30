@@ -20,7 +20,7 @@ function App() {
     likePhoto: likePhotoboothPhoto,
     isUsingFirebase: isPhotoboothUsingFirebase
   } = usePhotoboothPhotos()
-  const [activeTab, setActiveTab] = useState('gallery')
+  const [activeTab, setActiveTab] = useState('photobooth')
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [activeChallenge, setActiveChallenge] = useState(null)

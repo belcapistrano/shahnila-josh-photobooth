@@ -96,6 +96,28 @@ function usePhotoboothPhotos() {
     const collectionName = day === 'saturday' ? SATURDAY_COLLECTION : SUNDAY_COLLECTION
     const storagePath = `photobooth/${day}/${folder}`
 
+    // Detect file type from data URL and get appropriate extension
+    const getFileExtension = (dataUrl) => {
+      const mimeMatch = dataUrl.match(/data:([^;]+);/)
+      if (mimeMatch) {
+        const mimeType = mimeMatch[1]
+        if (mimeType.startsWith('video/mp4') || mimeType.startsWith('video/mpeg')) {
+          return '.mp4'
+        } else if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
+          return '.jpg'
+        } else if (mimeType === 'image/png') {
+          return '.png'
+        } else if (mimeType === 'image/gif') {
+          return '.gif'
+        } else if (mimeType === 'image/webp') {
+          return '.webp'
+        }
+      }
+      return '.jpg' // default fallback
+    }
+
+    const fileExtension = getFileExtension(photoData)
+
     // If Firebase is not configured, use local storage
     if (!useFirebase || !storage || !db) {
       const newPhoto = {
@@ -104,7 +126,8 @@ function usePhotoboothPhotos() {
         timestamp: new Date().toISOString(),
         day: day,
         folder: folder,
-        likes: 0
+        likes: 0,
+        fileType: fileExtension
       }
 
       if (day === 'saturday') {
@@ -116,8 +139,8 @@ function usePhotoboothPhotos() {
     }
 
     try {
-      // Firebase upload to specific folder
-      const filename = `${storagePath}/${timestamp}.jpg`
+      // Firebase upload to specific folder with correct extension
+      const filename = `${storagePath}/${timestamp}${fileExtension}`
       const storageRef = ref(storage, filename)
 
       // Upload photo data (base64)
@@ -134,7 +157,9 @@ function usePhotoboothPhotos() {
         createdAt: new Date().toISOString(),
         day: day,
         folder: folder,
-        likes: 0
+        likes: 0,
+        fileType: fileExtension,
+        isVideo: fileExtension === '.mp4'
       })
 
       return {
@@ -154,7 +179,9 @@ function usePhotoboothPhotos() {
         timestamp: new Date().toISOString(),
         day: day,
         folder: folder,
-        likes: 0
+        likes: 0,
+        fileType: fileExtension,
+        isVideo: fileExtension === '.mp4'
       }
 
       if (day === 'saturday') {

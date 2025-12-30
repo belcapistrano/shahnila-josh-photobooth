@@ -1,57 +1,10 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import PhotoCard from './PhotoCard'
 
 function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onLike, isUsingFirebase }) {
   const [activeDay, setActiveDay] = useState('saturday')
   const [activeFolder, setActiveFolder] = useState('original')
-  const [uploading, setUploading] = useState(false)
-  const fileInputRef = useRef(null)
   const [likedPhotos, setLikedPhotos] = useState(new Set())
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click()
-  }
-
-  const handleFileSelect = async (event) => {
-    const files = event.target.files
-    if (!files || files.length === 0) return
-
-    setUploading(true)
-    try {
-      const uploadPromises = Array.from(files).map(file => {
-        return new Promise((resolve, reject) => {
-          if (!file.type.startsWith('image/')) {
-            resolve()
-            return
-          }
-
-          const reader = new FileReader()
-          reader.onload = async (e) => {
-            try {
-              const dataUrl = e.target.result
-              if (onUpload) {
-                await onUpload(dataUrl, activeDay, activeFolder)
-              }
-              resolve()
-            } catch (error) {
-              reject(error)
-            }
-          }
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-      })
-
-      await Promise.all(uploadPromises)
-    } catch (error) {
-      console.error('Error uploading files:', error)
-    } finally {
-      setUploading(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
-    }
-  }
 
   const allDayPhotos = activeDay === 'saturday' ? saturdayPhotos : sundayPhotos
   const currentPhotos = allDayPhotos.filter(photo => photo.folder === activeFolder)
@@ -86,7 +39,42 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
     <div className="admin-photobooth">
       <div className="admin-header">
         <h2>Photobooth Pictures</h2>
-        <p className="admin-subtitle">Upload photos from the physical photobooth sessions</p>
+        <div className="photographer-credit-header">
+          <div className="photographer-info-inline">
+            <span className="camera-icon-small">📸</span>
+            <p className="photographer-byline">
+              Photography by <strong>Ray Tomaro</strong> - Professional Photographer
+            </p>
+          </div>
+          <div className="photographer-links-compact">
+            <a
+              href="http://www.raytomaro.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="photographer-link-small website"
+              title="Visit Ray Tomaro's Website"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              Website
+            </a>
+            <a
+              href="http://www.facebook.com/rtmediaphotovideo.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="photographer-link-small facebook"
+              title="Visit Ray Tomaro's Facebook Page"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              Facebook
+            </a>
+          </div>
+        </div>
       </div>
 
       <div className="day-tabs">
@@ -138,28 +126,10 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </button>
       </div>
 
-      <div className="admin-upload-section">
-        <button
-          className="btn-admin-upload"
-          onClick={handleUploadClick}
-          disabled={uploading}
-        >
-          {uploading ? 'Uploading...' : `📤 Upload to ${activeFolder.charAt(0).toUpperCase() + activeFolder.slice(1)}`}
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          style={{ display: 'none' }}
-          onChange={handleFileSelect}
-        />
-      </div>
-
       {currentPhotos.length === 0 ? (
         <div className="admin-empty">
-          <p>No photos uploaded for {activeDay === 'saturday' ? 'Saturday' : 'Sunday'} yet.</p>
-          <p className="admin-empty-hint">Click the upload button to add photos from the photobooth session.</p>
+          <p>No photos available for {activeDay === 'saturday' ? 'Saturday' : 'Sunday'} in the {activeFolder} folder yet.</p>
+          <p className="admin-empty-hint">Photos from the photobooth session will appear here.</p>
         </div>
       ) : (
         <div className="admin-gallery-grid">
