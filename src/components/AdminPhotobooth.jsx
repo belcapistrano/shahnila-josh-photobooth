@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PhotoCard from './PhotoCard'
 import { processAllExistingPhotos } from '../utils/processExistingPhotos'
 
-function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onLike, isUsingFirebase }) {
+function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDelete, onLike, isUsingFirebase }) {
   const [activeDay, setActiveDay] = useState('all')
   const [activeFolder, setActiveFolder] = useState('all')
   const [likedPhotos, setLikedPhotos] = useState(new Set())
@@ -291,7 +291,12 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </div>
       )}
 
-      {currentPhotos.length === 0 ? (
+      {loading ? (
+        <div className="admin-empty">
+          <p>Pictures are still loading, please wait...</p>
+          <div className="loading-spinner-large"></div>
+        </div>
+      ) : currentPhotos.length === 0 ? (
         <div className="admin-empty">
           <p>No photos available for {activeDay === 'saturday' ? 'Saturday' : 'Sunday'} in the {activeFolder} folder yet.</p>
           <p className="admin-empty-hint">Photos from the photobooth session will appear here.</p>

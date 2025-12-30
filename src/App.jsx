@@ -15,6 +15,7 @@ function App() {
   const {
     saturdayPhotos,
     sundayPhotos,
+    loading: photoboothLoading,
     uploadPhoto: uploadPhotoboothPhoto,
     deletePhoto: deletePhotoboothPhoto,
     likePhoto: likePhotoboothPhoto,
@@ -223,6 +224,7 @@ function App() {
           <AdminPhotobooth
             saturdayPhotos={saturdayPhotos}
             sundayPhotos={sundayPhotos}
+            loading={photoboothLoading}
             onUpload={handleAdminUploadPhoto}
             onDelete={handleDeletePhotoboothPhoto}
             onLike={handleLikePhotoboothPhoto}
