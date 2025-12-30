@@ -56,7 +56,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
   return (
     <div className="admin-photobooth">
       <div className="admin-header">
-        <h2>Official Photobooth Gallery</h2>
+        <h2>Photobooth Pictures</h2>
         <p className="admin-subtitle">Upload photos from the physical photobooth sessions</p>
       </div>
 

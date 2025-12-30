@@ -1,9 +1,7 @@
 function TabNavigation({ activeTab, onTabChange }) {
   const tabs = [
-    { id: 'camera', label: 'Camera', icon: '📷' },
     { id: 'gallery', label: 'Gallery', icon: '🖼️' },
-    { id: 'photobooth', label: 'Photobooth', icon: '📸' },
-    { id: 'challenges', label: 'Challenges', icon: '🎯' }
+    { id: 'photobooth', label: 'Photobooth Pictures', icon: '📸' }
   ]
 
   return (
