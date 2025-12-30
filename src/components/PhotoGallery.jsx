@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import PhotoCard from './PhotoCard'
 import useLikedPhotos from '../hooks/useLikedPhotos'
 
-function PhotoGallery({ photos, onDelete, onClearAll, onLike, onUpload, isUsingFirebase }) {
+function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload, isUsingFirebase }) {
   const { isPhotoLiked, toggleLike } = useLikedPhotos()
   const fileInputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
@@ -51,6 +51,34 @@ function PhotoGallery({ photos, onDelete, onClearAll, onLike, onUpload, isUsingF
         fileInputRef.current.value = ''
       }
     }
+  }
+
+  // Show loading skeletons
+  if (loading) {
+    return (
+      <div className="photo-gallery">
+        <div className="gallery-header">
+          <div className="gallery-header-left">
+            <h2>Gallery</h2>
+            <div className={`storage-indicator ${isUsingFirebase ? 'cloud' : 'local'}`}>
+              <span className="storage-icon">{isUsingFirebase ? '☁️' : '💾'}</span>
+              <span className="storage-text">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div className="gallery-grid">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="photo-card-skeleton">
+              <div className="skeleton-image"></div>
+              <div className="skeleton-footer">
+                <div className="skeleton-text skeleton-text-short"></div>
+                <div className="skeleton-text skeleton-text-long"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   if (photos.length === 0) {

@@ -211,6 +211,7 @@ function App() {
         {activeTab === 'gallery' && (
           <PhotoGallery
             photos={photos}
+            loading={loading}
             onDelete={handleDeletePhoto}
             onClearAll={handleClearAll}
             onLike={handleLike}
