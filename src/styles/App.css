@@ -2285,6 +2285,10 @@ body {
   gap: 8px;
   color: #8B6F47;
   font-size: 13px;
+  background: #F5F5DC;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #E8DCC4;
 }
 
 .photographer-credit-inline .photographer-text {
