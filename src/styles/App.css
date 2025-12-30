@@ -2263,6 +2263,181 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+/* Clean header */
+.admin-header-clean {
+  margin-bottom: 25px;
+}
+
+.admin-header-clean h2 {
+  margin: 0;
+  color: #674F2D;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+/* Horizontal filter bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px;
+  background: white;
+  border: 2px solid #E8DCC4;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-label {
+  color: #8B6F47;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  background: #F5F5DC;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  color: #674F2D;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  background: #E8DCC4;
+  transform: translateY(-1px);
+}
+
+.filter-btn.active {
+  background: #674F2D;
+  color: white;
+  border-color: #674F2D;
+}
+
+.filter-divider {
+  width: 1px;
+  height: 30px;
+  background: #E8DCC4;
+}
+
+.photo-count-display {
+  margin-left: auto;
+  color: #8B6F47;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  background: #F5F5DC;
+  border-radius: 8px;
+}
+
+/* Subtle photographer credit footer */
+.photographer-credit-footer {
+  margin-top: 40px;
+  padding: 20px 0;
+  text-align: center;
+  color: #8B6F47;
+  font-size: 13px;
+  border-top: 1px solid #E8DCC4;
+}
+
+.photographer-text {
+  color: #8B6F47;
+}
+
+.photographer-text strong {
+  color: #674F2D;
+  font-weight: 600;
+}
+
+.photographer-separator {
+  margin: 0 10px;
+  color: #E8DCC4;
+}
+
+.photographer-link-footer {
+  color: #674F2D;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.photographer-link-footer:hover {
+  color: #8B6F47;
+  text-decoration: underline;
+}
+
+/* Mobile responsive for filter bar */
+@media (max-width: 768px) {
+  .admin-header-clean h2 {
+    font-size: 24px;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding: 16px;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .filter-label {
+    font-size: 12px;
+  }
+
+  .filter-buttons {
+    width: 100%;
+  }
+
+  .filter-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .filter-divider {
+    display: none;
+  }
+
+  .photo-count-display {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .photographer-credit-footer {
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+
+  .photographer-separator {
+    margin: 0 6px;
+  }
+}
+
+/* Old header styles - keeping for backwards compatibility */
 .admin-header {
   text-align: center;
   margin-bottom: 25px;

@@ -72,43 +72,58 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
 
   return (
     <div className="admin-photobooth">
-      <div className="admin-header">
+      <div className="admin-header-clean">
         <h2>Photobooth Pictures</h2>
-        <div className="photographer-credit-header">
-          <div className="photographer-info-inline">
-            <span className="camera-icon-small">📸</span>
-            <p className="photographer-byline">
-              Photography by <strong>Ray Tomaro</strong> - Professional Photographer
-            </p>
-          </div>
-          <div className="photographer-links-compact">
-            <a
-              href="http://www.raytomaro.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="photographer-link-small website"
-              title="Visit Ray Tomaro's Website"
+      </div>
+
+      {/* Combined horizontal filter bar */}
+      <div className="filter-bar">
+        <div className="filter-group">
+          <label className="filter-label">Day:</label>
+          <div className="filter-buttons">
+            <button
+              className={`filter-btn ${activeDay === 'saturday' ? 'active' : ''}`}
+              onClick={() => setActiveDay('saturday')}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="2" y1="12" x2="22" y2="12"></line>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-              </svg>
-              Website
-            </a>
-            <a
-              href="http://www.facebook.com/rtmediaphotovideo.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="photographer-link-small facebook"
-              title="Visit Ray Tomaro's Facebook Page"
+              Saturday, Dec 27
+            </button>
+            <button
+              className={`filter-btn ${activeDay === 'sunday' ? 'active' : ''}`}
+              onClick={() => setActiveDay('sunday')}
             >
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              Facebook
-            </a>
+              Sunday, Dec 28
+            </button>
           </div>
+        </div>
+
+        <div className="filter-divider"></div>
+
+        <div className="filter-group">
+          <label className="filter-label">Type:</label>
+          <div className="filter-buttons">
+            <button
+              className={`filter-btn ${activeFolder === 'original' ? 'active' : ''}`}
+              onClick={() => setActiveFolder('original')}
+            >
+              Original
+            </button>
+            <button
+              className={`filter-btn ${activeFolder === 'animated' ? 'active' : ''}`}
+              onClick={() => setActiveFolder('animated')}
+            >
+              Animated
+            </button>
+            <button
+              className={`filter-btn ${activeFolder === 'prints' ? 'active' : ''}`}
+              onClick={() => setActiveFolder('prints')}
+            >
+              Prints
+            </button>
+          </div>
+        </div>
+
+        <div className="photo-count-display">
+          {currentPhotos.length} {currentPhotos.length === 1 ? 'photo' : 'photos'}
         </div>
       </div>
 
@@ -176,55 +191,6 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </div>
       )}
 
-      <div className="day-tabs">
-        <button
-          className={`day-tab ${activeDay === 'saturday' ? 'active' : ''}`}
-          onClick={() => setActiveDay('saturday')}
-        >
-          <span className="day-icon">📅</span>
-          <div className="day-info">
-            <span className="day-name">Saturday</span>
-            <span className="day-date">December 27, 2025</span>
-          </div>
-          <span className="photo-count">{saturdayPhotos.length}</span>
-        </button>
-        <button
-          className={`day-tab ${activeDay === 'sunday' ? 'active' : ''}`}
-          onClick={() => setActiveDay('sunday')}
-        >
-          <span className="day-icon">📅</span>
-          <div className="day-info">
-            <span className="day-name">Sunday</span>
-            <span className="day-date">December 28, 2025</span>
-          </div>
-          <span className="photo-count">{sundayPhotos.length}</span>
-        </button>
-      </div>
-
-      <div className="folder-selector">
-        <button
-          className={`folder-option ${activeFolder === 'original' ? 'active' : ''}`}
-          onClick={() => setActiveFolder('original')}
-        >
-          <span className="folder-icon">📁</span>
-          <span className="folder-name">Original</span>
-        </button>
-        <button
-          className={`folder-option ${activeFolder === 'animated' ? 'active' : ''}`}
-          onClick={() => setActiveFolder('animated')}
-        >
-          <span className="folder-icon">🎬</span>
-          <span className="folder-name">Animated</span>
-        </button>
-        <button
-          className={`folder-option ${activeFolder === 'prints' ? 'active' : ''}`}
-          onClick={() => setActiveFolder('prints')}
-        >
-          <span className="folder-icon">🖨️</span>
-          <span className="folder-name">Prints</span>
-        </button>
-      </div>
-
       {currentPhotos.length === 0 ? (
         <div className="admin-empty">
           <p>No photos available for {activeDay === 'saturday' ? 'Saturday' : 'Sunday'} in the {activeFolder} folder yet.</p>
@@ -244,6 +210,31 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
           ))}
         </div>
       )}
+
+      {/* Subtle photographer credit footer */}
+      <div className="photographer-credit-footer">
+        <span className="photographer-text">
+          Photography by <strong>Ray Tomaro</strong>
+        </span>
+        <span className="photographer-separator">•</span>
+        <a
+          href="http://www.raytomaro.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="photographer-link-footer"
+        >
+          Website
+        </a>
+        <span className="photographer-separator">•</span>
+        <a
+          href="http://www.facebook.com/rtmediaphotovideo.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="photographer-link-footer"
+        >
+          Facebook
+        </a>
+      </div>
     </div>
   )
 }
