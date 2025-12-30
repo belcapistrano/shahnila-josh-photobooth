@@ -8,6 +8,7 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState(null)
   const [canDelete, setCanDelete] = useState(false)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const videoRef = useRef(null)
 
   // Calculate time remaining for deletion (15 minutes window)
@@ -34,11 +35,20 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     return () => clearInterval(interval)
   }, [photo.createdAt, photo.timestamp])
 
-  // Autoplay video when in view
+  // Autoplay video when in view and track play/pause state
   useEffect(() => {
     if (!isVideo || !videoRef.current) return
 
     const video = videoRef.current
+
+    // Track video play/pause state for hiding controls on mobile
+    const handlePlay = () => setIsVideoPlaying(true)
+    const handlePause = () => setIsVideoPlaying(false)
+    const handleEnded = () => setIsVideoPlaying(false)
+
+    video.addEventListener('play', handlePlay)
+    video.addEventListener('pause', handlePause)
+    video.addEventListener('ended', handleEnded)
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -63,6 +73,9 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     observer.observe(video)
 
     return () => {
+      video.removeEventListener('play', handlePlay)
+      video.removeEventListener('pause', handlePause)
+      video.removeEventListener('ended', handleEnded)
       observer.disconnect()
     }
   }, [isVideo])
@@ -274,7 +287,7 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
             loop
             muted
             playsInline
-            className="photo-card-video"
+            className={`photo-card-video ${isVideoPlaying ? 'playing' : ''}`}
           >
             Your browser does not support the video tag.
           </video>
