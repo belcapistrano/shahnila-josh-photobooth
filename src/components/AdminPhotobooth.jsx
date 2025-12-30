@@ -3,6 +3,7 @@ import PhotoCard from './PhotoCard'
 
 function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onLike, isUsingFirebase }) {
   const [activeDay, setActiveDay] = useState('saturday')
+  const [activeFolder, setActiveFolder] = useState('original')
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef(null)
   const [likedPhotos, setLikedPhotos] = useState(new Set())
@@ -29,7 +30,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
             try {
               const dataUrl = e.target.result
               if (onUpload) {
-                await onUpload(dataUrl, activeDay)
+                await onUpload(dataUrl, activeDay, activeFolder)
               }
               resolve()
             } catch (error) {
@@ -52,7 +53,8 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
     }
   }
 
-  const currentPhotos = activeDay === 'saturday' ? saturdayPhotos : sundayPhotos
+  const allDayPhotos = activeDay === 'saturday' ? saturdayPhotos : sundayPhotos
+  const currentPhotos = allDayPhotos.filter(photo => photo.folder === activeFolder)
 
   const handleToggleLike = (photoId) => {
     const newLikedPhotos = new Set(likedPhotos)
@@ -112,13 +114,37 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </button>
       </div>
 
+      <div className="folder-selector">
+        <button
+          className={`folder-option ${activeFolder === 'original' ? 'active' : ''}`}
+          onClick={() => setActiveFolder('original')}
+        >
+          <span className="folder-icon">📁</span>
+          <span className="folder-name">Original</span>
+        </button>
+        <button
+          className={`folder-option ${activeFolder === 'animated' ? 'active' : ''}`}
+          onClick={() => setActiveFolder('animated')}
+        >
+          <span className="folder-icon">🎬</span>
+          <span className="folder-name">Animated</span>
+        </button>
+        <button
+          className={`folder-option ${activeFolder === 'prints' ? 'active' : ''}`}
+          onClick={() => setActiveFolder('prints')}
+        >
+          <span className="folder-icon">🖨️</span>
+          <span className="folder-name">Prints</span>
+        </button>
+      </div>
+
       <div className="admin-upload-section">
         <button
           className="btn-admin-upload"
           onClick={handleUploadClick}
           disabled={uploading}
         >
-          {uploading ? 'Uploading...' : `📤 Upload ${activeDay === 'saturday' ? 'Saturday' : 'Sunday'} Photos`}
+          {uploading ? 'Uploading...' : `📤 Upload to ${activeFolder.charAt(0).toUpperCase() + activeFolder.slice(1)}`}
         </button>
         <input
           ref={fileInputRef}

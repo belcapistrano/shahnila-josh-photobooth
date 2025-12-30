@@ -2219,6 +2219,53 @@ body {
   background: #8B6F47;
 }
 
+.folder-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.folder-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: white;
+  border: 2px solid #E8DCC4;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.folder-option:hover {
+  border-color: #674F2D;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.15);
+}
+
+.folder-option.active {
+  background: #674F2D;
+  border-color: #674F2D;
+  color: white;
+}
+
+.folder-icon {
+  font-size: 32px;
+}
+
+.folder-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #674F2D;
+}
+
+.folder-option.active .folder-name {
+  color: white;
+}
+
 .admin-upload-section {
   margin-bottom: 25px;
   text-align: center;
@@ -2317,6 +2364,24 @@ body {
     width: 100%;
     padding: 12px 24px;
     font-size: 15px;
+  }
+
+  .folder-selector {
+    gap: 8px;
+  }
+
+  .folder-option {
+    flex: 1;
+    min-width: auto;
+    padding: 12px 16px;
+  }
+
+  .folder-icon {
+    font-size: 24px;
+  }
+
+  .folder-name {
+    font-size: 12px;
   }
 }
 

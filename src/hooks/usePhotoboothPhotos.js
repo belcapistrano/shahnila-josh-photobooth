@@ -90,11 +90,11 @@ function usePhotoboothPhotos() {
     return () => unsubscribe()
   }, [useFirebase, localSundayPhotos])
 
-  // Upload photo to specific day folder
-  const uploadPhoto = async (photoData, day) => {
+  // Upload photo to specific day and folder
+  const uploadPhoto = async (photoData, day, folder = 'original') => {
     const timestamp = Date.now()
     const collectionName = day === 'saturday' ? SATURDAY_COLLECTION : SUNDAY_COLLECTION
-    const storagePath = day === 'saturday' ? 'photobooth/saturday' : 'photobooth/sunday'
+    const storagePath = `photobooth/${day}/${folder}`
 
     // If Firebase is not configured, use local storage
     if (!useFirebase || !storage || !db) {
@@ -103,6 +103,7 @@ function usePhotoboothPhotos() {
         dataUrl: photoData,
         timestamp: new Date().toISOString(),
         day: day,
+        folder: folder,
         likes: 0
       }
 
@@ -132,6 +133,7 @@ function usePhotoboothPhotos() {
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
         day: day,
+        folder: folder,
         likes: 0
       })
 
@@ -151,6 +153,7 @@ function usePhotoboothPhotos() {
         dataUrl: photoData,
         timestamp: new Date().toISOString(),
         day: day,
+        folder: folder,
         likes: 0
       }
 
