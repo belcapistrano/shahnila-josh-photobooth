@@ -112,8 +112,8 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </div>
       </div>
 
-      {/* Photo Processing Utility */}
-      {isUsingFirebase && (
+      {/* Photo Processing Utility - Hidden */}
+      {false && isUsingFirebase && (
         <div className="photo-processing-section">
           <button
             onClick={handleProcessExistingPhotos}
