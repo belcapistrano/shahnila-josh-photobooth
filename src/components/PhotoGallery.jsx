@@ -19,7 +19,8 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
     try {
       const uploadPromises = Array.from(files).map(file => {
         return new Promise((resolve, reject) => {
-          if (!file.type.startsWith('image/')) {
+          // Accept both images and videos
+          if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
             resolve()
             return
           }
@@ -90,25 +91,25 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
           <div className="instructions-steps">
             <div className="instruction-step">
               <span className="step-number">1</span>
-              <span className="step-text">Click "Upload Photo" below</span>
+              <span className="step-text">Click "Upload" below</span>
             </div>
             <div className="instruction-step">
               <span className="step-number">2</span>
-              <span className="step-text">Select one or more photos from your device</span>
+              <span className="step-text">Select one or more photos or videos from your device</span>
             </div>
             <div className="instruction-step">
               <span className="step-number">3</span>
-              <span className="step-text">Your photos will be optimized and added to the gallery! Download anytime to get the original high-quality version.</span>
+              <span className="step-text">Your media will be optimized and added to the gallery! Download anytime to get the original high-quality version.</span>
             </div>
           </div>
         </div>
         <button className="btn-upload-empty" onClick={handleUploadClick} disabled={uploading}>
-          {uploading ? 'Uploading...' : '📤 Upload Photo'}
+          {uploading ? 'Uploading...' : '📤 Upload'}
         </button>
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,video/*"
           multiple
           style={{ display: 'none' }}
           onChange={handleFileSelect}
@@ -123,7 +124,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
         <div className="upload-info-content">
           <span className="upload-info-icon">📸</span>
           <p>
-            <strong>Share your photos!</strong> Click the Upload button to add your favorite moments from the celebration.
+            <strong>Share your photos & videos!</strong> Click the Upload button to add your favorite moments from the celebration.
           </p>
         </div>
       </div>
@@ -141,7 +142,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,video/*"
           multiple
           style={{ display: 'none' }}
           onChange={handleFileSelect}

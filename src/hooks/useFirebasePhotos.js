@@ -82,12 +82,32 @@ function useFirebasePhotos() {
   const uploadPhoto = async (photoData, filter = 'none', challenge = null) => {
     const timestamp = Date.now()
 
-    // Process image to generate optimized versions
+    // Detect if this is a video
+    const isVideo = photoData.startsWith('data:video/')
+
+    // Determine file extension from data URL
+    const getFileExtension = (dataUrl) => {
+      const mimeMatch = dataUrl.match(/data:([^;]+);/)
+      if (mimeMatch) {
+        const mimeType = mimeMatch[1]
+        if (mimeType.startsWith('video/mp4')) return '.mp4'
+        if (mimeType.startsWith('video/')) return '.mp4'
+        if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') return '.jpg'
+        if (mimeType === 'image/png') return '.png'
+      }
+      return '.jpg'
+    }
+
+    const fileExtension = getFileExtension(photoData)
+
+    // Process image to generate optimized versions (skip for videos)
     let processedImage = null
-    try {
-      processedImage = await processImage(photoData)
-    } catch (error) {
-      console.error('Error processing image:', error)
+    if (!isVideo) {
+      try {
+        processedImage = await processImage(photoData)
+      } catch (error) {
+        console.error('Error processing image:', error)
+      }
     }
 
     // If Firebase is not configured, use local storage
@@ -101,6 +121,8 @@ function useFirebasePhotos() {
         timestamp: new Date().toISOString(),
         filter: filter || 'none',
         likes: 0,
+        isVideo,
+        fileType: fileExtension,
         challenge: challenge ? {
           text: challenge.text,
           emoji: challenge.emoji,
@@ -112,23 +134,23 @@ function useFirebasePhotos() {
     }
 
     try {
-      // Upload original high-res photo
-      const originalFilename = `photos/originals/${timestamp}.jpg`
+      // Upload original high-res photo/video
+      const originalFilename = `photos/originals/${timestamp}${fileExtension}`
       const originalRef = ref(storage, originalFilename)
       await uploadString(originalRef, photoData, 'data_url')
       const originalURL = await getDownloadURL(originalRef)
 
-      // Upload compressed version for display
-      const compressedFilename = `photos/${timestamp}.jpg`
+      // Upload compressed version for display (images only, videos use original)
+      const compressedFilename = `photos/${timestamp}${fileExtension}`
       const compressedRef = ref(storage, compressedFilename)
-      const compressedData = processedImage?.compressed || photoData
+      const compressedData = isVideo ? photoData : (processedImage?.compressed || photoData)
       await uploadString(compressedRef, compressedData, 'data_url')
       const downloadURL = await getDownloadURL(compressedRef)
 
-      // Upload thumbnail if available
+      // Upload thumbnail if available (images only)
       let thumbnailURL = null
-      if (processedImage?.thumbnail) {
-        const thumbnailFilename = `photos/thumbnails/${timestamp}.jpg`
+      if (!isVideo && processedImage?.thumbnail) {
+        const thumbnailFilename = `photos/thumbnails/${timestamp}${fileExtension}`
         const thumbnailRef = ref(storage, thumbnailFilename)
         await uploadString(thumbnailRef, processedImage.thumbnail, 'data_url')
         thumbnailURL = await getDownloadURL(thumbnailRef)
@@ -146,6 +168,8 @@ function useFirebasePhotos() {
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
         likes: 0,
+        isVideo,
+        fileType: fileExtension,
         challenge: challenge ? {
           text: challenge.text,
           emoji: challenge.emoji,
@@ -160,6 +184,8 @@ function useFirebasePhotos() {
         thumbnailURL,
         blurPlaceholder: processedImage?.blurPlaceholder,
         filter,
+        isVideo,
+        fileType: fileExtension,
         timestamp: new Date().toISOString()
       }
     } catch (err) {
@@ -176,6 +202,8 @@ function useFirebasePhotos() {
         timestamp: new Date().toISOString(),
         filter: filter || 'none',
         likes: 0,
+        isVideo,
+        fileType: fileExtension,
         challenge: challenge ? {
           text: challenge.text,
           emoji: challenge.emoji,
