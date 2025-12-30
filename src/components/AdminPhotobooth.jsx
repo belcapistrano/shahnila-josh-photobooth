@@ -170,7 +170,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
             </button>
           </div>
           <div className="photo-count">
-            {currentPhotos.length} {currentPhotos.length === 1 ? 'photo' : 'photos'}
+            {loading ? 'Loading...' : `${currentPhotos.length} ${currentPhotos.length === 1 ? 'photo' : 'photos'}`}
           </div>
         </div>
 
