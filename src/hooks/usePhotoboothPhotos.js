@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore'
 import { storage, db, isFirebaseConfigured } from '../config/firebase'
 import useLocalStorage from './useLocalStorage'
+import { processImage } from '../utils/imageOptimization'
 
 const SATURDAY_COLLECTION = 'photobooth-saturday'
 const SUNDAY_COLLECTION = 'photobooth-sunday'
@@ -117,17 +118,31 @@ function usePhotoboothPhotos() {
     }
 
     const fileExtension = getFileExtension(photoData)
+    const isVideo = fileExtension === '.mp4'
+
+    // Process images to generate thumbnails and blur placeholders
+    let processedImage = null
+    if (!isVideo) {
+      try {
+        processedImage = await processImage(photoData)
+      } catch (error) {
+        console.error('Error processing image:', error)
+      }
+    }
 
     // If Firebase is not configured, use local storage
     if (!useFirebase || !storage || !db) {
       const newPhoto = {
         id: timestamp,
-        dataUrl: photoData,
+        dataUrl: processedImage?.compressed || photoData,
+        thumbnail: processedImage?.thumbnail,
+        blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
         day: day,
         folder: folder,
         likes: 0,
-        fileType: fileExtension
+        fileType: fileExtension,
+        isVideo: isVideo
       }
 
       if (day === 'saturday') {
@@ -143,15 +158,27 @@ function usePhotoboothPhotos() {
       const filename = `${storagePath}/${timestamp}${fileExtension}`
       const storageRef = ref(storage, filename)
 
-      // Upload photo data (base64)
-      await uploadString(storageRef, photoData, 'data_url')
+      // Upload compressed photo data (or original for videos)
+      const uploadData = isVideo ? photoData : (processedImage?.compressed || photoData)
+      await uploadString(storageRef, uploadData, 'data_url')
 
-      // Get download URL
+      // Get download URL for main file
       const downloadURL = await getDownloadURL(storageRef)
+
+      // Upload thumbnail if available (images only)
+      let thumbnailURL = null
+      if (!isVideo && processedImage?.thumbnail) {
+        const thumbnailFilename = `${storagePath}/thumbnails/${timestamp}${fileExtension}`
+        const thumbnailRef = ref(storage, thumbnailFilename)
+        await uploadString(thumbnailRef, processedImage.thumbnail, 'data_url')
+        thumbnailURL = await getDownloadURL(thumbnailRef)
+      }
 
       // Save metadata to specific Firestore collection
       const photoDoc = await addDoc(collection(db, collectionName), {
         downloadURL,
+        thumbnailURL,
+        blurPlaceholder: processedImage?.blurPlaceholder || null,
         storagePath: filename,
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
@@ -159,12 +186,14 @@ function usePhotoboothPhotos() {
         folder: folder,
         likes: 0,
         fileType: fileExtension,
-        isVideo: fileExtension === '.mp4'
+        isVideo: isVideo
       })
 
       return {
         id: photoDoc.id,
         downloadURL,
+        thumbnailURL,
+        blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
         day: day
       }
@@ -175,13 +204,15 @@ function usePhotoboothPhotos() {
       // Fallback to local storage on error
       const newPhoto = {
         id: timestamp,
-        dataUrl: photoData,
+        dataUrl: processedImage?.compressed || photoData,
+        thumbnail: processedImage?.thumbnail,
+        blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
         day: day,
         folder: folder,
         likes: 0,
         fileType: fileExtension,
-        isVideo: fileExtension === '.mp4'
+        isVideo: isVideo
       }
 
       if (day === 'saturday') {

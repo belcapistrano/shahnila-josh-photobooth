@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import ImageLoader from './ImageLoader'
 
 function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   // Use downloadURL from Firebase or dataUrl as fallback
@@ -278,10 +279,11 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
             Your browser does not support the video tag.
           </video>
         ) : (
-          <img
+          <ImageLoader
             src={imageUrl}
+            thumbnail={photo.thumbnailURL || photo.thumbnail}
+            blurPlaceholder={photo.blurPlaceholder}
             alt={`Photo taken at ${photo.timestamp}`}
-            loading="lazy"
           />
         )}
       </div>
