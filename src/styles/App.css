@@ -2442,7 +2442,9 @@ body {
   }
 
   .photographer-credit-inline {
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
   }
 
   .photographer-main {
