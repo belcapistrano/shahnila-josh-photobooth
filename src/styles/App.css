@@ -2281,32 +2281,42 @@ body {
 
 .photographer-credit-inline {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
   color: #8B6F47;
-  font-size: 13px;
   background: #F5F5DC;
   padding: 8px 16px;
   border-radius: 8px;
   border: 1px solid #E8DCC4;
 }
 
-.photographer-credit-inline .photographer-text {
+.photographer-main {
+  font-size: 13px;
   color: #8B6F47;
 }
 
-.photographer-credit-inline .photographer-separator {
-  color: #C4B5A0;
+.photographer-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
 }
 
-.photographer-credit-inline .photographer-link {
+.photographer-links .photographer-link {
   color: #4A90E2;
-  text-decoration: underline;
+  text-decoration: none;
   transition: color 0.2s ease;
 }
 
-.photographer-credit-inline .photographer-link:hover {
+.photographer-links .photographer-link:hover {
   color: #357ABD;
+  text-decoration: underline;
+}
+
+.photographer-links .link-separator {
+  color: #C4B5A0;
+  font-size: 10px;
 }
 
 /* Horizontal filter bar */
@@ -2431,7 +2441,15 @@ body {
   }
 
   .photographer-credit-inline {
+    align-items: flex-start;
+  }
+
+  .photographer-main {
     font-size: 12px;
+  }
+
+  .photographer-links {
+    font-size: 10px;
   }
 
   .filter-bar {
