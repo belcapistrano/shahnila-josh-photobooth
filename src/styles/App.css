@@ -2320,6 +2320,11 @@ body {
   font-size: 10px;
 }
 
+/* Mobile photographer credit section */
+.photographer-credit-mobile {
+  display: none;
+}
+
 /* Filter section */
 .filter-section {
   background: white;
@@ -2474,18 +2479,32 @@ body {
     font-size: 24px;
   }
 
+  /* Hide header credit on mobile */
   .photographer-credit-inline {
-    flex-direction: row;
+    display: none;
+  }
+
+  /* Show dedicated mobile credit section */
+  .photographer-credit-mobile {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 6px;
+    text-align: center;
+    padding: 12px;
+    background: white;
+    border: 2px solid #E8DCC4;
+    border-radius: 12px;
+    margin-bottom: 16px;
   }
 
-  .photographer-main {
-    font-size: 12px;
+  .photographer-credit-mobile .photographer-main {
+    font-size: 13px;
+    color: #8B6F47;
   }
 
-  .photographer-links {
-    font-size: 10px;
+  .photographer-credit-mobile .photographer-links {
+    font-size: 11px;
   }
 
   .filter-section {

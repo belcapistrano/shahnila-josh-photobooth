@@ -134,6 +134,32 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </div>
       </div>
 
+      {/* Photographer credit - Mobile only */}
+      <div className="photographer-credit-mobile">
+        <div className="photographer-main">
+          Photography by <strong>Ray Tomaro</strong>
+        </div>
+        <div className="photographer-links">
+          <a
+            href="http://www.raytomaro.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="photographer-link"
+          >
+            Website
+          </a>
+          <span className="link-separator">·</span>
+          <a
+            href="http://www.facebook.com/rtmediaphotovideo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="photographer-link"
+          >
+            Facebook
+          </a>
+        </div>
+      </div>
+
       {/* Filter section */}
       <div className="filter-section">
         <div className={`filter-header ${filtersExpanded ? 'expanded' : ''}`} onClick={() => setFiltersExpanded(!filtersExpanded)}>
