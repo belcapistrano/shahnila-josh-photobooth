@@ -9,6 +9,7 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   const [timeRemaining, setTimeRemaining] = useState(null)
   const [canDelete, setCanDelete] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
   const videoRef = useRef(null)
 
   // Calculate time remaining for deletion (15 minutes window)
@@ -95,6 +96,7 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
   }
 
   const handleDownload = async () => {
+    setIsDownloading(true)
     try {
       // Convert URL to blob
       const response = await fetch(imageUrl)
@@ -127,6 +129,9 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+    } finally {
+      // Keep showing downloading state for a moment
+      setTimeout(() => setIsDownloading(false), 800)
     }
   }
 
@@ -340,8 +345,15 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
           </div>
         )}
         <div className="photo-action-buttons">
-          <button onClick={handleDownload} className="btn-download">
-            Download
+          <button onClick={handleDownload} className="btn-download" disabled={isDownloading}>
+            {isDownloading ? (
+              <>
+                <span className="download-spinner"></span>
+                Downloading...
+              </>
+            ) : (
+              'Download'
+            )}
           </button>
           <div className="social-share-section">
             <div className="social-share-label">Share:</div>
