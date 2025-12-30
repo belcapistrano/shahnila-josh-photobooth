@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import PhotoCard from './PhotoCard'
 import { processAllExistingPhotos } from '../utils/processExistingPhotos'
 
@@ -10,6 +10,9 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
   const [processingProgress, setProcessingProgress] = useState(null)
   const [processingResults, setProcessingResults] = useState(null)
   const [filtersExpanded, setFiltersExpanded] = useState(true)
+  const [displayedCount, setDisplayedCount] = useState(30)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const observerTarget = useRef(null)
 
   // Combine all photos
   const allPhotos = [...saturdayPhotos, ...sundayPhotos]
@@ -46,6 +49,53 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
     // Combine: images first, then videos
     currentPhotos = [...shuffleArray(images), ...shuffleArray(videos)]
   }
+
+  // Get total count before pagination
+  const totalPhotos = currentPhotos.length
+
+  // Apply pagination - only show displayedCount photos
+  const displayedPhotos = currentPhotos.slice(0, displayedCount)
+  const hasMore = displayedCount < totalPhotos
+
+  // Reset displayed count when filters change
+  useEffect(() => {
+    setDisplayedCount(30)
+  }, [activeDay, activeFolder])
+
+  // Load more photos when observer target is visible
+  const loadMore = useCallback(() => {
+    if (!hasMore || isLoadingMore) return
+
+    setIsLoadingMore(true)
+    // Simulate a small delay for smooth UX
+    setTimeout(() => {
+      setDisplayedCount(prev => Math.min(prev + 30, totalPhotos))
+      setIsLoadingMore(false)
+    }, 300)
+  }, [hasMore, isLoadingMore, totalPhotos])
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    const currentTarget = observerTarget.current
+    if (currentTarget) {
+      observer.observe(currentTarget)
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget)
+      }
+    }
+  }, [hasMore, loading, loadMore])
 
   const handleToggleLike = (photoId) => {
     const newLikedPhotos = new Set(likedPhotos)
@@ -170,7 +220,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
             </button>
           </div>
           <div className="photo-count">
-            {loading ? 'Loading...' : `${currentPhotos.length} ${currentPhotos.length === 1 ? 'photo' : 'photos'}`}
+            {loading ? 'Loading...' : `${totalPhotos} ${totalPhotos === 1 ? 'photo' : 'photos'}`}
           </div>
         </div>
 
@@ -296,24 +346,45 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
           <p>Pictures are still loading, please wait...</p>
           <div className="loading-spinner-large"></div>
         </div>
-      ) : currentPhotos.length === 0 ? (
+      ) : totalPhotos === 0 ? (
         <div className="admin-empty">
           <p>No photos available for {activeDay === 'saturday' ? 'Saturday' : 'Sunday'} in the {activeFolder} folder yet.</p>
           <p className="admin-empty-hint">Photos from the photobooth session will appear here.</p>
         </div>
       ) : (
-        <div className="admin-gallery-grid">
-          {currentPhotos.map(photo => (
-            <PhotoCard
-              key={photo.id}
-              photo={photo}
-              onLike={handleLike}
-              onDelete={handleDelete}
-              isLiked={likedPhotos.has(photo.id)}
-              onToggleLike={handleToggleLike}
-            />
-          ))}
-        </div>
+        <>
+          <div className="admin-gallery-grid">
+            {displayedPhotos.map(photo => (
+              <PhotoCard
+                key={photo.id}
+                photo={photo}
+                onLike={handleLike}
+                onDelete={handleDelete}
+                isLiked={likedPhotos.has(photo.id)}
+                onToggleLike={handleToggleLike}
+              />
+            ))}
+          </div>
+
+          {/* Infinite scroll observer target */}
+          {hasMore && (
+            <div ref={observerTarget} className="infinite-scroll-trigger">
+              {isLoadingMore && (
+                <div className="loading-more">
+                  <div className="loading-spinner-small"></div>
+                  <p>Loading more photos...</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Show count indicator when not all photos are displayed */}
+          {!hasMore && displayedCount >= 30 && (
+            <div className="all-photos-loaded">
+              <p>All {totalPhotos} photos loaded</p>
+            </div>
+          )}
+        </>
       )}
 
     </div>

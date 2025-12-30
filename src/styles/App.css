@@ -2862,6 +2862,51 @@ body {
   animation: spin 0.8s linear infinite;
 }
 
+/* Infinite scroll styles */
+.infinite-scroll-trigger {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.loading-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.loading-more p {
+  color: #8B6F47;
+  font-size: 14px;
+  margin: 0;
+}
+
+.loading-spinner-small {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #E8DCC4;
+  border-top-color: #674F2D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.all-photos-loaded {
+  text-align: center;
+  padding: 30px 20px;
+  margin: 20px 0;
+}
+
+.all-photos-loaded p {
+  color: #8B6F47;
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+}
+
 /* Photographer Credit Styles */
 .photographer-credit {
   background: linear-gradient(135deg, #674F2D 0%, #8B6F47 100%);
