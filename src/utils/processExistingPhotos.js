@@ -27,57 +27,83 @@ async function urlToDataUrl(url) {
  * Process a single photo to generate thumbnails and compressed versions
  */
 async function processSinglePhoto(photo, collectionName, onProgress) {
-  try {
-    // Skip if already has thumbnail or if it's a video
-    if (photo.thumbnailURL || photo.isVideo) {
-      onProgress?.({
-        id: photo.id,
-        status: 'skipped',
-        reason: photo.thumbnailURL ? 'Already has thumbnail' : 'Video file'
+  // Wrap entire function in timeout
+  const TIMEOUT_MS = 60000 // 60 seconds per photo
+
+  const processPromise = new Promise(async (resolve, reject) => {
+    try {
+      // Skip if already has thumbnail/blur placeholder or if it's a video
+      if (photo.thumbnailURL || photo.blurPlaceholder || photo.isVideo) {
+        const reason = photo.isVideo
+          ? 'Video file'
+          : (photo.thumbnailURL && photo.blurPlaceholder)
+            ? 'Already optimized'
+            : 'Partially optimized'
+
+        onProgress?.({
+          id: photo.id,
+          status: 'skipped',
+          reason
+        })
+        resolve({ success: true, skipped: true })
+        return
+      }
+
+      onProgress?.({ id: photo.id, status: 'downloading', fileName: photo.storagePath })
+
+      // Download original image with timeout
+      const dataUrl = await urlToDataUrl(photo.downloadURL)
+
+      onProgress?.({ id: photo.id, status: 'processing', fileName: photo.storagePath })
+
+      // Process image to generate optimized versions
+      const processed = await processImage(dataUrl)
+
+      onProgress?.({ id: photo.id, status: 'uploading', fileName: photo.storagePath })
+
+      // Upload compressed version (replace original)
+      const storagePath = photo.storagePath
+      const storageRef = ref(storage, storagePath)
+      await uploadString(storageRef, processed.compressed, 'data_url')
+      const compressedURL = await getDownloadURL(storageRef)
+
+      // Upload thumbnail
+      const thumbnailPath = storagePath.replace(/\/([^/]+)$/, '/thumbnails/$1')
+      const thumbnailRef = ref(storage, thumbnailPath)
+      await uploadString(thumbnailRef, processed.thumbnail, 'data_url')
+      const thumbnailURL = await getDownloadURL(thumbnailRef)
+
+      onProgress?.({ id: photo.id, status: 'updating', fileName: photo.storagePath })
+
+      // Update Firestore document
+      const photoRef = doc(db, collectionName, photo.id)
+      await updateDoc(photoRef, {
+        downloadURL: compressedURL,
+        thumbnailURL,
+        blurPlaceholder: processed.blurPlaceholder
       })
-      return { success: true, skipped: true }
+
+      onProgress?.({ id: photo.id, status: 'completed', fileName: photo.storagePath })
+
+      resolve({ success: true, skipped: false })
+    } catch (error) {
+      console.error(`Error processing photo ${photo.id}:`, error)
+      onProgress?.({ id: photo.id, status: 'error', error: error.message, fileName: photo.storagePath })
+      reject(error)
     }
+  })
 
-    onProgress?.({ id: photo.id, status: 'downloading' })
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error(`Timeout: Photo processing took longer than ${TIMEOUT_MS / 1000}s`))
+    }, TIMEOUT_MS)
+  })
 
-    // Download original image
-    const dataUrl = await urlToDataUrl(photo.downloadURL)
-
-    onProgress?.({ id: photo.id, status: 'processing' })
-
-    // Process image to generate optimized versions
-    const processed = await processImage(dataUrl)
-
-    onProgress?.({ id: photo.id, status: 'uploading' })
-
-    // Upload compressed version (replace original)
-    const storagePath = photo.storagePath
-    const storageRef = ref(storage, storagePath)
-    await uploadString(storageRef, processed.compressed, 'data_url')
-    const compressedURL = await getDownloadURL(storageRef)
-
-    // Upload thumbnail
-    const thumbnailPath = storagePath.replace(/\/([^/]+)$/, '/thumbnails/$1')
-    const thumbnailRef = ref(storage, thumbnailPath)
-    await uploadString(thumbnailRef, processed.thumbnail, 'data_url')
-    const thumbnailURL = await getDownloadURL(thumbnailRef)
-
-    onProgress?.({ id: photo.id, status: 'updating' })
-
-    // Update Firestore document
-    const photoRef = doc(db, collectionName, photo.id)
-    await updateDoc(photoRef, {
-      downloadURL: compressedURL,
-      thumbnailURL,
-      blurPlaceholder: processed.blurPlaceholder
-    })
-
-    onProgress?.({ id: photo.id, status: 'completed' })
-
-    return { success: true, skipped: false }
+  try {
+    return await Promise.race([processPromise, timeoutPromise])
   } catch (error) {
     console.error(`Error processing photo ${photo.id}:`, error)
-    onProgress?.({ id: photo.id, status: 'error', error: error.message })
+    onProgress?.({ id: photo.id, status: 'error', error: error.message, fileName: photo.storagePath })
     return { success: false, error: error.message }
   }
 }
@@ -137,8 +163,8 @@ export async function processPhotosInCollection(collectionName, onProgress) {
         ...result
       })
 
-      // Small delay to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 500))
+      // Small delay to avoid rate limiting (reduced from 500ms)
+      await new Promise(resolve => setTimeout(resolve, 200))
     }
 
     return results

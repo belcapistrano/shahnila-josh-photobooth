@@ -125,10 +125,30 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
           {processingProgress && (
             <div className="processing-progress">
               {processingProgress.collection && (
-                <div className="progress-text">
-                  Processing {processingProgress.collection}: {processingProgress.current || 0}/{processingProgress.total || 0}
-                  {processingProgress.photo && ` - ${processingProgress.status}`}
-                </div>
+                <>
+                  <div className="progress-text">
+                    📦 <strong>{processingProgress.collection}</strong>: Photo {processingProgress.current || 0}/{processingProgress.total || 0}
+                  </div>
+                  {processingProgress.fileName && (
+                    <div className="progress-detail">
+                      {processingProgress.status === 'downloading' && '⬇️ Downloading'}
+                      {processingProgress.status === 'processing' && '⚙️ Processing'}
+                      {processingProgress.status === 'uploading' && '⬆️ Uploading'}
+                      {processingProgress.status === 'updating' && '💾 Updating'}
+                      {processingProgress.status === 'completed' && '✅ Completed'}
+                      {processingProgress.status === 'error' && '❌ Error'}
+                      {processingProgress.status === 'skipped' && `⏭️ Skipped (${processingProgress.reason})`}
+                      {' - '}
+                      <span className="file-name">{processingProgress.fileName.split('/').pop()}</span>
+                    </div>
+                  )}
+                  <div className="progress-bar-container">
+                    <div
+                      className="progress-bar-fill"
+                      style={{ width: `${((processingProgress.current || 0) / (processingProgress.total || 1)) * 100}%` }}
+                    ></div>
+                  </div>
+                </>
               )}
             </div>
           )}
@@ -145,6 +165,12 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
                   )}
                 </div>
               ))}
+              <button
+                onClick={() => setProcessingResults(null)}
+                className="btn-dismiss-results"
+              >
+                Dismiss
+              </button>
             </div>
           )}
         </div>
