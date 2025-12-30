@@ -2300,14 +2300,13 @@ body {
 }
 
 .photographer-credit-inline .photographer-link {
-  color: #674F2D;
-  text-decoration: none;
+  color: #4A90E2;
+  text-decoration: underline;
   transition: color 0.2s ease;
 }
 
 .photographer-credit-inline .photographer-link:hover {
-  color: #8B6F47;
-  text-decoration: underline;
+  color: #357ABD;
 }
 
 /* Horizontal filter bar */
