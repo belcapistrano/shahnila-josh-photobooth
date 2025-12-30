@@ -74,6 +74,29 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
     <div className="admin-photobooth">
       <div className="admin-header-clean">
         <h2>Photobooth Pictures</h2>
+        <div className="photographer-credit-inline">
+          <span className="photographer-text">
+            Photography by <strong>Ray Tomaro</strong>
+          </span>
+          <span className="photographer-separator">•</span>
+          <a
+            href="http://www.raytomaro.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="photographer-link"
+          >
+            Website
+          </a>
+          <span className="photographer-separator">•</span>
+          <a
+            href="http://www.facebook.com/rtmediaphotovideo.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="photographer-link"
+          >
+            Facebook
+          </a>
+        </div>
       </div>
 
       {/* Combined horizontal filter bar */}
@@ -211,30 +234,6 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </div>
       )}
 
-      {/* Subtle photographer credit footer */}
-      <div className="photographer-credit-footer">
-        <span className="photographer-text">
-          Photography by <strong>Ray Tomaro</strong>
-        </span>
-        <span className="photographer-separator">•</span>
-        <a
-          href="http://www.raytomaro.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="photographer-link-footer"
-        >
-          Website
-        </a>
-        <span className="photographer-separator">•</span>
-        <a
-          href="http://www.facebook.com/rtmediaphotovideo.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="photographer-link-footer"
-        >
-          Facebook
-        </a>
-      </div>
     </div>
   )
 }
