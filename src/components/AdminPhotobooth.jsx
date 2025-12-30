@@ -5,6 +5,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
   const [activeDay, setActiveDay] = useState('saturday')
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef(null)
+  const [likedPhotos, setLikedPhotos] = useState(new Set())
 
   const handleUploadClick = () => {
     fileInputRef.current?.click()
@@ -52,6 +53,32 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
   }
 
   const currentPhotos = activeDay === 'saturday' ? saturdayPhotos : sundayPhotos
+
+  const handleToggleLike = (photoId) => {
+    const newLikedPhotos = new Set(likedPhotos)
+    const isLiked = newLikedPhotos.has(photoId)
+
+    if (isLiked) {
+      newLikedPhotos.delete(photoId)
+    } else {
+      newLikedPhotos.add(photoId)
+    }
+
+    setLikedPhotos(newLikedPhotos)
+    return !isLiked
+  }
+
+  const handleDelete = (photoId) => {
+    if (onDelete) {
+      onDelete(photoId, activeDay)
+    }
+  }
+
+  const handleLike = (photoId, incrementValue) => {
+    if (onLike) {
+      onLike(photoId, activeDay, incrementValue)
+    }
+  }
 
   return (
     <div className="admin-photobooth">
@@ -114,10 +141,10 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
             <PhotoCard
               key={photo.id}
               photo={photo}
-              onLike={onLike}
-              onDelete={onDelete}
-              isLiked={false}
-              onToggleLike={() => {}}
+              onLike={handleLike}
+              onDelete={handleDelete}
+              isLiked={likedPhotos.has(photo.id)}
+              onToggleLike={handleToggleLike}
             />
           ))}
         </div>

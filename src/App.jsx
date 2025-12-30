@@ -7,10 +7,19 @@ import InfoBanner from './components/InfoBanner'
 import TabNavigation from './components/TabNavigation'
 import RecentPhoto from './components/RecentPhoto'
 import useFirebasePhotos from './hooks/useFirebasePhotos'
+import usePhotoboothPhotos from './hooks/usePhotoboothPhotos'
 import { combinePhotosIntoStrip } from './utils/photoStrip'
 
 function App() {
   const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, likePhoto, isUsingFirebase } = useFirebasePhotos()
+  const {
+    saturdayPhotos,
+    sundayPhotos,
+    uploadPhoto: uploadPhotoboothPhoto,
+    deletePhoto: deletePhotoboothPhoto,
+    likePhoto: likePhotoboothPhoto,
+    isUsingFirebase: isPhotoboothUsingFirebase
+  } = usePhotoboothPhotos()
   const [activeTab, setActiveTab] = useState('gallery')
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -138,14 +147,8 @@ function App() {
       // Apply photostrip styling to uploaded photo
       const stripData = await combinePhotosIntoStrip([photoDataUrl])
 
-      // Upload to Firebase/local storage with day tag
-      const challenge = {
-        text: day === 'saturday' ? 'Saturday, December 27' : 'Sunday, December 28',
-        emoji: '📸',
-        category: 'photobooth'
-      }
-
-      await uploadPhoto(stripData, 'none', challenge)
+      // Upload to Firebase/local storage in separate folder/collection
+      await uploadPhotoboothPhoto(stripData, day)
 
       console.log(`Photo uploaded successfully for ${day}`)
     } catch (error) {
@@ -153,14 +156,21 @@ function App() {
     }
   }
 
-  // Filter photos by day for admin photobooth
-  const saturdayPhotos = photos.filter(photo =>
-    photo.challenge?.category === 'photobooth' && photo.challenge?.text === 'Saturday, December 27'
-  )
+  const handleDeletePhotoboothPhoto = async (photoId, day) => {
+    try {
+      await deletePhotoboothPhoto(photoId, day)
+    } catch (error) {
+      console.error('Error deleting photobooth photo:', error)
+    }
+  }
 
-  const sundayPhotos = photos.filter(photo =>
-    photo.challenge?.category === 'photobooth' && photo.challenge?.text === 'Sunday, December 28'
-  )
+  const handleLikePhotoboothPhoto = async (photoId, day, incrementValue) => {
+    try {
+      await likePhotoboothPhoto(photoId, day, incrementValue)
+    } catch (error) {
+      console.error('Error liking photobooth photo:', error)
+    }
+  }
 
   const handleDismissBanner = () => {
     localStorage.setItem('infoBannerDismissed', 'true')
@@ -216,9 +226,9 @@ function App() {
             saturdayPhotos={saturdayPhotos}
             sundayPhotos={sundayPhotos}
             onUpload={handleAdminUploadPhoto}
-            onDelete={handleDeletePhoto}
-            onLike={handleLike}
-            isUsingFirebase={isUsingFirebase}
+            onDelete={handleDeletePhotoboothPhoto}
+            onLike={handleLikePhotoboothPhoto}
+            isUsingFirebase={isPhotoboothUsingFirebase}
           />
         )}
         {activeTab === 'challenges' && <Challenges onTakePhoto={handleTakePhoto} />}
