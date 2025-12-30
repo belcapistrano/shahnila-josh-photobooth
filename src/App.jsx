@@ -144,11 +144,8 @@ function App() {
 
   const handleAdminUploadPhoto = async (photoDataUrl, day, folder) => {
     try {
-      // Apply photostrip styling to uploaded photo
-      const stripData = await combinePhotosIntoStrip([photoDataUrl])
-
-      // Upload to Firebase/local storage in separate folder/collection
-      await uploadPhotoboothPhoto(stripData, day, folder)
+      // Upload original photo directly without processing to preserve quality
+      await uploadPhotoboothPhoto(photoDataUrl, day, folder)
 
       console.log(`Photo uploaded successfully for ${day}/${folder}`)
     } catch (error) {
