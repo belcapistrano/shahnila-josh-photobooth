@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import PhotoCard from './PhotoCard'
+import { processAllExistingPhotos } from '../utils/processExistingPhotos'
 
 function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onLike, isUsingFirebase }) {
   const [activeDay, setActiveDay] = useState('saturday')
   const [activeFolder, setActiveFolder] = useState('original')
   const [likedPhotos, setLikedPhotos] = useState(new Set())
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [processingProgress, setProcessingProgress] = useState(null)
+  const [processingResults, setProcessingResults] = useState(null)
 
   const allDayPhotos = activeDay === 'saturday' ? saturdayPhotos : sundayPhotos
   const currentPhotos = allDayPhotos.filter(photo => photo.folder === activeFolder)
@@ -32,6 +36,37 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
   const handleLike = (photoId, incrementValue) => {
     if (onLike) {
       onLike(photoId, activeDay, incrementValue)
+    }
+  }
+
+  const handleProcessExistingPhotos = async () => {
+    if (!isUsingFirebase) {
+      alert('This feature requires Firebase to be configured.')
+      return
+    }
+
+    if (!window.confirm('This will process all existing photos to generate thumbnails and compressed versions. This may take several minutes. Continue?')) {
+      return
+    }
+
+    setIsProcessing(true)
+    setProcessingProgress({ stage: 'starting' })
+    setProcessingResults(null)
+
+    try {
+      const results = await processAllExistingPhotos((progress) => {
+        setProcessingProgress(progress)
+      })
+
+      setProcessingResults(results)
+      alert('Photo processing completed! Check the console for details.')
+      console.log('Processing results:', results)
+    } catch (error) {
+      console.error('Error processing photos:', error)
+      alert(`Error processing photos: ${error.message}`)
+    } finally {
+      setIsProcessing(false)
+      setProcessingProgress(null)
     }
   }
 
@@ -76,6 +111,44 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
           </div>
         </div>
       </div>
+
+      {/* Photo Processing Utility */}
+      {isUsingFirebase && (
+        <div className="photo-processing-section">
+          <button
+            onClick={handleProcessExistingPhotos}
+            disabled={isProcessing}
+            className="btn-process-photos"
+          >
+            {isProcessing ? '⚙️ Processing...' : '⚡ Optimize Existing Photos'}
+          </button>
+          {processingProgress && (
+            <div className="processing-progress">
+              {processingProgress.collection && (
+                <div className="progress-text">
+                  Processing {processingProgress.collection}: {processingProgress.current || 0}/{processingProgress.total || 0}
+                  {processingProgress.photo && ` - ${processingProgress.status}`}
+                </div>
+              )}
+            </div>
+          )}
+          {processingResults && (
+            <div className="processing-results">
+              <h4>Processing Complete!</h4>
+              {Object.entries(processingResults).map(([collection, results]) => (
+                <div key={collection} className="result-item">
+                  <strong>{collection}:</strong>
+                  {results.error ? (
+                    <span className="error"> Error: {results.error}</span>
+                  ) : (
+                    <span> ✅ {results.processed} processed, ⏭️ {results.skipped} skipped, ❌ {results.errors} errors</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="day-tabs">
         <button

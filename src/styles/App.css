@@ -2856,3 +2856,88 @@ body {
     background-position: 200% 0;
   }
 }
+
+/* ===== PHOTO PROCESSING UTILITY STYLES ===== */
+
+.photo-processing-section {
+  background: linear-gradient(135deg, #F5F5DC 0%, #E8DCC4 100%);
+  border: 2px solid #674F2D;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.btn-process-photos {
+  background: linear-gradient(135deg, #674F2D 0%, #8B6F47 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-process-photos:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(103, 79, 45, 0.4);
+  background: linear-gradient(135deg, #8B6F47 0%, #674F2D 100%);
+}
+
+.btn-process-photos:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.processing-progress {
+  margin-top: 15px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #674F2D;
+}
+
+.progress-text {
+  color: #674F2D;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.processing-results {
+  margin-top: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+  text-align: left;
+}
+
+.processing-results h4 {
+  color: #4CAF50;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.result-item {
+  margin: 8px 0;
+  padding: 8px;
+  background: #F5F5DC;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.result-item strong {
+  color: #674F2D;
+}
+
+.result-item .error {
+  color: #D32F2F;
+  font-weight: 600;
+}
