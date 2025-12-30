@@ -3,15 +3,28 @@ import PhotoCard from './PhotoCard'
 import { processAllExistingPhotos } from '../utils/processExistingPhotos'
 
 function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onLike, isUsingFirebase }) {
-  const [activeDay, setActiveDay] = useState('saturday')
-  const [activeFolder, setActiveFolder] = useState('original')
+  const [activeDay, setActiveDay] = useState('all')
+  const [activeFolder, setActiveFolder] = useState('all')
   const [likedPhotos, setLikedPhotos] = useState(new Set())
   const [isProcessing, setIsProcessing] = useState(false)
   const [processingProgress, setProcessingProgress] = useState(null)
   const [processingResults, setProcessingResults] = useState(null)
 
-  const allDayPhotos = activeDay === 'saturday' ? saturdayPhotos : sundayPhotos
-  const currentPhotos = allDayPhotos.filter(photo => photo.folder === activeFolder)
+  // Combine all photos
+  const allPhotos = [...saturdayPhotos, ...sundayPhotos]
+
+  // Filter by day
+  let dayFilteredPhotos = allPhotos
+  if (activeDay === 'saturday') {
+    dayFilteredPhotos = saturdayPhotos
+  } else if (activeDay === 'sunday') {
+    dayFilteredPhotos = sundayPhotos
+  }
+
+  // Filter by folder
+  const currentPhotos = activeFolder === 'all'
+    ? dayFilteredPhotos
+    : dayFilteredPhotos.filter(photo => photo.folder === activeFolder)
 
   const handleToggleLike = (photoId) => {
     const newLikedPhotos = new Set(likedPhotos)
@@ -100,54 +113,65 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
         </div>
       </div>
 
-      {/* Combined horizontal filter bar */}
-      <div className="filter-bar">
-        <div className="filter-group">
-          <label className="filter-label">Day:</label>
-          <div className="filter-buttons">
-            <button
-              className={`filter-btn ${activeDay === 'saturday' ? 'active' : ''}`}
-              onClick={() => setActiveDay('saturday')}
-            >
-              Saturday, Dec 27
-            </button>
-            <button
-              className={`filter-btn ${activeDay === 'sunday' ? 'active' : ''}`}
-              onClick={() => setActiveDay('sunday')}
-            >
-              Sunday, Dec 28
-            </button>
+      {/* Filter section */}
+      <div className="filter-section">
+        <div className="filter-header">
+          <h3>Filters</h3>
+          <div className="photo-count">
+            {currentPhotos.length} {currentPhotos.length === 1 ? 'photo' : 'photos'}
           </div>
         </div>
 
-        <div className="filter-divider"></div>
-
-        <div className="filter-group">
-          <label className="filter-label">Type:</label>
-          <div className="filter-buttons">
+        <div className="filter-chips-container">
+          <div className="filter-chip-group">
+            <span className="filter-chip-label">Day:</span>
             <button
-              className={`filter-btn ${activeFolder === 'original' ? 'active' : ''}`}
+              className={`filter-chip ${activeDay === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveDay('all')}
+            >
+              All
+            </button>
+            <button
+              className={`filter-chip ${activeDay === 'saturday' ? 'active' : ''}`}
+              onClick={() => setActiveDay('saturday')}
+            >
+              Saturday
+            </button>
+            <button
+              className={`filter-chip ${activeDay === 'sunday' ? 'active' : ''}`}
+              onClick={() => setActiveDay('sunday')}
+            >
+              Sunday
+            </button>
+          </div>
+
+          <div className="filter-chip-group">
+            <span className="filter-chip-label">Type:</span>
+            <button
+              className={`filter-chip ${activeFolder === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveFolder('all')}
+            >
+              All
+            </button>
+            <button
+              className={`filter-chip ${activeFolder === 'original' ? 'active' : ''}`}
               onClick={() => setActiveFolder('original')}
             >
               Original
             </button>
             <button
-              className={`filter-btn ${activeFolder === 'animated' ? 'active' : ''}`}
+              className={`filter-chip ${activeFolder === 'animated' ? 'active' : ''}`}
               onClick={() => setActiveFolder('animated')}
             >
               Animated
             </button>
             <button
-              className={`filter-btn ${activeFolder === 'prints' ? 'active' : ''}`}
+              className={`filter-chip ${activeFolder === 'prints' ? 'active' : ''}`}
               onClick={() => setActiveFolder('prints')}
             >
               Prints
             </button>
           </div>
-        </div>
-
-        <div className="photo-count-display">
-          {currentPhotos.length} {currentPhotos.length === 1 ? 'photo' : 'photos'}
         </div>
       </div>
 

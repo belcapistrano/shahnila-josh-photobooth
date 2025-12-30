@@ -2320,77 +2320,82 @@ body {
   font-size: 10px;
 }
 
-/* Horizontal filter bar */
-.filter-bar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 16px 20px;
+/* Filter section */
+.filter-section {
   background: white;
   border: 2px solid #E8DCC4;
   border-radius: 12px;
+  padding: 16px;
   margin-bottom: 30px;
-  flex-wrap: wrap;
 }
 
-.filter-group {
+.filter-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 12px;
+}
+
+.filter-header h3 {
+  margin: 0;
+  color: #674F2D;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.photo-count {
+  color: #8B6F47;
+  font-size: 13px;
+  font-weight: 600;
+  background: #F5F5DC;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.filter-chips-container {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
-.filter-label {
+.filter-chip-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-chip-label {
   color: #8B6F47;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
+  letter-spacing: 0.3px;
+  min-width: 40px;
 }
 
-.filter-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.filter-btn {
-  padding: 8px 16px;
+.filter-chip {
+  padding: 6px 14px;
   background: #F5F5DC;
-  border: 2px solid transparent;
-  border-radius: 8px;
+  border: 1.5px solid #E8DCC4;
+  border-radius: 20px;
   color: #674F2D;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
-.filter-btn:hover {
+.filter-chip:hover {
   background: #E8DCC4;
-  transform: translateY(-1px);
+  border-color: #D4C5A7;
 }
 
-.filter-btn.active {
+.filter-chip.active {
   background: #674F2D;
   color: white;
   border-color: #674F2D;
-}
-
-.filter-divider {
-  width: 1px;
-  height: 30px;
-  background: #E8DCC4;
-}
-
-.photo-count-display {
-  margin-left: auto;
-  color: #8B6F47;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 8px 16px;
-  background: #F5F5DC;
-  border-radius: 8px;
 }
 
 /* Subtle photographer credit footer */
@@ -2455,41 +2460,27 @@ body {
     font-size: 10px;
   }
 
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 15px;
-    padding: 16px;
+  .filter-section {
+    padding: 12px;
   }
 
-  .filter-group {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+  .filter-header h3 {
+    font-size: 14px;
   }
 
-  .filter-label {
+  .photo-count {
     font-size: 12px;
+    padding: 3px 10px;
   }
 
-  .filter-buttons {
-    width: 100%;
+  .filter-chip-label {
+    font-size: 11px;
+    min-width: 35px;
   }
 
-  .filter-btn {
-    flex: 1;
-    text-align: center;
-    font-size: 13px;
-    padding: 10px 12px;
-  }
-
-  .filter-divider {
-    display: none;
-  }
-
-  .photo-count-display {
-    margin-left: 0;
-    text-align: center;
+  .filter-chip {
+    font-size: 12px;
+    padding: 5px 12px;
   }
 
   .photographer-credit-footer {
