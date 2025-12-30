@@ -9,6 +9,7 @@ import RecentPhoto from './components/RecentPhoto'
 import useFirebasePhotos from './hooks/useFirebasePhotos'
 import usePhotoboothPhotos from './hooks/usePhotoboothPhotos'
 import { combinePhotosIntoStrip } from './utils/photoStrip'
+import { compressImage } from './utils/imageOptimization'
 
 function App() {
   const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, likePhoto, isUsingFirebase } = useFirebasePhotos()
@@ -131,8 +132,12 @@ function App() {
 
   const handleUploadPhoto = async (photoDataUrl) => {
     try {
-      // Apply photostrip styling to uploaded photo
-      const stripData = await combinePhotosIntoStrip([photoDataUrl])
+      // Pre-compress the image to reduce memory usage and improve quality
+      // This is especially important when uploading multiple files simultaneously
+      const compressedPhoto = await compressImage(photoDataUrl, 2400, 0.92)
+
+      // Apply photostrip styling to compressed photo
+      const stripData = await combinePhotosIntoStrip([compressedPhoto])
 
       // Upload to Firebase/local storage
       await uploadPhoto(stripData, 'none', null)
