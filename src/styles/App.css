@@ -2334,6 +2334,14 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .filter-header h3 {
@@ -2341,6 +2349,17 @@ body {
   color: #674F2D;
   font-size: 16px;
   font-weight: 600;
+}
+
+.filter-toggle-btn {
+  background: none;
+  border: none;
+  color: #8B6F47;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+  display: none;
+  transition: transform 0.2s ease;
 }
 
 .photo-count {
@@ -2356,6 +2375,15 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* On desktop, always show filters */
+.filter-chips-container.collapsed,
+.filter-chips-container.expanded {
+  max-height: none;
+  opacity: 1;
 }
 
 .filter-chip-group {
@@ -2468,6 +2496,10 @@ body {
     font-size: 14px;
   }
 
+  .filter-toggle-btn {
+    display: block;
+  }
+
   .photo-count {
     font-size: 12px;
     padding: 3px 10px;
@@ -2481,6 +2513,26 @@ body {
   .filter-chip {
     font-size: 12px;
     padding: 5px 12px;
+  }
+
+  /* On mobile, collapse filters by default */
+  .filter-chips-container.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+  }
+
+  .filter-chips-container.expanded {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  .filter-header {
+    margin-bottom: 0;
+  }
+
+  .filter-header.expanded {
+    margin-bottom: 12px;
   }
 
   .photographer-credit-footer {

@@ -9,6 +9,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
   const [isProcessing, setIsProcessing] = useState(false)
   const [processingProgress, setProcessingProgress] = useState(null)
   const [processingResults, setProcessingResults] = useState(null)
+  const [filtersExpanded, setFiltersExpanded] = useState(false)
 
   // Combine all photos
   const allPhotos = [...saturdayPhotos, ...sundayPhotos]
@@ -115,14 +116,19 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
 
       {/* Filter section */}
       <div className="filter-section">
-        <div className="filter-header">
-          <h3>Filters</h3>
+        <div className={`filter-header ${filtersExpanded ? 'expanded' : ''}`} onClick={() => setFiltersExpanded(!filtersExpanded)}>
+          <div className="filter-header-left">
+            <h3>Filters</h3>
+            <button className="filter-toggle-btn">
+              {filtersExpanded ? '▲' : '▼'}
+            </button>
+          </div>
           <div className="photo-count">
             {currentPhotos.length} {currentPhotos.length === 1 ? 'photo' : 'photos'}
           </div>
         </div>
 
-        <div className="filter-chips-container">
+        <div className={`filter-chips-container ${filtersExpanded ? 'expanded' : 'collapsed'}`}>
           <div className="filter-chip-group">
             <span className="filter-chip-label">Day:</span>
             <button
