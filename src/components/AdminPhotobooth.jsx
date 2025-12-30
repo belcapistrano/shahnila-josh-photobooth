@@ -9,7 +9,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, onUpload, onDelete, onL
   const [isProcessing, setIsProcessing] = useState(false)
   const [processingProgress, setProcessingProgress] = useState(null)
   const [processingResults, setProcessingResults] = useState(null)
-  const [filtersExpanded, setFiltersExpanded] = useState(false)
+  const [filtersExpanded, setFiltersExpanded] = useState(true)
 
   // Combine all photos
   const allPhotos = [...saturdayPhotos, ...sundayPhotos]
