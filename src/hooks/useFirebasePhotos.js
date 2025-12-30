@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore'
 import { storage, db, isFirebaseConfigured } from '../config/firebase'
 import useLocalStorage from './useLocalStorage'
+import { processImage } from '../utils/imageOptimization'
 
 const PHOTOS_COLLECTION = 'wedding-photos'
 const DELETED_PHOTOS_COLLECTION = 'deleted-photos'
@@ -81,11 +82,22 @@ function useFirebasePhotos() {
   const uploadPhoto = async (photoData, filter = 'none', challenge = null) => {
     const timestamp = Date.now()
 
+    // Process image to generate optimized versions
+    let processedImage = null
+    try {
+      processedImage = await processImage(photoData)
+    } catch (error) {
+      console.error('Error processing image:', error)
+    }
+
     // If Firebase is not configured, use local storage
     if (!useFirebase || !storage || !db) {
       const newPhoto = {
         id: timestamp,
-        dataUrl: photoData,
+        dataUrl: processedImage?.compressed || photoData,
+        originalDataUrl: photoData,
+        thumbnail: processedImage?.thumbnail,
+        blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
         filter: filter || 'none',
         likes: 0,
@@ -100,20 +112,36 @@ function useFirebasePhotos() {
     }
 
     try {
-      // Firebase upload
-      const filename = `photos/${timestamp}.jpg`
-      const storageRef = ref(storage, filename)
+      // Upload original high-res photo
+      const originalFilename = `photos/originals/${timestamp}.jpg`
+      const originalRef = ref(storage, originalFilename)
+      await uploadString(originalRef, photoData, 'data_url')
+      const originalURL = await getDownloadURL(originalRef)
 
-      // Upload photo data (base64)
-      await uploadString(storageRef, photoData, 'data_url')
+      // Upload compressed version for display
+      const compressedFilename = `photos/${timestamp}.jpg`
+      const compressedRef = ref(storage, compressedFilename)
+      const compressedData = processedImage?.compressed || photoData
+      await uploadString(compressedRef, compressedData, 'data_url')
+      const downloadURL = await getDownloadURL(compressedRef)
 
-      // Get download URL
-      const downloadURL = await getDownloadURL(storageRef)
+      // Upload thumbnail if available
+      let thumbnailURL = null
+      if (processedImage?.thumbnail) {
+        const thumbnailFilename = `photos/thumbnails/${timestamp}.jpg`
+        const thumbnailRef = ref(storage, thumbnailFilename)
+        await uploadString(thumbnailRef, processedImage.thumbnail, 'data_url')
+        thumbnailURL = await getDownloadURL(thumbnailRef)
+      }
 
       // Save metadata to Firestore
       const photoDoc = await addDoc(collection(db, PHOTOS_COLLECTION), {
         downloadURL,
-        storagePath: filename,
+        originalURL,
+        thumbnailURL,
+        blurPlaceholder: processedImage?.blurPlaceholder || null,
+        storagePath: compressedFilename,
+        originalStoragePath: originalFilename,
         filter,
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
@@ -128,6 +156,9 @@ function useFirebasePhotos() {
       return {
         id: photoDoc.id,
         downloadURL,
+        originalURL,
+        thumbnailURL,
+        blurPlaceholder: processedImage?.blurPlaceholder,
         filter,
         timestamp: new Date().toISOString()
       }
@@ -138,7 +169,10 @@ function useFirebasePhotos() {
       // Fallback to local storage on error
       const newPhoto = {
         id: timestamp,
-        dataUrl: photoData,
+        dataUrl: processedImage?.compressed || photoData,
+        originalDataUrl: photoData,
+        thumbnail: processedImage?.thumbnail,
+        blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
         filter: filter || 'none',
         likes: 0,

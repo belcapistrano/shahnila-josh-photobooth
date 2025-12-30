@@ -105,20 +105,23 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
 
     setIsDownloading(true)
     try {
+      // Use original high-quality photo if available, otherwise use display version
+      const downloadUrl = photo.originalURL || photo.originalDataUrl || imageUrl
+
       // Convert URL to blob
-      const response = await fetch(imageUrl)
+      const response = await fetch(downloadUrl)
       const blob = await response.blob()
 
       // Create object URL from blob
       const blobUrl = URL.createObjectURL(blob)
 
       // Determine file extension
-      const fileExtension = isVideo ? 'mp4' : 'png'
+      const fileExtension = isVideo ? 'mp4' : 'jpg'
 
       // Create download link
       const link = document.createElement('a')
       link.href = blobUrl
-      link.download = `photobooth-${photo.id}.${fileExtension}`
+      link.download = `shahnila-josh-wedding-${photo.id}.${fileExtension}`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -128,10 +131,11 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     } catch (error) {
       console.error('Download failed:', error)
       // Fallback: try direct link download
-      const fileExtension = isVideo ? 'mp4' : 'png'
+      const downloadUrl = photo.originalURL || photo.originalDataUrl || imageUrl
+      const fileExtension = isVideo ? 'mp4' : 'jpg'
       const link = document.createElement('a')
-      link.href = imageUrl
-      link.download = `photobooth-${photo.id}.${fileExtension}`
+      link.href = downloadUrl
+      link.download = `shahnila-josh-wedding-${photo.id}.${fileExtension}`
       link.target = '_blank'
       document.body.appendChild(link)
       link.click()

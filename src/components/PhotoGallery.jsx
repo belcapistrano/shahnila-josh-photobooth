@@ -98,7 +98,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
             </div>
             <div className="instruction-step">
               <span className="step-number">3</span>
-              <span className="step-text">Your photos will be beautifully framed and added to the gallery!</span>
+              <span className="step-text">Your photos will be optimized and added to the gallery! Download anytime to get the original high-quality version.</span>
             </div>
           </div>
         </div>
@@ -124,7 +124,6 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
           <span className="upload-info-icon">📸</span>
           <p>
             <strong>Share your photos!</strong> Click the Upload button to add your favorite moments from the celebration.
-            All photos will be beautifully framed with our wedding details.
           </p>
         </div>
       </div>
