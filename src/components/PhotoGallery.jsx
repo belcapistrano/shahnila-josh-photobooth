@@ -221,27 +221,21 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
         <div className="upload-info-content">
           <span className="upload-info-icon">📸</span>
           <p>
-            <strong>Share your photos & videos!</strong> Click the Upload button to add your favorite moments from the celebration.
+            <strong>Share your photos & videos!</strong>
           </p>
         </div>
+        <button className="btn-upload-banner" onClick={handleUploadClick} disabled={uploading}>
+          {uploading ? 'Uploading...' : '📤 Upload'}
+        </button>
       </div>
       <div className="gallery-header">
         <div className="gallery-header-left">
           <h2>Gallery ({filteredPhotos.length})</h2>
-          <div className={`storage-indicator ${isUsingFirebase ? 'cloud' : 'local'}`}>
-            <span className="storage-icon">{isUsingFirebase ? '☁️' : '💾'}</span>
-            <span className="storage-text">{isUsingFirebase ? 'Cloud Storage' : 'Local Storage'}</span>
-          </div>
-        </div>
-        <div className="gallery-header-actions">
           {filteredPhotos.length > 0 && (
             <button className="btn-slideshow" onClick={() => setShowSlideshow(true)}>
               ▶️ Slideshow
             </button>
           )}
-          <button className="btn-upload" onClick={handleUploadClick} disabled={uploading}>
-            {uploading ? 'Uploading...' : '📤 Upload'}
-          </button>
         </div>
         <input
           ref={fileInputRef}
