@@ -132,15 +132,15 @@ function App() {
     }
   }
 
-  const handleUploadPhoto = async (photoDataUrl) => {
+  const handleUploadPhoto = async (photoDataOrFile, isFileObject = false) => {
     try {
-      // Upload original photo directly - optimized versions will be created automatically
-      // This preserves the original high-quality photo for download
-      await uploadPhoto(photoDataUrl, 'none', null)
+      // Upload original photo/video directly - optimized versions will be created automatically
+      // This preserves the original high-quality media for download
+      await uploadPhoto(photoDataOrFile, 'none', null, isFileObject)
 
-      console.log('Photo uploaded successfully')
+      console.log('Media uploaded successfully')
     } catch (error) {
-      console.error('Error uploading photo:', error)
+      console.error('Error uploading media:', error)
     }
   }
 

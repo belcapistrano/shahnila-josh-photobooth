@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ref, uploadString, getDownloadURL } from 'firebase/storage'
+import { ref, uploadString, uploadBytes, getDownloadURL } from 'firebase/storage'
 import {
   collection,
   addDoc,
@@ -78,18 +78,32 @@ function useFirebasePhotos() {
     return () => unsubscribe()
   }, [useFirebase, localPhotos, refreshTrigger])
 
+  // Helper function to convert data URL to Blob
+  const dataURLtoBlob = (dataUrl) => {
+    const arr = dataUrl.split(',')
+    const mime = arr[0].match(/:(.*?);/)[1]
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new Blob([u8arr], { type: mime })
+  }
+
   // Upload photo to Firebase Storage and save metadata to Firestore
-  const uploadPhoto = async (photoData, filter = 'none', challenge = null) => {
+  const uploadPhoto = async (photoData, filter = 'none', challenge = null, isFileObject = false) => {
     const timestamp = Date.now()
 
     // Detect if this is a video
-    const isVideo = photoData.startsWith('data:video/')
+    const isVideo = isFileObject
+      ? photoData.type?.startsWith('video/')
+      : photoData.startsWith('data:video/')
 
-    // Determine file extension from data URL
-    const getFileExtension = (dataUrl) => {
-      const mimeMatch = dataUrl.match(/data:([^;]+);/)
-      if (mimeMatch) {
-        const mimeType = mimeMatch[1]
+    // Determine file extension from data URL or File object
+    const getFileExtension = (data, isFile) => {
+      if (isFile) {
+        const mimeType = data.type
         // Handle video formats - normalize to MP4 for universal compatibility
         if (mimeType.startsWith('video/mp4')) return '.mp4'
         if (mimeType.startsWith('video/quicktime')) return '.mp4' // iOS videos
@@ -97,15 +111,28 @@ function useFirebasePhotos() {
         // Handle image formats
         if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') return '.jpg'
         if (mimeType === 'image/png') return '.png'
+        return '.jpg'
+      } else {
+        const mimeMatch = data.match(/data:([^;]+);/)
+        if (mimeMatch) {
+          const mimeType = mimeMatch[1]
+          // Handle video formats - normalize to MP4 for universal compatibility
+          if (mimeType.startsWith('video/mp4')) return '.mp4'
+          if (mimeType.startsWith('video/quicktime')) return '.mp4' // iOS videos
+          if (mimeType.startsWith('video/')) return '.mp4'
+          // Handle image formats
+          if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') return '.jpg'
+          if (mimeType === 'image/png') return '.png'
+        }
+        return '.jpg'
       }
-      return '.jpg'
     }
 
-    const fileExtension = getFileExtension(photoData)
+    const fileExtension = getFileExtension(photoData, isFileObject)
 
     // Process image to generate optimized versions (skip for videos)
     let processedImage = null
-    if (!isVideo) {
+    if (!isVideo && !isFileObject) {
       try {
         processedImage = await processImage(photoData)
       } catch (error) {
@@ -115,10 +142,21 @@ function useFirebasePhotos() {
 
     // If Firebase is not configured, use local storage
     if (!useFirebase || !storage || !db) {
+      // For File objects, convert to data URL for local storage
+      let dataUrlForStorage = photoData
+      if (isFileObject) {
+        dataUrlForStorage = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = (e) => resolve(e.target.result)
+          reader.onerror = reject
+          reader.readAsDataURL(photoData)
+        })
+      }
+
       const newPhoto = {
         id: timestamp,
-        dataUrl: processedImage?.compressed || photoData,
-        originalDataUrl: photoData,
+        dataUrl: processedImage?.compressed || dataUrlForStorage,
+        originalDataUrl: dataUrlForStorage,
         thumbnail: processedImage?.thumbnail,
         blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
@@ -140,14 +178,30 @@ function useFirebasePhotos() {
       // Upload original high-res photo/video
       const originalFilename = `photos/originals/${timestamp}${fileExtension}`
       const originalRef = ref(storage, originalFilename)
-      await uploadString(originalRef, photoData, 'data_url')
+
+      if (isFileObject) {
+        // For File objects (videos), use uploadBytes for better performance
+        await uploadBytes(originalRef, photoData)
+      } else {
+        // For data URLs, convert to blob for more efficient upload
+        const blob = dataURLtoBlob(photoData)
+        await uploadBytes(originalRef, blob)
+      }
       const originalURL = await getDownloadURL(originalRef)
 
       // Upload compressed version for display (images only, videos use original)
       const compressedFilename = `photos/${timestamp}${fileExtension}`
       const compressedRef = ref(storage, compressedFilename)
-      const compressedData = isVideo ? photoData : (processedImage?.compressed || photoData)
-      await uploadString(compressedRef, compressedData, 'data_url')
+
+      if (isFileObject) {
+        // Videos: use same file for both original and display
+        await uploadBytes(compressedRef, photoData)
+      } else {
+        // Images: use compressed version if available
+        const compressedData = processedImage?.compressed || photoData
+        const compressedBlob = dataURLtoBlob(compressedData)
+        await uploadBytes(compressedRef, compressedBlob)
+      }
       const downloadURL = await getDownloadURL(compressedRef)
 
       // Upload thumbnail if available (images only)
@@ -155,7 +209,8 @@ function useFirebasePhotos() {
       if (!isVideo && processedImage?.thumbnail) {
         const thumbnailFilename = `photos/thumbnails/${timestamp}${fileExtension}`
         const thumbnailRef = ref(storage, thumbnailFilename)
-        await uploadString(thumbnailRef, processedImage.thumbnail, 'data_url')
+        const thumbnailBlob = dataURLtoBlob(processedImage.thumbnail)
+        await uploadBytes(thumbnailRef, thumbnailBlob)
         thumbnailURL = await getDownloadURL(thumbnailRef)
       }
 
@@ -196,10 +251,21 @@ function useFirebasePhotos() {
       console.warn('Falling back to local storage')
 
       // Fallback to local storage on error
+      // For File objects, convert to data URL for local storage
+      let dataUrlForStorage = photoData
+      if (isFileObject) {
+        dataUrlForStorage = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = (e) => resolve(e.target.result)
+          reader.onerror = reject
+          reader.readAsDataURL(photoData)
+        })
+      }
+
       const newPhoto = {
         id: timestamp,
-        dataUrl: processedImage?.compressed || photoData,
-        originalDataUrl: photoData,
+        dataUrl: processedImage?.compressed || dataUrlForStorage,
+        originalDataUrl: dataUrlForStorage,
         thumbnail: processedImage?.thumbnail,
         blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),

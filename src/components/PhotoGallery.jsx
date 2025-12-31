@@ -6,47 +6,70 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
   const { isPhotoLiked, toggleLike } = useLikedPhotos()
   const fileInputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 })
+  const [mediaFilter, setMediaFilter] = useState('all') // 'all', 'photos', 'videos'
 
   const handleUploadClick = () => {
     fileInputRef.current?.click()
   }
 
+  // Filter photos based on media type
+  const filteredPhotos = photos.filter(photo => {
+    if (mediaFilter === 'all') return true
+    if (mediaFilter === 'photos') return !photo.isVideo
+    if (mediaFilter === 'videos') return photo.isVideo
+    return true
+  })
+
   const handleFileSelect = async (event) => {
     const files = event.target.files
     if (!files || files.length === 0) return
 
-    setUploading(true)
-    try {
-      const uploadPromises = Array.from(files).map(file => {
-        return new Promise((resolve, reject) => {
-          // Accept both images and videos
-          if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-            resolve()
-            return
-          }
+    const fileArray = Array.from(files).filter(
+      file => file.type.startsWith('image/') || file.type.startsWith('video/')
+    )
 
-          const reader = new FileReader()
-          reader.onload = async (e) => {
-            try {
-              const dataUrl = e.target.result
-              if (onUpload) {
-                await onUpload(dataUrl)
-              }
-              resolve()
-            } catch (error) {
-              reject(error)
+    if (fileArray.length === 0) return
+
+    setUploading(true)
+    setUploadProgress({ current: 0, total: fileArray.length })
+
+    try {
+      let completedCount = 0
+
+      for (const file of fileArray) {
+        try {
+          // For videos, pass the File object directly (more efficient for large files)
+          // For images, convert to data URL for processing
+          if (file.type.startsWith('video/')) {
+            if (onUpload) {
+              await onUpload(file, true) // Pass file directly with isFileObject flag
+            }
+          } else {
+            const dataUrl = await new Promise((resolve, reject) => {
+              const reader = new FileReader()
+              reader.onload = (e) => resolve(e.target.result)
+              reader.onerror = reject
+              reader.readAsDataURL(file)
+            })
+
+            if (onUpload) {
+              await onUpload(dataUrl, false)
             }
           }
-          reader.onerror = reject
-          reader.readAsDataURL(file)
-        })
-      })
 
-      await Promise.all(uploadPromises)
+          completedCount++
+          setUploadProgress({ current: completedCount, total: fileArray.length })
+        } catch (error) {
+          console.error('Error uploading file:', error)
+          // Continue with next file even if one fails
+        }
+      }
     } catch (error) {
       console.error('Error uploading files:', error)
     } finally {
       setUploading(false)
+      setUploadProgress({ current: 0, total: 0 })
       // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
@@ -130,7 +153,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
       </div>
       <div className="gallery-header">
         <div className="gallery-header-left">
-          <h2>Gallery ({photos.length})</h2>
+          <h2>Gallery ({filteredPhotos.length})</h2>
           <div className={`storage-indicator ${isUsingFirebase ? 'cloud' : 'local'}`}>
             <span className="storage-icon">{isUsingFirebase ? '☁️' : '💾'}</span>
             <span className="storage-text">{isUsingFirebase ? 'Cloud Storage' : 'Local Storage'}</span>
@@ -148,18 +171,69 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
           onChange={handleFileSelect}
         />
       </div>
-      <div className="gallery-grid">
-        {photos.map(photo => (
-          <PhotoCard
-            key={photo.id}
-            photo={photo}
-            onLike={onLike}
-            onDelete={onDelete}
-            isLiked={isPhotoLiked(photo.id)}
-            onToggleLike={toggleLike}
-          />
-        ))}
+
+      {/* Media Filter */}
+      <div className="media-filter">
+        <button
+          className={`filter-btn ${mediaFilter === 'all' ? 'active' : ''}`}
+          onClick={() => setMediaFilter('all')}
+        >
+          All ({photos.length})
+        </button>
+        <button
+          className={`filter-btn ${mediaFilter === 'photos' ? 'active' : ''}`}
+          onClick={() => setMediaFilter('photos')}
+        >
+          📸 Photos ({photos.filter(p => !p.isVideo).length})
+        </button>
+        <button
+          className={`filter-btn ${mediaFilter === 'videos' ? 'active' : ''}`}
+          onClick={() => setMediaFilter('videos')}
+        >
+          🎥 Videos ({photos.filter(p => p.isVideo).length})
+        </button>
       </div>
+      <div className="gallery-grid">
+        {filteredPhotos.length > 0 ? (
+          filteredPhotos.map(photo => (
+            <PhotoCard
+              key={photo.id}
+              photo={photo}
+              onLike={onLike}
+              onDelete={onDelete}
+              isLiked={isPhotoLiked(photo.id)}
+              onToggleLike={toggleLike}
+            />
+          ))
+        ) : (
+          <div className="no-media-message">
+            <p>No {mediaFilter === 'photos' ? 'photos' : 'videos'} found.</p>
+            <p className="no-media-subtitle">Try uploading some or switch to a different filter.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Upload Progress Indicator */}
+      {uploading && uploadProgress.total > 0 && (
+        <div className="upload-progress-overlay">
+          <div className="upload-progress-modal">
+            <div className="upload-progress-icon">📤</div>
+            <h3>Uploading Media</h3>
+            <p className="upload-progress-text">
+              {uploadProgress.current} of {uploadProgress.total} {uploadProgress.total === 1 ? 'file' : 'files'}
+            </p>
+            <div className="upload-progress-bar-container">
+              <div
+                className="upload-progress-bar"
+                style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+              />
+            </div>
+            <p className="upload-progress-percent">
+              {Math.round((uploadProgress.current / uploadProgress.total) * 100)}%
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
