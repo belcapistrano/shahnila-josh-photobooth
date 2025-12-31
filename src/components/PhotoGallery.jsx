@@ -32,20 +32,31 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
     if (fileArray.length === 0) return
 
     setUploading(true)
+
+    // Use a small delay to ensure the modal renders before we start uploading
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     setUploadProgress({ current: 0, total: fileArray.length })
 
     try {
-      let completedCount = 0
+      for (let i = 0; i < fileArray.length; i++) {
+        const file = fileArray[i]
 
-      for (const file of fileArray) {
         try {
+          console.log(`Uploading file ${i + 1} of ${fileArray.length}: ${file.name}`)
+
+          // Update progress before starting upload
+          setUploadProgress({ current: i, total: fileArray.length })
+
           // For videos, pass the File object directly (more efficient for large files)
           // For images, convert to data URL for processing
           if (file.type.startsWith('video/')) {
+            console.log('Processing video file...')
             if (onUpload) {
               await onUpload(file, true) // Pass file directly with isFileObject flag
             }
           } else {
+            console.log('Processing image file...')
             const dataUrl = await new Promise((resolve, reject) => {
               const reader = new FileReader()
               reader.onload = (e) => resolve(e.target.result)
@@ -58,8 +69,12 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
             }
           }
 
-          completedCount++
-          setUploadProgress({ current: completedCount, total: fileArray.length })
+          console.log(`Completed uploading file ${i + 1} of ${fileArray.length}`)
+          // Update progress after completing upload
+          setUploadProgress({ current: i + 1, total: fileArray.length })
+
+          // Small delay to allow UI to update
+          await new Promise(resolve => setTimeout(resolve, 100))
         } catch (error) {
           console.error('Error uploading file:', error)
           // Continue with next file even if one fails

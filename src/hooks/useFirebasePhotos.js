@@ -93,12 +93,15 @@ function useFirebasePhotos() {
 
   // Upload photo to Firebase Storage and save metadata to Firestore
   const uploadPhoto = async (photoData, filter = 'none', challenge = null, isFileObject = false) => {
+    console.log('uploadPhoto called', { isFileObject, filter, hasChallenge: !!challenge })
     const timestamp = Date.now()
 
     // Detect if this is a video
     const isVideo = isFileObject
       ? photoData.type?.startsWith('video/')
       : photoData.startsWith('data:video/')
+
+    console.log('File type detected:', isVideo ? 'video' : 'image')
 
     // Determine file extension from data URL or File object
     const getFileExtension = (data, isFile) => {
@@ -175,34 +178,46 @@ function useFirebasePhotos() {
     }
 
     try {
+      console.log('Starting Firebase upload...')
       // Upload original high-res photo/video
       const originalFilename = `photos/originals/${timestamp}${fileExtension}`
       const originalRef = ref(storage, originalFilename)
 
+      console.log('Uploading original file...')
       if (isFileObject) {
         // For File objects (videos), use uploadBytes for better performance
+        console.log('Uploading as File object, size:', photoData.size, 'bytes')
         await uploadBytes(originalRef, photoData)
       } else {
         // For data URLs, convert to blob for more efficient upload
+        console.log('Converting data URL to blob...')
         const blob = dataURLtoBlob(photoData)
+        console.log('Uploading blob, size:', blob.size, 'bytes')
         await uploadBytes(originalRef, blob)
       }
+      console.log('Original file uploaded, getting download URL...')
       const originalURL = await getDownloadURL(originalRef)
+      console.log('Original URL:', originalURL)
 
       // Upload compressed version for display (images only, videos use original)
+      console.log('Uploading display version...')
       const compressedFilename = `photos/${timestamp}${fileExtension}`
       const compressedRef = ref(storage, compressedFilename)
 
       if (isFileObject) {
         // Videos: use same file for both original and display
+        console.log('Uploading video display version...')
         await uploadBytes(compressedRef, photoData)
       } else {
         // Images: use compressed version if available
+        console.log('Uploading image compressed version...')
         const compressedData = processedImage?.compressed || photoData
         const compressedBlob = dataURLtoBlob(compressedData)
         await uploadBytes(compressedRef, compressedBlob)
       }
+      console.log('Display version uploaded, getting download URL...')
       const downloadURL = await getDownloadURL(compressedRef)
+      console.log('Display URL:', downloadURL)
 
       // Upload thumbnail if available (images only)
       let thumbnailURL = null
@@ -215,6 +230,7 @@ function useFirebasePhotos() {
       }
 
       // Save metadata to Firestore
+      console.log('Saving metadata to Firestore...')
       const photoDoc = await addDoc(collection(db, PHOTOS_COLLECTION), {
         downloadURL,
         originalURL,
@@ -234,6 +250,8 @@ function useFirebasePhotos() {
           category: challenge.category
         } : null
       })
+
+      console.log('Upload complete! Photo ID:', photoDoc.id)
 
       return {
         id: photoDoc.id,
