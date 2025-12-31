@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import PhotoCard from './PhotoCard'
+import Lightbox from './Lightbox'
+import Slideshow from './Slideshow'
 import useLikedPhotos from '../hooks/useLikedPhotos'
 
 function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload, isUsingFirebase }) {
@@ -9,6 +11,8 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 })
   const [simulatedPercent, setSimulatedPercent] = useState(0)
   const [mediaFilter, setMediaFilter] = useState('all') // 'all', 'photos', 'videos'
+  const [lightboxPhoto, setLightboxPhoto] = useState(null)
+  const [showSlideshow, setShowSlideshow] = useState(false)
   const progressIntervalRef = useRef(null)
 
   // Cleanup interval on unmount
@@ -135,6 +139,18 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
     }
   }
 
+  const handlePhotoClick = (photo) => {
+    setLightboxPhoto(photo)
+  }
+
+  const handleCloseLightbox = () => {
+    setLightboxPhoto(null)
+  }
+
+  const handleNavigateLightbox = (newPhoto) => {
+    setLightboxPhoto(newPhoto)
+  }
+
   // Show loading skeletons
   if (loading) {
     return (
@@ -217,9 +233,16 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
             <span className="storage-text">{isUsingFirebase ? 'Cloud Storage' : 'Local Storage'}</span>
           </div>
         </div>
-        <button className="btn-upload" onClick={handleUploadClick} disabled={uploading}>
-          {uploading ? 'Uploading...' : '📤 Upload'}
-        </button>
+        <div className="gallery-header-actions">
+          {filteredPhotos.length > 0 && (
+            <button className="btn-slideshow" onClick={() => setShowSlideshow(true)}>
+              ▶️ Slideshow
+            </button>
+          )}
+          <button className="btn-upload" onClick={handleUploadClick} disabled={uploading}>
+            {uploading ? 'Uploading...' : '📤 Upload'}
+          </button>
+        </div>
         <input
           ref={fileInputRef}
           type="file"
@@ -261,6 +284,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
               onDelete={onDelete}
               isLiked={isPhotoLiked(photo.id)}
               onToggleLike={toggleLike}
+              onClick={handlePhotoClick}
             />
           ))
         ) : (
@@ -291,6 +315,24 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
             </p>
           </div>
         </div>
+      )}
+
+      {/* Lightbox */}
+      {lightboxPhoto && (
+        <Lightbox
+          photo={lightboxPhoto}
+          photos={filteredPhotos}
+          onClose={handleCloseLightbox}
+          onNavigate={handleNavigateLightbox}
+        />
+      )}
+
+      {/* Slideshow */}
+      {showSlideshow && (
+        <Slideshow
+          photos={filteredPhotos}
+          onClose={() => setShowSlideshow(false)}
+        />
       )}
     </div>
   )

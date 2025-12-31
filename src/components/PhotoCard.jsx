@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import ImageLoader from './ImageLoader'
 
-function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
+function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike, onClick }) {
   // Use downloadURL from Firebase or dataUrl as fallback
   const imageUrl = photo.downloadURL || photo.dataUrl
   const isVideo = photo.isVideo || photo.fileType === '.mp4'
@@ -310,9 +310,15 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike }) {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
+  const handleImageClick = () => {
+    if (onClick) {
+      onClick(photo)
+    }
+  }
+
   return (
     <div className="photo-card">
-      <div className="photo-card-image-container">
+      <div className="photo-card-image-container" onClick={handleImageClick}>
         {isVideo ? (
           <video
             ref={videoRef}

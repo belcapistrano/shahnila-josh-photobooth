@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import PhotoCard from './PhotoCard'
+import Lightbox from './Lightbox'
+import Slideshow from './Slideshow'
 import { processAllExistingPhotos } from '../utils/processExistingPhotos'
 
 function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDelete, onLike, isUsingFirebase }) {
@@ -12,6 +14,8 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
   const [filtersExpanded, setFiltersExpanded] = useState(true)
   const [displayedCount, setDisplayedCount] = useState(30)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [lightboxPhoto, setLightboxPhoto] = useState(null)
+  const [showSlideshow, setShowSlideshow] = useState(false)
   const observerTarget = useRef(null)
 
   // Initialize randomSeed from localStorage or create new one
@@ -193,6 +197,18 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
     }
   }
 
+  const handlePhotoClick = (photo) => {
+    setLightboxPhoto(photo)
+  }
+
+  const handleCloseLightbox = () => {
+    setLightboxPhoto(null)
+  }
+
+  const handleNavigateLightbox = (newPhoto) => {
+    setLightboxPhoto(newPhoto)
+  }
+
   return (
     <div className="admin-photobooth">
       <div className="admin-header-clean">
@@ -258,19 +274,35 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
               {filtersExpanded ? '▲' : '▼'}
             </button>
           </div>
-          <div className="photo-count">
-            {loading ? 'Loading...' : `${totalPhotos} ${totalPhotos === 1 ? 'photo' : 'photos'}`}
+          <div className="filter-header-right">
+            <div className="photo-count">
+              {loading ? 'Loading...' : `${totalPhotos} ${totalPhotos === 1 ? 'photo' : 'photos'}`}
+            </div>
+            {!loading && totalPhotos > 0 && (
+              <button
+                type="button"
+                className="btn-slideshow"
+                onClick={(e) => {
+                  e.stopPropagation() // Prevent filter header click
+                  setShowSlideshow(true)
+                }}
+                title="Start slideshow"
+              >
+                ▶️ Slideshow
+              </button>
+            )}
             {!loading && activeDay === 'all' && activeFolder === 'all' && totalPhotos > 0 && (
               <button
                 type="button"
-                className="btn-shuffle"
+                className="btn-shuffle-prominent"
                 onClick={(e) => {
                   e.stopPropagation() // Prevent filter header click
                   handleShuffle()
                 }}
                 title="Shuffle photos"
               >
-                🔀
+                <span className="shuffle-icon">🔀</span>
+                <span className="shuffle-text">Shuffle</span>
               </button>
             )}
           </div>
@@ -414,6 +446,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
                 onDelete={(photoId) => handleDelete(photoId, photo.day)}
                 isLiked={likedPhotos.has(photo.id)}
                 onToggleLike={handleToggleLike}
+                onClick={handlePhotoClick}
               />
             ))}
           </div>
@@ -439,6 +472,23 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
         </>
       )}
 
+      {/* Lightbox */}
+      {lightboxPhoto && (
+        <Lightbox
+          photo={lightboxPhoto}
+          photos={displayedPhotos}
+          onClose={handleCloseLightbox}
+          onNavigate={handleNavigateLightbox}
+        />
+      )}
+
+      {/* Slideshow */}
+      {showSlideshow && (
+        <Slideshow
+          photos={currentPhotos}
+          onClose={() => setShowSlideshow(false)}
+        />
+      )}
     </div>
   )
 }
