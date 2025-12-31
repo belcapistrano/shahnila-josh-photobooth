@@ -1043,26 +1043,30 @@ body {
   object-fit: contain;
 }
 
-/* Hide video controls when playing on mobile */
+/* Hide video controls on mobile (even during loading) */
 @media (max-width: 768px) {
-  .photo-card-video.playing::-webkit-media-controls {
+  .photo-card-video::-webkit-media-controls {
     display: none !important;
   }
 
-  .photo-card-video.playing::-webkit-media-controls-enclosure {
+  .photo-card-video::-webkit-media-controls-enclosure {
     display: none !important;
   }
 
-  .photo-card-video.playing::-webkit-media-controls-panel {
+  .photo-card-video::-webkit-media-controls-panel {
     display: none !important;
   }
 
-  .photo-card-video.playing::-moz-media-controls {
+  .photo-card-video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+  }
+
+  .photo-card-video::-moz-media-controls {
     display: none !important;
   }
 
   /* For browsers that support controlsList */
-  .photo-card-video.playing {
+  .photo-card-video {
     pointer-events: auto;
   }
 }
@@ -3988,6 +3992,27 @@ body {
   .lightbox-likes {
     justify-content: center;
   }
+
+  /* Hide video controls on mobile */
+  .lightbox-video::-webkit-media-controls {
+    display: none !important;
+  }
+
+  .lightbox-video::-webkit-media-controls-enclosure {
+    display: none !important;
+  }
+
+  .lightbox-video::-webkit-media-controls-panel {
+    display: none !important;
+  }
+
+  .lightbox-video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+  }
+
+  .lightbox-video::-moz-media-controls {
+    display: none !important;
+  }
 }
 
 /* Add cursor pointer to photo cards */
@@ -4398,6 +4423,27 @@ body {
   .btn-slideshow {
     padding: 7px 14px;
     font-size: 13px;
+  }
+
+  /* Hide video controls on mobile */
+  .slideshow-video::-webkit-media-controls {
+    display: none !important;
+  }
+
+  .slideshow-video::-webkit-media-controls-enclosure {
+    display: none !important;
+  }
+
+  .slideshow-video::-webkit-media-controls-panel {
+    display: none !important;
+  }
+
+  .slideshow-video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+  }
+
+  .slideshow-video::-moz-media-controls {
+    display: none !important;
   }
 }
 
