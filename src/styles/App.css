@@ -2496,6 +2496,16 @@ body {
     width: 10px;
     height: 10px;
   }
+
+  .media-filter {
+    gap: 6px;
+    margin: 12px 0;
+  }
+
+  .filter-btn {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+  }
 }
 
 /* Admin Photobooth Styles */
@@ -2823,12 +2833,21 @@ body {
   }
 
   .photographer-credit-mobile .photographer-main {
-    font-size: 13px;
+    font-size: 12px;
     color: #8B6F47;
   }
 
   .photographer-credit-mobile .photographer-links {
-    font-size: 11px;
+    font-size: 10px;
+    flex-direction: row;
+  }
+
+  .photographer-credit-mobile .photographer-link {
+    font-size: 10px;
+  }
+
+  .photographer-credit-mobile .link-separator {
+    font-size: 9px;
   }
 
   .filter-section {
@@ -2844,23 +2863,41 @@ body {
   }
 
   .photo-count {
-    font-size: 12px;
-    padding: 5px 12px;
+    font-size: 11px;
+    padding: 4px 10px;
   }
 
   .filter-header-right {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .filter-header-right .photo-count {
+    order: 1;
+  }
+
+  .filter-header-right .btn-slideshow {
+    order: 2;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .filter-header-right .btn-shuffle-prominent {
+    order: 3;
   }
 
   .btn-shuffle-prominent {
-    padding: 6px 14px;
-    font-size: 13px;
+    padding: 5px 12px;
+    font-size: 12px;
   }
 
   .shuffle-icon {
-    font-size: 14px;
+    font-size: 13px;
+  }
+
+  .shuffle-text {
+    font-size: 12px;
   }
 
   .filter-chip-label {
@@ -3340,11 +3377,11 @@ body {
     font-size: 28px;
   }
 
-  .photographer-links {
+  .photographer-credit .photographer-links {
     flex-direction: column;
   }
 
-  .photographer-link {
+  .photographer-credit .photographer-link {
     width: 100%;
   }
 }
