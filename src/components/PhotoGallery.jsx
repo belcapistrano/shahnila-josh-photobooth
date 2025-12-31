@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import PhotoCard from './PhotoCard'
 import useLikedPhotos from '../hooks/useLikedPhotos'
 
@@ -7,7 +7,18 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
   const fileInputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 })
+  const [simulatedPercent, setSimulatedPercent] = useState(0)
   const [mediaFilter, setMediaFilter] = useState('all') // 'all', 'photos', 'videos'
+  const progressIntervalRef = useRef(null)
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+      }
+    }
+  }, [])
 
   const handleUploadClick = () => {
     fileInputRef.current?.click()
@@ -48,6 +59,23 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
           // Update progress before starting upload
           setUploadProgress({ current: i, total: fileArray.length })
 
+          // Start simulated progress for this file
+          setSimulatedPercent(0)
+          let currentPercent = 0
+
+          // Clear any existing interval
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current)
+          }
+
+          // Update progress every 2 seconds
+          progressIntervalRef.current = setInterval(() => {
+            currentPercent += 10
+            if (currentPercent <= 90) { // Cap at 90% until upload completes
+              setSimulatedPercent(currentPercent)
+            }
+          }, 2000)
+
           // For videos, pass the File object directly (more efficient for large files)
           // For images, convert to data URL for processing
           if (file.type.startsWith('video/')) {
@@ -69,22 +97,37 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
             }
           }
 
+          // Clear interval and set to 100%
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current)
+          }
+          setSimulatedPercent(100)
+
           console.log(`Completed uploading file ${i + 1} of ${fileArray.length}`)
           // Update progress after completing upload
           setUploadProgress({ current: i + 1, total: fileArray.length })
 
           // Small delay to allow UI to update
-          await new Promise(resolve => setTimeout(resolve, 100))
+          await new Promise(resolve => setTimeout(resolve, 300))
         } catch (error) {
           console.error('Error uploading file:', error)
+          // Clear interval on error
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current)
+          }
           // Continue with next file even if one fails
         }
       }
     } catch (error) {
       console.error('Error uploading files:', error)
     } finally {
+      // Clear any remaining interval
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current)
+      }
       setUploading(false)
       setUploadProgress({ current: 0, total: 0 })
+      setSimulatedPercent(0)
       // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
@@ -235,16 +278,16 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
             <div className="upload-progress-icon">📤</div>
             <h3>Uploading Media</h3>
             <p className="upload-progress-text">
-              {uploadProgress.current} of {uploadProgress.total} {uploadProgress.total === 1 ? 'file' : 'files'}
+              File {uploadProgress.current + 1} of {uploadProgress.total}
             </p>
             <div className="upload-progress-bar-container">
               <div
                 className="upload-progress-bar"
-                style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                style={{ width: `${simulatedPercent}%` }}
               />
             </div>
             <p className="upload-progress-percent">
-              {Math.round((uploadProgress.current / uploadProgress.total) * 100)}%
+              {simulatedPercent}%
             </p>
           </div>
         </div>
