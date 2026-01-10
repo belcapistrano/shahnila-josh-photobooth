@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import Lightbox from './Lightbox'
 import Slideshow from './Slideshow'
 import ProgressiveImage from './ProgressiveImage'
@@ -6,11 +6,13 @@ import ProgressiveImage from './ProgressiveImage'
 function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, onUpdateGalleryPhotoDate, onUpdatePhotoboothPhotoDate, onDeleteGalleryPhoto, onDeletePhotoboothPhoto, onUpload }) {
   // Detect mobile device and optimize initial load
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-  const initialLoadCount = isMobile ? 15 : 24 // Load fewer photos initially on mobile
-  const loadMoreCount = isMobile ? 12 : 20 // Load fewer photos per scroll on mobile
+  const initialLoadCount = isMobile ? 20 : 36 // Increased initial load for better preloading
+  const loadMoreCount = isMobile ? 15 : 24 // Increased load more for smoother scrolling
 
   const [activeDate, setActiveDate] = useState('all')
   const [sortOrder, setSortOrder] = useState('newest') // 'newest' or 'oldest'
+  const [isShuffled, setIsShuffled] = useState(false)
+  const [shuffleSeed, setShuffleSeed] = useState(0) // Changes each shuffle to trigger re-randomization
   const [viewMode, setViewMode] = useState('tiles') // 'tiles' or 'list'
   const [lightboxPhoto, setLightboxPhoto] = useState(null)
   const [showSlideshow, setShowSlideshow] = useState(false)
@@ -24,24 +26,25 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
   const fileInputRef = useRef(null)
   const progressIntervalRef = useRef(null)
 
-  // Add source tags to photos
-  const taggedGalleryPhotos = galleryPhotos.map(photo => ({
-    ...photo,
-    source: 'gallery'
-  }))
+  // Memoize photo tagging and combining to avoid recalculation on every render
+  const allPhotos = useMemo(() => {
+    const taggedGalleryPhotos = galleryPhotos.map(photo => ({
+      ...photo,
+      source: 'gallery'
+    }))
 
-  const taggedSaturdayPhotos = saturdayPhotos.map(photo => ({
-    ...photo,
-    source: 'photobooth'
-  }))
+    const taggedSaturdayPhotos = saturdayPhotos.map(photo => ({
+      ...photo,
+      source: 'photobooth'
+    }))
 
-  const taggedSundayPhotos = sundayPhotos.map(photo => ({
-    ...photo,
-    source: 'photobooth'
-  }))
+    const taggedSundayPhotos = sundayPhotos.map(photo => ({
+      ...photo,
+      source: 'photobooth'
+    }))
 
-  // Combine all photos
-  const allPhotos = [...taggedGalleryPhotos, ...taggedSaturdayPhotos, ...taggedSundayPhotos]
+    return [...taggedGalleryPhotos, ...taggedSaturdayPhotos, ...taggedSundayPhotos]
+  }, [galleryPhotos, saturdayPhotos, sundayPhotos])
 
   // Get date string from photoDate, creationDate or timestamp (YYYY-MM-DD format for comparison)
   const getDateString = (photo) => {
@@ -57,79 +60,99 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
     return date.toISOString().split('T')[0] // YYYY-MM-DD
   }
 
-  // Get unique dates from all photos (including videos)
-  const uniqueDates = [...new Set(
-    allPhotos
-      .map(photo => getDateString(photo))
-      .filter(date => date !== null)
-  )].sort().reverse() // Sort newest to oldest
+  // Memoize unique dates calculation
+  const uniqueDates = useMemo(() => {
+    return [...new Set(
+      allPhotos
+        .map(photo => getDateString(photo))
+        .filter(date => date !== null)
+    )].sort().reverse() // Sort newest to oldest
+  }, [allPhotos])
 
-  // Filter by date
-  let currentPhotos = allPhotos
-  if (activeDate !== 'all') {
-    currentPhotos = allPhotos.filter(photo => getDateString(photo) === activeDate)
-  }
-
-  // Sort photos by date (using photoDate for photobooth, creationDate for gallery, fallback to timestamp)
-  currentPhotos = currentPhotos.slice().sort((a, b) => {
-    const dateA = a.photoDate || a.creationDate || a.timestamp
-    const dateB = b.photoDate || b.creationDate || b.timestamp
-
-    const timeA = dateA?.seconds ? dateA.seconds * 1000 : new Date(dateA || 0).getTime()
-    const timeB = dateB?.seconds ? dateB.seconds * 1000 : new Date(dateB || 0).getTime()
-
-    if (sortOrder === 'newest') {
-      return timeB - timeA // Newest first
-    } else {
-      return timeA - timeB // Oldest first
+  // Memoize photo processing (filter, sort, alternate, shuffle) to optimize rendering
+  const { currentPhotos, totalPhotos } = useMemo(() => {
+    // Filter by date
+    let photos = allPhotos
+    if (activeDate !== 'all') {
+      photos = allPhotos.filter(photo => getDateString(photo) === activeDate)
     }
-  })
 
-  // Alternate between regular photos and animated videos for better visual variety
-  const animatedVideos = currentPhotos.filter(photo => {
-    const isVideo = photo.isVideo || photo.fileType === '.mp4'
-    return isVideo && photo.folder === 'animated'
-  })
-  const regularContent = currentPhotos.filter(photo => {
-    const isVideo = photo.isVideo || photo.fileType === '.mp4'
-    return !(isVideo && photo.folder === 'animated')
-  })
+    // Sort photos by date (using photoDate for photobooth, creationDate for gallery, fallback to timestamp)
+    photos = photos.slice().sort((a, b) => {
+      const dateA = a.photoDate || a.creationDate || a.timestamp
+      const dateB = b.photoDate || b.creationDate || b.timestamp
 
-  // Interleave animated videos with regular content
-  const alternatedPhotos = []
-  const maxLength = Math.max(regularContent.length, animatedVideos.length)
-  for (let i = 0; i < maxLength; i++) {
-    if (i < regularContent.length) {
-      alternatedPhotos.push(regularContent[i])
+      const timeA = dateA?.seconds ? dateA.seconds * 1000 : new Date(dateA || 0).getTime()
+      const timeB = dateB?.seconds ? dateB.seconds * 1000 : new Date(dateB || 0).getTime()
+
+      if (sortOrder === 'newest') {
+        return timeB - timeA // Newest first
+      } else {
+        return timeA - timeB // Oldest first
+      }
+    })
+
+    // Alternate between regular photos and animated videos for better visual variety
+    const animatedVideos = photos.filter(photo => {
+      const isVideo = photo.isVideo || photo.fileType === '.mp4'
+      return isVideo && photo.folder === 'animated'
+    })
+    const regularContent = photos.filter(photo => {
+      const isVideo = photo.isVideo || photo.fileType === '.mp4'
+      return !(isVideo && photo.folder === 'animated')
+    })
+
+    // Interleave animated videos with regular content
+    const alternatedPhotos = []
+    const maxLength = Math.max(regularContent.length, animatedVideos.length)
+    for (let i = 0; i < maxLength; i++) {
+      if (i < regularContent.length) {
+        alternatedPhotos.push(regularContent[i])
+      }
+      if (i < animatedVideos.length) {
+        alternatedPhotos.push(animatedVideos[i])
+      }
     }
-    if (i < animatedVideos.length) {
-      alternatedPhotos.push(animatedVideos[i])
+
+    photos = alternatedPhotos
+
+    // Apply shuffle if enabled
+    if (isShuffled) {
+      // Fisher-Yates shuffle algorithm for true randomization
+      photos = [...photos]
+      for (let i = photos.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [photos[i], photos[j]] = [photos[j], photos[i]]
+      }
     }
-  }
 
-  currentPhotos = alternatedPhotos
-
-  // Get total count before pagination
-  const totalPhotos = currentPhotos.length
+    return {
+      currentPhotos: photos,
+      totalPhotos: photos.length
+    }
+  }, [allPhotos, activeDate, sortOrder, isShuffled, shuffleSeed])
 
   // Apply pagination
   const displayedPhotos = currentPhotos.slice(0, displayedCount)
   const hasMore = displayedCount < totalPhotos
 
-  // Reset displayed count when filter or sort changes
+  // Reset displayed count when filter, sort, or shuffle changes
   useEffect(() => {
     setDisplayedCount(initialLoadCount)
-  }, [activeDate, sortOrder, initialLoadCount])
+  }, [activeDate, sortOrder, isShuffled, shuffleSeed, initialLoadCount])
 
   // Load more photos when observer target is visible
   const loadMore = useCallback(() => {
     if (!hasMore || isLoadingMore) return
 
     setIsLoadingMore(true)
-    setTimeout(() => {
-      setDisplayedCount(prev => Math.min(prev + loadMoreCount, totalPhotos))
-      setIsLoadingMore(false)
-    }, 300)
+    // Use requestAnimationFrame for smoother updates during scroll
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        setDisplayedCount(prev => Math.min(prev + loadMoreCount, totalPhotos))
+        setIsLoadingMore(false)
+      }, 100) // Reduced timeout for faster response
+    })
   }, [hasMore, isLoadingMore, totalPhotos, loadMoreCount])
 
   // Intersection Observer for infinite scroll
@@ -141,8 +164,8 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: '200px' // Start loading 200px before reaching the target
+        threshold: 0.01, // Lower threshold for earlier triggering
+        rootMargin: '800px' // Significantly increased preload distance for smoother scrolling
       }
     )
 
@@ -433,18 +456,34 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
               </div>
               <div className="tile-sort-controls">
                 <button
-                  className={`tile-sort-btn ${sortOrder === 'newest' ? 'active' : ''}`}
-                  onClick={() => setSortOrder('newest')}
+                  className={`tile-sort-btn ${sortOrder === 'newest' && !isShuffled ? 'active' : ''}`}
+                  onClick={() => {
+                    setSortOrder('newest')
+                    setIsShuffled(false)
+                  }}
                   title="Sort by newest first"
                 >
                   ⬇️ Newest
                 </button>
                 <button
-                  className={`tile-sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
-                  onClick={() => setSortOrder('oldest')}
+                  className={`tile-sort-btn ${sortOrder === 'oldest' && !isShuffled ? 'active' : ''}`}
+                  onClick={() => {
+                    setSortOrder('oldest')
+                    setIsShuffled(false)
+                  }}
                   title="Sort by oldest first"
                 >
                   ⬆️ Oldest
+                </button>
+                <button
+                  className={`tile-sort-btn ${isShuffled ? 'active' : ''}`}
+                  onClick={() => {
+                    setIsShuffled(true)
+                    setShuffleSeed(Math.random()) // Trigger new shuffle each time
+                  }}
+                  title="Shuffle photos randomly (click again to reshuffle)"
+                >
+                  🔀 Shuffle
                 </button>
               </div>
               <button
@@ -583,9 +622,6 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
                     <span className="tile-date">
                       {photo.source === 'gallery' ? '🖼️' : '📸'} {formatDate(photo)}
                     </span>
-                  )}
-                  {photo.folder && (
-                    <span className="tile-folder">{photo.folder}</span>
                   )}
                 </div>
                 {/* Hidden: change date and delete photo icons */}

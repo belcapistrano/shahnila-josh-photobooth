@@ -4781,6 +4781,9 @@ body {
   gap: 8px;
   padding: 0;
   margin-bottom: 30px;
+  /* Performance optimizations for smooth scrolling */
+  will-change: scroll-position;
+  contain: layout style paint;
 }
 
 .tile {
@@ -4790,6 +4793,10 @@ body {
   cursor: pointer;
   background: #f5f5f5;
   transition: all 0.3s ease;
+  /* Performance optimizations */
+  contain: layout style paint;
+  content-visibility: auto;
+  will-change: transform;
 }
 
 .tile:hover {
@@ -4819,6 +4826,10 @@ body {
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+  /* Performance optimizations for image rendering */
+  will-change: transform;
+  transform: translateZ(0); /* Force GPU acceleration */
+  backface-visibility: hidden;
 }
 
 .tile:hover .tile-image {
@@ -5194,6 +5205,9 @@ body {
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
+  /* Performance optimizations */
+  will-change: scroll-position;
+  contain: layout style paint;
 }
 
 .photo-list-item {
@@ -5203,6 +5217,9 @@ body {
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  /* Performance optimizations */
+  contain: layout style paint;
+  content-visibility: auto;
 }
 
 .photo-list-item:hover {
