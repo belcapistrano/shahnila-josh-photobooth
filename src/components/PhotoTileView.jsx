@@ -625,7 +625,8 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
                   onClick={() => handlePhotoClick(photo)}
                 />
               )}
-              <div className="tile-overlay">
+              {/* Hidden: tooltip overlay with date and video badge */}
+              {/* <div className="tile-overlay">
                 <div className="tile-info">
                   {isVideo && !isAnimatedVideo && (
                     <span className="tile-video-badge">▶️</span>
@@ -636,8 +637,7 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
                     </span>
                   )}
                 </div>
-                {/* Hidden: change date and delete photo icons */}
-                {/* <div className="tile-actions">
+                <div className="tile-actions">
                   {(onUpdateGalleryPhotoDate || onUpdatePhotoboothPhotoDate) && (
                     <button
                       className="tile-date-btn"
@@ -659,8 +659,8 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
                       🗑️
                     </button>
                   )}
-                </div> */}
-              </div>
+                </div>
+              </div> */}
               {activeDatePicker === photo.id && (
                 <div className="tile-date-picker" onClick={(e) => e.stopPropagation()}>
                   {dateOptions.map((option) => (
