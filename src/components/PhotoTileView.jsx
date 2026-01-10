@@ -85,6 +85,30 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
     }
   })
 
+  // Alternate between regular photos and animated videos for better visual variety
+  const animatedVideos = currentPhotos.filter(photo => {
+    const isVideo = photo.isVideo || photo.fileType === '.mp4'
+    return isVideo && photo.folder === 'animated'
+  })
+  const regularContent = currentPhotos.filter(photo => {
+    const isVideo = photo.isVideo || photo.fileType === '.mp4'
+    return !(isVideo && photo.folder === 'animated')
+  })
+
+  // Interleave animated videos with regular content
+  const alternatedPhotos = []
+  const maxLength = Math.max(regularContent.length, animatedVideos.length)
+  for (let i = 0; i < maxLength; i++) {
+    if (i < regularContent.length) {
+      alternatedPhotos.push(regularContent[i])
+    }
+    if (i < animatedVideos.length) {
+      alternatedPhotos.push(animatedVideos[i])
+    }
+  }
+
+  currentPhotos = alternatedPhotos
+
   // Get total count before pagination
   const totalPhotos = currentPhotos.length
 
@@ -564,7 +588,8 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
                     <span className="tile-folder">{photo.folder}</span>
                   )}
                 </div>
-                <div className="tile-actions">
+                {/* Hidden: change date and delete photo icons */}
+                {/* <div className="tile-actions">
                   {(onUpdateGalleryPhotoDate || onUpdatePhotoboothPhotoDate) && (
                     <button
                       className="tile-date-btn"
@@ -586,7 +611,7 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
                       🗑️
                     </button>
                   )}
-                </div>
+                </div> */}
               </div>
               {activeDatePicker === photo.id && (
                 <div className="tile-date-picker" onClick={(e) => e.stopPropagation()}>
