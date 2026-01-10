@@ -4,6 +4,7 @@ import PhotoGallery from './components/PhotoGallery'
 import Challenges from './components/Challenges'
 import AdminPhotobooth from './components/AdminPhotobooth'
 import PhotoTileView from './components/PhotoTileView'
+import NikahGallery from './components/NikahGallery'
 import InfoBanner from './components/InfoBanner'
 import TabNavigation from './components/TabNavigation'
 import RecentPhoto from './components/RecentPhoto'
@@ -228,6 +229,24 @@ function App() {
             <p className="wedding-date-header">♥ December 26-28, 2025 ♥</p>
           </div>
         </div>
+        <div className="header-actions">
+          <button
+            className={`btn-nikah ${activeTab === 'nikah' ? 'active' : ''}`}
+            onClick={() => setActiveTab('nikah')}
+            title="View Nikah Ceremony Photos"
+          >
+            💍 Nikah Gallery
+          </button>
+          {activeTab === 'nikah' && (
+            <button
+              className="btn-back-to-photos"
+              onClick={() => setActiveTab('tiles')}
+              title="Back to Reception Photos"
+            >
+              ← Back to Photos
+            </button>
+          )}
+        </div>
       </header>
       {showBanner && activeTab === 'camera' && <InfoBanner onClose={handleDismissBanner} />}
       <main className="app-main">
@@ -269,6 +288,7 @@ function App() {
             onUpload={handleUploadPhoto}
           />
         )}
+        {activeTab === 'nikah' && <NikahGallery />}
         {activeTab === 'challenges' && <Challenges onTakePhoto={handleTakePhoto} />}
       </main>
       <RecentPhoto

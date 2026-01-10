@@ -5409,3 +5409,166 @@ body {
     font-size: 13px;
   }
 }
+
+/* ========================================
+   Nikah Gallery Styles
+   ======================================== */
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-nikah {
+  background: linear-gradient(135deg, #674F2D 0%, #8B6F47 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.3);
+}
+
+.btn-nikah:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(103, 79, 45, 0.4);
+}
+
+.btn-nikah.active {
+  background: linear-gradient(135deg, #8B6F47 0%, #A89060 100%);
+  box-shadow: 0 2px 8px rgba(103, 79, 45, 0.3);
+}
+
+.btn-back-to-photos {
+  background: white;
+  color: #674F2D;
+  border: 2px solid #674F2D;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back-to-photos:hover {
+  background: #674F2D;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Nikah Gallery Container */
+.nikah-gallery {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.nikah-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nikah-header h2 {
+  color: #674F2D;
+  font-size: 2rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.nikah-subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+.nikah-open-link {
+  display: inline-block;
+  background: linear-gradient(135deg, #674F2D 0%, #8B6F47 100%);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.nikah-open-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.3);
+}
+
+/* Loading State */
+.nikah-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #674F2D;
+}
+
+.nikah-loading p {
+  margin-top: 16px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Embed Container */
+.nikah-embed-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 280px);
+  min-height: 600px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.nikah-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .nikah-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .nikah-subtitle {
+    font-size: 1rem;
+  }
+
+  .nikah-embed-container {
+    height: calc(100vh - 320px);
+    min-height: 500px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-nikah,
+  .btn-back-to-photos {
+    width: 100%;
+    max-width: 280px;
+  }
+}
