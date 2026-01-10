@@ -12,13 +12,47 @@ function ImageLoader({ src, thumbnail, blurPlaceholder, alt, className = '' }) {
   const imgRef = useRef(null)
   const observerRef = useRef(null)
 
+  // Check if user prefers reduced data usage
+  const shouldLoadHighRes = () => {
+    // Check if user has data saver enabled or slow connection
+    if (navigator.connection) {
+      const conn = navigator.connection
+
+      // Don't load high-res on slow connections
+      if (conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g') {
+        return false
+      }
+
+      // Don't load high-res if user has data saver enabled
+      if (conn.saveData) {
+        return false
+      }
+    }
+
+    return true
+  }
+
   // Intersection Observer to detect when image is near viewport
   useEffect(() => {
+    // Detect mobile device for optimized loading
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const rootMargin = isMobile ? '400px' : '300px' // Load even earlier for smooth scrolling
+
     observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setShouldLoadFull(true)
+            // Check connection before loading full image
+            if (shouldLoadHighRes()) {
+              // Use requestAnimationFrame for smoother updates during scroll
+              requestAnimationFrame(() => {
+                setShouldLoadFull(true)
+              })
+            } else {
+              // Skip full image on slow connections
+              setIsLoading(false)
+            }
+
             // Stop observing after triggering
             if (observerRef.current && imgRef.current) {
               observerRef.current.unobserve(imgRef.current)
@@ -27,7 +61,7 @@ function ImageLoader({ src, thumbnail, blurPlaceholder, alt, className = '' }) {
         })
       },
       {
-        rootMargin: '100px', // Start loading slightly before entering viewport
+        rootMargin: rootMargin, // Start loading earlier based on device
         threshold: 0.01
       }
     )

@@ -4,11 +4,17 @@ import Slideshow from './Slideshow'
 import ProgressiveImage from './ProgressiveImage'
 
 function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, onUpdateGalleryPhotoDate, onUpdatePhotoboothPhotoDate, onDeleteGalleryPhoto, onDeletePhotoboothPhoto, onUpload }) {
+  // Detect mobile device and optimize initial load
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+  const initialLoadCount = isMobile ? 15 : 24 // Load fewer photos initially on mobile
+  const loadMoreCount = isMobile ? 12 : 20 // Load fewer photos per scroll on mobile
+
   const [activeDate, setActiveDate] = useState('all')
   const [sortOrder, setSortOrder] = useState('newest') // 'newest' or 'oldest'
+  const [viewMode, setViewMode] = useState('tiles') // 'tiles' or 'list'
   const [lightboxPhoto, setLightboxPhoto] = useState(null)
   const [showSlideshow, setShowSlideshow] = useState(false)
-  const [displayedCount, setDisplayedCount] = useState(20)
+  const [displayedCount, setDisplayedCount] = useState(initialLoadCount)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [activeDatePicker, setActiveDatePicker] = useState(null) // Track which tile's date picker is open
   const [uploading, setUploading] = useState(false)
@@ -88,8 +94,8 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
 
   // Reset displayed count when filter or sort changes
   useEffect(() => {
-    setDisplayedCount(20)
-  }, [activeDate, sortOrder])
+    setDisplayedCount(initialLoadCount)
+  }, [activeDate, sortOrder, initialLoadCount])
 
   // Load more photos when observer target is visible
   const loadMore = useCallback(() => {
@@ -97,20 +103,23 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
 
     setIsLoadingMore(true)
     setTimeout(() => {
-      setDisplayedCount(prev => Math.min(prev + 20, totalPhotos))
+      setDisplayedCount(prev => Math.min(prev + loadMoreCount, totalPhotos))
       setIsLoadingMore(false)
     }, 300)
-  }, [hasMore, isLoadingMore, totalPhotos])
+  }, [hasMore, isLoadingMore, totalPhotos, loadMoreCount])
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
           loadMore()
         }
       },
-      { threshold: 0.1 }
+      {
+        threshold: 0.1,
+        rootMargin: '200px' // Start loading 200px before reaching the target
+      }
     )
 
     const currentTarget = observerTarget.current
@@ -123,7 +132,7 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
         observer.unobserve(currentTarget)
       }
     }
-  }, [hasMore, loading, loadMore])
+  }, [hasMore, isLoadingMore, loadMore])
 
   const handlePhotoClick = (photo) => {
     setLightboxPhoto(photo)
@@ -382,6 +391,22 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
           )}
           {totalPhotos > 0 && (
             <>
+              <div className="tile-view-controls">
+                <button
+                  className={`tile-view-btn ${viewMode === 'tiles' ? 'active' : ''}`}
+                  onClick={() => setViewMode('tiles')}
+                  title="Tiles view"
+                >
+                  ⊞
+                </button>
+                <button
+                  className={`tile-view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                  title="List view"
+                >
+                  ☰
+                </button>
+              </div>
               <div className="tile-sort-controls">
                 <button
                   className={`tile-sort-btn ${sortOrder === 'newest' ? 'active' : ''}`}
@@ -448,31 +473,50 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
         })}
       </div>
 
-      {/* Tile Grid */}
-      <div className="tile-grid">
+      {/* Photo Grid - Tiles or List */}
+      <div className={viewMode === 'tiles' ? 'tile-grid' : 'photo-list'}>
         {displayedPhotos.map((photo, index) => {
-          const tileSize = getTileSize(index)
+          const tileSize = viewMode === 'tiles' ? getTileSize(index) : 'single'
           const thumbnailUrl = photo.thumbnailURL || photo.thumbnail
           const fullUrl = photo.compressedURL || photo.downloadURL || photo.dataUrl
           const isVideo = photo.isVideo || photo.fileType === '.mp4'
+          const isGif = photo.fileType === '.gif'
 
           return (
             <div
               key={photo.id}
-              className={`tile tile-${tileSize} ${isVideo ? 'tile-video' : ''} ${activeDatePicker === photo.id ? 'tile-picker-active' : ''}`}
+              className={`${viewMode === 'tiles' ? `tile tile-${tileSize}` : 'photo-list-item'} ${isVideo ? 'tile-video' : ''} ${activeDatePicker === photo.id ? 'tile-picker-active' : ''}`}
             >
               {isVideo ? (
-                <video
+                <div className="tile-video-container" onClick={() => handlePhotoClick(photo)}>
+                  {thumbnailUrl && (
+                    <img
+                      src={thumbnailUrl}
+                      alt={`Video ${index + 1} thumbnail`}
+                      className="tile-image tile-video-thumbnail"
+                      loading="lazy"
+                    />
+                  )}
+                  <video
+                    src={fullUrl}
+                    className="tile-image tile-video-element"
+                    muted
+                    playsInline
+                    preload="metadata"
+                    poster={thumbnailUrl}
+                    style={{ display: 'none' }}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              ) : isGif ? (
+                <img
                   src={fullUrl}
-                  className="tile-image tile-video-element"
-                  muted
-                  playsInline
-                  preload="metadata"
-                  poster={thumbnailUrl}
+                  alt={`Animated ${index + 1}`}
+                  className="tile-image"
+                  loading="lazy"
                   onClick={() => handlePhotoClick(photo)}
-                >
-                  Your browser does not support the video tag.
-                </video>
+                />
               ) : (
                 <ProgressiveImage
                   thumbnailUrl={thumbnailUrl}
