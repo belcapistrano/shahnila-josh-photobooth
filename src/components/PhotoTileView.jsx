@@ -477,17 +477,40 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
       <div className={viewMode === 'tiles' ? 'tile-grid' : 'photo-list'}>
         {displayedPhotos.map((photo, index) => {
           const tileSize = viewMode === 'tiles' ? getTileSize(index) : 'single'
-          const thumbnailUrl = photo.thumbnailURL || photo.thumbnail
-          const fullUrl = photo.compressedURL || photo.downloadURL || photo.dataUrl
           const isVideo = photo.isVideo || photo.fileType === '.mp4'
           const isGif = photo.fileType === '.gif'
+
+          // Videos in the "animated" folder should autoplay like GIFs (boomerangs, animated clips)
+          const isAnimatedVideo = isVideo && photo.folder === 'animated'
+
+          // For GIFs and animated videos, always use the original downloadURL to preserve animation
+          // Compressed versions lose animation, so skip compressedURL for these
+          const thumbnailUrl = photo.thumbnailURL || photo.thumbnail
+          const fullUrl = (isGif || isAnimatedVideo)
+            ? (photo.downloadURL || photo.dataUrl)  // GIFs/animated videos: use original only
+            : (photo.compressedURL || photo.downloadURL || photo.dataUrl)  // Others: prefer compressed
 
           return (
             <div
               key={photo.id}
               className={`${viewMode === 'tiles' ? `tile tile-${tileSize}` : 'photo-list-item'} ${isVideo ? 'tile-video' : ''} ${activeDatePicker === photo.id ? 'tile-picker-active' : ''}`}
             >
-              {isVideo ? (
+              {isAnimatedVideo ? (
+                // Animated videos (from "animated" folder) - autoplay like GIFs
+                <video
+                  src={fullUrl}
+                  className="tile-image tile-animated-video"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  onClick={() => handlePhotoClick(photo)}
+                >
+                  Your browser does not support the video tag.
+                </video>
+              ) : isVideo ? (
+                // Regular videos - show thumbnail with play button
                 <div className="tile-video-container" onClick={() => handlePhotoClick(photo)}>
                   {thumbnailUrl && (
                     <img
@@ -529,7 +552,7 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
               )}
               <div className="tile-overlay">
                 <div className="tile-info">
-                  {isVideo && (
+                  {isVideo && !isAnimatedVideo && (
                     <span className="tile-video-badge">▶️</span>
                   )}
                   {(photo.creationDate || photo.timestamp) && (
