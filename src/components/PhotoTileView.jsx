@@ -574,25 +574,38 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
               ) : isVideo ? (
                 // Regular videos - show thumbnail with play button
                 <div className="tile-video-container" onClick={() => handlePhotoClick(photo)}>
-                  {thumbnailUrl && (
-                    <img
-                      src={thumbnailUrl}
-                      alt={`Video ${index + 1} thumbnail`}
+                  {thumbnailUrl ? (
+                    <>
+                      <img
+                        src={thumbnailUrl}
+                        alt={`Video ${index + 1} thumbnail`}
+                        className="tile-image tile-video-thumbnail"
+                        loading="lazy"
+                      />
+                      <video
+                        src={fullUrl}
+                        className="tile-image tile-video-element"
+                        muted
+                        playsInline
+                        preload="metadata"
+                        poster={thumbnailUrl}
+                        style={{ display: 'none' }}
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    </>
+                  ) : (
+                    // No thumbnail available - show video with first frame
+                    <video
+                      src={fullUrl}
                       className="tile-image tile-video-thumbnail"
-                      loading="lazy"
-                    />
+                      muted
+                      playsInline
+                      preload="metadata"
+                    >
+                      Your browser does not support the video tag.
+                    </video>
                   )}
-                  <video
-                    src={fullUrl}
-                    className="tile-image tile-video-element"
-                    muted
-                    playsInline
-                    preload="metadata"
-                    poster={thumbnailUrl}
-                    style={{ display: 'none' }}
-                  >
-                    Your browser does not support the video tag.
-                  </video>
                 </div>
               ) : isGif ? (
                 <img

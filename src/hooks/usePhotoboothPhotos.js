@@ -147,7 +147,12 @@ function usePhotoboothPhotos() {
       const mimeMatch = dataUrl.match(/data:([^;]+);/)
       if (mimeMatch) {
         const mimeType = mimeMatch[1]
-        if (mimeType.startsWith('video/mp4') || mimeType.startsWith('video/mpeg')) {
+        // Handle video formats - normalize to MP4 for universal compatibility
+        if (mimeType.startsWith('video/mp4')) {
+          return '.mp4'
+        } else if (mimeType.startsWith('video/quicktime')) {
+          return '.mp4' // iOS QuickTime videos
+        } else if (mimeType.startsWith('video/mpeg')) {
           return '.mp4'
         } else if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
           return '.jpg'
