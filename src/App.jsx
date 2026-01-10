@@ -226,7 +226,7 @@ function App() {
           <h1>Shahnila & Josh</h1>
           <p className="wedding-subtitle">Our Wedding Celebration</p>
           <div className="wedding-schedule">
-            <p className="wedding-date-header">♥ December 26-28, 2025 ♥</p>
+            <p className="wedding-date-header">♥ December 26-29, 2025 ♥</p>
           </div>
         </div>
         <div className="header-actions">

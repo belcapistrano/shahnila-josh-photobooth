@@ -521,8 +521,7 @@ function PhotoTileView({ galleryPhotos, saturdayPhotos, sundayPhotos, loading, o
           const date = new Date(dateString + 'T12:00:00')
           const displayDate = date.toLocaleDateString('en-US', {
             month: 'short',
-            day: 'numeric',
-            year: 'numeric'
+            day: 'numeric'
           })
           return (
             <button
