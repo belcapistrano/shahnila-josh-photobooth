@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import ImageLoader from './ImageLoader'
 
-function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike, onClick }) {
+function PhotoCard({ photo, onLike, onDelete, onUpdateDate, isLiked = false, onToggleLike, onClick }) {
   // Use downloadURL from Firebase or dataUrl as fallback
   const imageUrl = photo.downloadURL || photo.dataUrl
   const isVideo = photo.isVideo || photo.fileType === '.mp4'
@@ -10,6 +10,7 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike, onC
   const [canDelete, setCanDelete] = useState(false)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [showDatePicker, setShowDatePicker] = useState(false)
   const videoRef = useRef(null)
 
   // Calculate time remaining for deletion (15 minutes window)
@@ -316,6 +317,24 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike, onC
     }
   }
 
+  const handleDateChange = async (dateString) => {
+    if (onUpdateDate) {
+      try {
+        await onUpdateDate(photo.id, dateString)
+        setShowDatePicker(false)
+      } catch (error) {
+        console.error('Failed to update photo date:', error)
+      }
+    }
+  }
+
+  const dateOptions = [
+    { label: 'Dec 26, 2025', value: '2025-12-26T12:00:00.000Z' },
+    { label: 'Dec 27, 2025', value: '2025-12-27T12:00:00.000Z' },
+    { label: 'Dec 28, 2025', value: '2025-12-28T12:00:00.000Z' },
+    { label: 'Dec 29, 2025', value: '2025-12-29T12:00:00.000Z' }
+  ]
+
   return (
     <div className="photo-card">
       <div className="photo-card-image-container" onClick={handleImageClick}>
@@ -372,6 +391,32 @@ function PhotoCard({ photo, onLike, onDelete, isLiked = false, onToggleLike, onC
         )}
       </div>
       <div className="photo-card-actions">
+        {onUpdateDate && (
+          <div className="date-picker-section">
+            <button
+              type="button"
+              onClick={() => setShowDatePicker(!showDatePicker)}
+              className="btn-change-date"
+              title="Change photo date"
+            >
+              📅 Change Date
+            </button>
+            {showDatePicker && (
+              <div className="date-picker-dropdown">
+                {dateOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleDateChange(option.value)}
+                    className="date-option"
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         {canDelete && (
           <div className="delete-timer-section">
             <button type="button" onClick={handleDelete} className="btn-delete">

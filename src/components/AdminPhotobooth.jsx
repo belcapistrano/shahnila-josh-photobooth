@@ -4,7 +4,7 @@ import Lightbox from './Lightbox'
 import Slideshow from './Slideshow'
 import { processAllExistingPhotos } from '../utils/processExistingPhotos'
 
-function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDelete, onLike, isUsingFirebase }) {
+function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDelete, onLike, onUpdatePhotoDate, isUsingFirebase }) {
   const [activeDay, setActiveDay] = useState('all')
   const [activeFolder, setActiveFolder] = useState('all')
   const [likedPhotos, setLikedPhotos] = useState(new Set())
@@ -444,6 +444,7 @@ function AdminPhotobooth({ saturdayPhotos, sundayPhotos, loading, onUpload, onDe
                 photo={photo}
                 onLike={(photoId, incrementValue) => handleLike(photoId, incrementValue, photo.day)}
                 onDelete={(photoId) => handleDelete(photoId, photo.day)}
+                onUpdateDate={onUpdatePhotoDate ? (photoId, newDateString) => onUpdatePhotoDate(photoId, photo.day, newDateString) : null}
                 isLiked={likedPhotos.has(photo.id)}
                 onToggleLike={handleToggleLike}
                 onClick={handlePhotoClick}

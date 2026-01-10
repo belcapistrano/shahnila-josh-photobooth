@@ -3,6 +3,7 @@ import Camera from './components/Camera'
 import PhotoGallery from './components/PhotoGallery'
 import Challenges from './components/Challenges'
 import AdminPhotobooth from './components/AdminPhotobooth'
+import PhotoTileView from './components/PhotoTileView'
 import InfoBanner from './components/InfoBanner'
 import TabNavigation from './components/TabNavigation'
 import RecentPhoto from './components/RecentPhoto'
@@ -11,7 +12,7 @@ import usePhotoboothPhotos from './hooks/usePhotoboothPhotos'
 import { combinePhotosIntoStrip } from './utils/photoStrip'
 
 function App() {
-  const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, likePhoto, isUsingFirebase } = useFirebasePhotos()
+  const { photos, loading, uploadPhoto, deletePhoto, clearAllPhotos, likePhoto, updatePhotoDate, isUsingFirebase } = useFirebasePhotos()
   const {
     saturdayPhotos,
     sundayPhotos,
@@ -19,9 +20,10 @@ function App() {
     uploadPhoto: uploadPhotoboothPhoto,
     deletePhoto: deletePhotoboothPhoto,
     likePhoto: likePhotoboothPhoto,
+    updatePhotoDate: updatePhotoboothPhotoDate,
     isUsingFirebase: isPhotoboothUsingFirebase
   } = usePhotoboothPhotos()
-  const [activeTab, setActiveTab] = useState('photobooth')
+  const [activeTab, setActiveTab] = useState('tiles')
   const [recentPhoto, setRecentPhoto] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [activeChallenge, setActiveChallenge] = useState(null)
@@ -79,8 +81,8 @@ function App() {
         dataUrl: recentPhoto.dataUrl
       })
 
-      // Switch to gallery tab after successful save
-      setActiveTab('gallery')
+      // Switch to tiles tab after successful save
+      setActiveTab('tiles')
     } catch (error) {
       console.error('Error saving photo:', error)
     } finally {
@@ -144,6 +146,26 @@ function App() {
     }
   }
 
+  const handleUpdatePhotoDate = async (photoId, newDateString) => {
+    try {
+      await updatePhotoDate(photoId, newDateString)
+      console.log(`Photo date updated to ${newDateString}`)
+    } catch (error) {
+      console.error('Error updating photo date:', error)
+      throw error
+    }
+  }
+
+  const handleUpdatePhotoboothPhotoDate = async (photoId, day, newDateString) => {
+    try {
+      await updatePhotoboothPhotoDate(photoId, day, newDateString)
+      console.log(`Photobooth ${day} photo date updated to ${newDateString}`)
+    } catch (error) {
+      console.error('Error updating photobooth photo date:', error)
+      throw error
+    }
+  }
+
   const handleAdminUploadPhoto = async (photoDataUrl, day, folder) => {
     try {
       // Upload original photo directly without processing to preserve quality
@@ -176,12 +198,12 @@ function App() {
     setShowBanner(false)
   }
 
-  // Switch to gallery when user returns to app while on camera tab
+  // Switch to tiles when user returns to app while on camera tab
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && activeTab === 'camera') {
-        console.log('User returned to app on camera tab, switching to gallery...')
-        setActiveTab('gallery')
+        console.log('User returned to app on camera tab, switching to tiles...')
+        setActiveTab('tiles')
       }
     }
 
@@ -189,9 +211,9 @@ function App() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [activeTab])
 
-  // Scroll to top when switching to gallery or photobooth
+  // Scroll to top when switching to tiles
   useEffect(() => {
-    if (activeTab === 'gallery' || activeTab === 'photobooth') {
+    if (activeTab === 'tiles') {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, [activeTab])
@@ -218,6 +240,7 @@ function App() {
             onClearAll={handleClearAll}
             onLike={handleLike}
             onUpload={handleUploadPhoto}
+            onUpdatePhotoDate={handleUpdatePhotoDate}
             isUsingFirebase={isUsingFirebase}
           />
         )}
@@ -229,7 +252,21 @@ function App() {
             onUpload={handleAdminUploadPhoto}
             onDelete={handleDeletePhotoboothPhoto}
             onLike={handleLikePhotoboothPhoto}
+            onUpdatePhotoDate={handleUpdatePhotoboothPhotoDate}
             isUsingFirebase={isPhotoboothUsingFirebase}
+          />
+        )}
+        {activeTab === 'tiles' && (
+          <PhotoTileView
+            galleryPhotos={photos}
+            saturdayPhotos={saturdayPhotos}
+            sundayPhotos={sundayPhotos}
+            loading={loading || photoboothLoading}
+            onUpdateGalleryPhotoDate={handleUpdatePhotoDate}
+            onUpdatePhotoboothPhotoDate={handleUpdatePhotoboothPhotoDate}
+            onDeleteGalleryPhoto={handleDeletePhoto}
+            onDeletePhotoboothPhoto={handleDeletePhotoboothPhoto}
+            onUpload={handleUploadPhoto}
           />
         )}
         {activeTab === 'challenges' && <Challenges onTakePhoto={handleTakePhoto} />}
@@ -241,7 +278,7 @@ function App() {
         onSave={handleSaveRecentPhoto}
         isUploading={uploading}
       />
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      {/* <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} /> */}
     </div>
   )
 }

@@ -4442,6 +4442,74 @@ body {
   box-shadow: 0 2px 6px rgba(103, 79, 45, 0.3);
 }
 
+/* Upload button in tile view */
+.btn-upload-tile {
+  background: linear-gradient(135deg, #8B6F47 0%, #A0865F 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 111, 71, 0.3);
+  white-space: nowrap;
+}
+
+.btn-upload-tile:hover:not(:disabled) {
+  background: linear-gradient(135deg, #A0865F 0%, #8B6F47 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 111, 71, 0.4);
+}
+
+.btn-upload-tile:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(139, 111, 71, 0.3);
+}
+
+.btn-upload-tile:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Migration button */
+.btn-migrate {
+  background: linear-gradient(135deg, #8B6F47 0%, #A0865F 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 111, 71, 0.3);
+  white-space: nowrap;
+}
+
+.btn-migrate:hover:not(:disabled) {
+  background: linear-gradient(135deg, #A0865F 0%, #8B6F47 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 111, 71, 0.4);
+}
+
+.btn-migrate:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(139, 111, 71, 0.3);
+}
+
+.btn-migrate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Gallery header actions container */
 .gallery-header-actions {
   display: flex;
@@ -4556,4 +4624,602 @@ body {
 
 .slideshow-overlay:fullscreen .slideshow-controls {
   bottom: 40px;
+}
+
+/* Photo Tile View Styles - Amazon Photos inspired */
+.photo-tile-view {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.tile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 15px 0;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #E8DCC4;
+}
+
+.tile-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.tile-header-left h2 {
+  color: #674F2D;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tile-count {
+  background: #F0E6D2;
+  color: #674F2D;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.tile-header-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Tile Sort Controls */
+.tile-sort-controls {
+  display: flex;
+  gap: 5px;
+  background: white;
+  border: 2px solid #E8DCC4;
+  border-radius: 20px;
+  padding: 2px;
+}
+
+.tile-sort-btn {
+  background: transparent;
+  border: none;
+  color: #674F2D;
+  padding: 6px 12px;
+  border-radius: 18px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tile-sort-btn:hover {
+  background: #F0E6D2;
+}
+
+.tile-sort-btn.active {
+  background: linear-gradient(135deg, #674F2D 0%, #8B6F47 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(103, 79, 45, 0.3);
+}
+
+/* Tile Filter */
+.tile-filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.tile-filter-btn {
+  background: white;
+  border: 2px solid #E8DCC4;
+  color: #674F2D;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tile-filter-btn:hover {
+  background: #F0E6D2;
+  border-color: #8B6F47;
+  transform: translateY(-1px);
+}
+
+.tile-filter-btn.active {
+  background: linear-gradient(135deg, #674F2D 0%, #8B6F47 100%);
+  color: white;
+  border-color: #674F2D;
+  box-shadow: 0 4px 12px rgba(103, 79, 45, 0.3);
+}
+
+/* Tile Grid - Masonry Layout */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: 200px;
+  gap: 8px;
+  padding: 0;
+  margin-bottom: 30px;
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #f5f5f5;
+  transition: all 0.3s ease;
+}
+
+.tile:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* Varied tile sizes for visual interest */
+.tile-small {
+  grid-row: span 1;
+  grid-column: span 1;
+}
+
+.tile-medium {
+  grid-row: span 1;
+  grid-column: span 2;
+}
+
+.tile-large {
+  grid-row: span 2;
+  grid-column: span 2;
+}
+
+.tile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.tile:hover .tile-image {
+  transform: scale(1.05);
+}
+
+/* Video tiles */
+.tile-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.tile-video-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tile-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  padding: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tile:hover .tile-overlay {
+  opacity: 1;
+}
+
+.tile-info {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tile-date,
+.tile-folder {
+  background: rgba(255, 255, 255, 0.9);
+  color: #674F2D;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Tile actions container */
+.tile-actions {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.tile:hover .tile-actions {
+  opacity: 1;
+}
+
+/* Tile date picker button */
+.tile-date-btn {
+  background: rgba(139, 111, 71, 0.95);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tile-date-btn:hover {
+  background: rgba(160, 134, 95, 0.95);
+  transform: scale(1.1);
+}
+
+.tile-date-btn:active {
+  transform: scale(0.95);
+}
+
+/* Tile delete button */
+.tile-delete-btn {
+  background: rgba(185, 28, 28, 0.95);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tile-delete-btn:hover {
+  background: rgba(220, 38, 38, 0.95);
+  transform: scale(1.1);
+}
+
+.tile-delete-btn:active {
+  transform: scale(0.95);
+}
+
+/* Tile date picker dropdown */
+.tile-date-picker {
+  position: absolute;
+  top: 55px;
+  left: 10px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 100;
+  animation: slideDown 0.2s ease-out;
+  min-width: 150px;
+  pointer-events: auto;
+}
+
+.tile-date-option {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: white;
+  color: #674F2D;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tile-date-option:last-child {
+  border-bottom: none;
+}
+
+.tile-date-option:hover {
+  background: linear-gradient(135deg, #8B6F47 0%, #A0865F 100%);
+  color: white;
+}
+
+.tile-date-option:active {
+  transform: scale(0.98);
+}
+
+.tile-picker-active {
+  z-index: 50;
+}
+
+/* Empty state */
+.tile-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8B6F47;
+}
+
+.tile-empty p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.tile-empty-hint {
+  font-size: 0.95rem;
+  color: #A0926D;
+}
+
+/* Loading skeletons */
+.tile-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #f0f0f0;
+}
+
+.tile-skeleton .skeleton-image {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .tile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .tile-header-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .tile-header-left h2 {
+    font-size: 1.4rem;
+  }
+
+  .tile-count {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+  }
+
+  .tile-header-right {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .tile-sort-controls {
+    gap: 3px;
+    padding: 2px;
+  }
+
+  .tile-sort-btn {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+
+  .tile-filter {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tile-filter-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .tile-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-auto-rows: 110px;
+    gap: 4px;
+  }
+
+  /* Simplify tile sizes for mobile */
+  .tile-small {
+    grid-row: span 1;
+    grid-column: span 1;
+  }
+
+  .tile-medium {
+    grid-row: span 1;
+    grid-column: span 2;
+  }
+
+  .tile-large {
+    grid-row: span 2;
+    grid-column: span 2;
+  }
+
+  .btn-slideshow {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+
+  /* Smaller action buttons for mobile tiles */
+  .tile-actions {
+    top: 6px;
+    left: 6px;
+    gap: 6px;
+    opacity: 1; /* Always visible on mobile (no hover) */
+  }
+
+  .tile-date-btn,
+  .tile-delete-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+
+  /* Adjust tile info text sizes for smaller tiles */
+  .tile-info {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .tile-challenge {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+
+  .tile-date {
+    font-size: 0.7rem;
+  }
+
+  .tile-folder {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .tile-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-auto-rows: 180px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .tile-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-auto-rows: 220px;
+  }
+}
+
+/* Date Picker Styles */
+.date-picker-section {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.btn-change-date {
+  background: linear-gradient(135deg, #8B6F47 0%, #A0865F 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 111, 71, 0.3);
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-change-date:hover {
+  background: linear-gradient(135deg, #9A7E56 0%, #AF9570 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 111, 71, 0.4);
+}
+
+.btn-change-date:active {
+  transform: translateY(0);
+}
+
+.date-picker-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.date-option {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #674F2D;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.date-option:last-child {
+  border-bottom: none;
+}
+
+.date-option:hover {
+  background: linear-gradient(90deg, #FFF9F0 0%, #FFEFD5 100%);
+  color: #8B6F47;
+}
+
+.date-option:active {
+  background: #FFEFD5;
+}
+
+@media (max-width: 768px) {
+  .date-picker-section {
+    margin-bottom: 8px;
+  }
+
+  .btn-change-date {
+    font-size: 13px;
+    padding: 7px 14px;
+  }
+
+  .date-option {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
 }

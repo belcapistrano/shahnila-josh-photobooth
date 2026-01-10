@@ -3,8 +3,9 @@ import PhotoCard from './PhotoCard'
 import Lightbox from './Lightbox'
 import Slideshow from './Slideshow'
 import useLikedPhotos from '../hooks/useLikedPhotos'
+import { migratePhotoDates } from '../utils/migratePhotoDates'
 
-function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload, isUsingFirebase }) {
+function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload, onUpdatePhotoDate, isUsingFirebase }) {
   const { isPhotoLiked, toggleLike } = useLikedPhotos()
   const fileInputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
@@ -13,6 +14,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
   const [mediaFilter, setMediaFilter] = useState('all') // 'all', 'photos', 'videos'
   const [lightboxPhoto, setLightboxPhoto] = useState(null)
   const [showSlideshow, setShowSlideshow] = useState(false)
+  const [migrating, setMigrating] = useState(false)
   const progressIntervalRef = useRef(null)
 
   // Cleanup interval on unmount
@@ -26,6 +28,33 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
 
   const handleUploadClick = () => {
     fileInputRef.current?.click()
+  }
+
+  const handleMigrateDates = async () => {
+    if (!isUsingFirebase) {
+      alert('Migration only works with Firebase')
+      return
+    }
+
+    if (!window.confirm('This will update all existing photos to add creation dates. Continue?')) {
+      return
+    }
+
+    setMigrating(true)
+    try {
+      const result = await migratePhotoDates()
+      if (result.success) {
+        const totalUpdated = result.results.gallery.updated + result.results.saturday.updated + result.results.sunday.updated
+        alert(`Migration complete! Updated ${totalUpdated} photos.\n\nGallery: ${result.results.gallery.updated}\nSaturday: ${result.results.saturday.updated}\nSunday: ${result.results.sunday.updated}`)
+      } else {
+        alert(`Migration failed: ${result.error}`)
+      }
+    } catch (error) {
+      console.error('Migration error:', error)
+      alert(`Migration error: ${error.message}`)
+    } finally {
+      setMigrating(false)
+    }
   }
 
   // Filter photos based on media type
@@ -232,9 +261,21 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
         <div className="gallery-header-left">
           <h2>Gallery ({filteredPhotos.length})</h2>
           {filteredPhotos.length > 0 && (
-            <button className="btn-slideshow" onClick={() => setShowSlideshow(true)}>
-              ▶️ Slideshow
-            </button>
+            <>
+              <button className="btn-slideshow" onClick={() => setShowSlideshow(true)}>
+                ▶️ Slideshow
+              </button>
+              {isUsingFirebase && (
+                <button
+                  className="btn-migrate"
+                  onClick={handleMigrateDates}
+                  disabled={migrating}
+                  title="Fix dates for existing photos"
+                >
+                  {migrating ? '⏳ Migrating...' : '📅 Fix Dates'}
+                </button>
+              )}
+            </>
           )}
         </div>
         <input
@@ -276,6 +317,7 @@ function PhotoGallery({ photos, loading, onDelete, onClearAll, onLike, onUpload,
               photo={photo}
               onLike={onLike}
               onDelete={onDelete}
+              onUpdateDate={onUpdatePhotoDate}
               isLiked={isPhotoLiked(photo.id)}
               onToggleLike={toggleLike}
               onClick={handlePhotoClick}

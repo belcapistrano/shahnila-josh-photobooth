@@ -96,6 +96,12 @@ function useFirebasePhotos() {
     console.log('uploadPhoto called', { isFileObject, filter, hasChallenge: !!challenge })
     const timestamp = Date.now()
 
+    // Get the actual creation date of the file (when photo was taken)
+    // For uploaded files: use lastModified, for camera captures: use current time
+    const creationDate = isFileObject && photoData.lastModified
+      ? new Date(photoData.lastModified).toISOString()
+      : new Date().toISOString()
+
     // Detect if this is a video
     const isVideo = isFileObject
       ? photoData.type?.startsWith('video/')
@@ -163,6 +169,7 @@ function useFirebasePhotos() {
         thumbnail: processedImage?.thumbnail,
         blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
+        creationDate: creationDate,
         filter: filter || 'none',
         likes: 0,
         isVideo,
@@ -241,6 +248,7 @@ function useFirebasePhotos() {
         filter,
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
+        creationDate: creationDate,
         likes: 0,
         isVideo,
         fileType: fileExtension,
@@ -287,6 +295,7 @@ function useFirebasePhotos() {
         thumbnail: processedImage?.thumbnail,
         blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
+        creationDate: creationDate,
         filter: filter || 'none',
         likes: 0,
         isVideo,
@@ -394,6 +403,34 @@ function useFirebasePhotos() {
     }
   }
 
+  // Update photo date
+  const updatePhotoDate = async (photoId, newDateString) => {
+    try {
+      // If Firebase is not configured, use local storage
+      if (!useFirebase || !storage || !db) {
+        setLocalPhotos(prev =>
+          prev.map(photo =>
+            photo.id === photoId
+              ? { ...photo, photoDate: newDateString, creationDate: newDateString }
+              : photo
+          )
+        )
+        return
+      }
+
+      const photoRef = doc(db, PHOTOS_COLLECTION, photoId)
+      await updateDoc(photoRef, {
+        photoDate: newDateString,
+        creationDate: newDateString
+      })
+
+      console.log(`Updated photo ${photoId} date to ${newDateString}`)
+    } catch (err) {
+      console.error('Error updating photo date:', err)
+      throw err
+    }
+  }
+
   return {
     photos,
     loading,
@@ -402,6 +439,7 @@ function useFirebasePhotos() {
     deletePhoto,
     clearAllPhotos,
     likePhoto,
+    updatePhotoDate,
     isUsingFirebase: useFirebase && storage && db && !error
   }
 }

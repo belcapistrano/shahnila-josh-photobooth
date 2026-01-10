@@ -132,6 +132,13 @@ function usePhotoboothPhotos() {
   // Upload photo to specific day and folder
   const uploadPhoto = async (photoData, day, folder = 'original') => {
     const timestamp = Date.now()
+    const creationDate = new Date().toISOString()
+
+    // Assign specific date based on the day folder
+    const photoDate = day === 'saturday'
+      ? new Date('2025-12-27T12:00:00').toISOString()
+      : new Date('2025-12-28T12:00:00').toISOString()
+
     const collectionName = day === 'saturday' ? SATURDAY_COLLECTION : SUNDAY_COLLECTION
     const storagePath = `photobooth/${day}/${folder}`
 
@@ -176,6 +183,8 @@ function usePhotoboothPhotos() {
         thumbnail: processedImage?.thumbnail,
         blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
+        creationDate: creationDate,
+        photoDate: photoDate,
         day: day,
         folder: folder,
         likes: 0,
@@ -220,6 +229,8 @@ function usePhotoboothPhotos() {
         storagePath: filename,
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
+        creationDate: creationDate,
+        photoDate: photoDate,
         day: day,
         folder: folder,
         likes: 0,
@@ -246,6 +257,8 @@ function usePhotoboothPhotos() {
         thumbnail: processedImage?.thumbnail,
         blurPlaceholder: processedImage?.blurPlaceholder,
         timestamp: new Date().toISOString(),
+        creationDate: creationDate,
+        photoDate: photoDate,
         day: day,
         folder: folder,
         likes: 0,
@@ -328,6 +341,43 @@ function usePhotoboothPhotos() {
     }
   }
 
+  // Update photo date
+  const updatePhotoDate = async (photoId, day, newDateString) => {
+    try {
+      // If Firebase is not configured, use local storage
+      if (!useFirebase || !storage || !db) {
+        const updateLocalState = (setter) => {
+          setter(prev =>
+            prev.map(photo =>
+              photo.id === photoId
+                ? { ...photo, photoDate: newDateString, creationDate: newDateString }
+                : photo
+            )
+          )
+        }
+
+        if (day === 'saturday') {
+          updateLocalState(setLocalSaturdayPhotos)
+        } else {
+          updateLocalState(setLocalSundayPhotos)
+        }
+        return
+      }
+
+      const collectionName = day === 'saturday' ? SATURDAY_COLLECTION : SUNDAY_COLLECTION
+      const photoRef = doc(db, collectionName, photoId)
+      await updateDoc(photoRef, {
+        photoDate: newDateString,
+        creationDate: newDateString
+      })
+
+      console.log(`Updated ${day} photo ${photoId} date to ${newDateString}`)
+    } catch (err) {
+      console.error('Error updating photo date:', err)
+      throw err
+    }
+  }
+
   return {
     saturdayPhotos,
     sundayPhotos,
@@ -336,6 +386,7 @@ function usePhotoboothPhotos() {
     uploadPhoto,
     deletePhoto,
     likePhoto,
+    updatePhotoDate,
     isUsingFirebase: useFirebase && storage && db && !error
   }
 }
